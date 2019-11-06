@@ -1,4 +1,5 @@
 set history=500
+set formatoptions+=r
 
 " Enable filetype plugins
 filetype plugin on
@@ -340,3 +341,7 @@ function! VisualSelection(direction, extra_filter) range
     let @/ = l:pattern
     let @" = l:saved_reg
 endfunction
+
+" Jedi vim
+let g:jedi#use_splits_not_buffers = "left"
+

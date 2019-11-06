@@ -22,7 +22,9 @@ font pango:DejaVu Sans Mono 8
 exec --no-startup-id feh --bg-fill Pictures/wallpaper.jpg
 exec --no-startup-id pasystray
 exec --no-startup-id owncloud
+exec --no-startup-id xfce4-power-manager
 exec --no-startup-id blueman-applet 
+exec --no-startup-id gnome-encfs-manager
 
 #presenting
 #assign [title="DS PDF Viewer - Audience Window"] 2
@@ -197,8 +199,7 @@ bindsym $mod+Shift+c		exec --no-startup-id $BROWSER
 bindsym $mod+m			exec $term -e neomutt
 
 bindsym $mod+e          layout toggle split
-bindsym $mod+Shift+e		exec --no-startup-id tutorialvids
-bindsym $sup+e          exec --no-startup-id nemo
+bindsym $mod+Shift+e       exec --no-startup-id nemo
 
 bindsym $mod+r 			exec $term -e ranger
 bindsym $mod+Shift+r		exec $term -e sudo ranger /
@@ -219,7 +220,7 @@ bindsym $mod+Shift+i		exec --no-startup-id "bash ~/.scripts/i3resize up"
 bindsym $mod+Shift+o		exec --no-startup-id "bash ~/.scripts/i3resize right"
 
 #lock screen
-bindsym $mod+p exec --no-startup-id lockscreen 
+bindsym $mod+p exec --no-startup-id "bash ~/git/Configs/i3/lock.sh"
 bindsym $mod+Shift+p		exec --no-startup-id lmc pause
 
 #bindsym $mod+a			exec --no-startup-id ddspawn dropdowncalc -f mono:pixelsize=24
