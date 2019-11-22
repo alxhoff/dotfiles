@@ -1,0 +1,25 @@
+# Maintainer: alxhoff <alex dot hoffman at tum dot de>
+
+pkgname=libexplain
+pkgver=1.4.0.g250cd6b
+pkgrel=1
+pkgdesc="A library which may be used to explain Unix and Linux system call errors."
+arch=(i686 x86_64)
+url="http://libexplain.sourceforge.net/"
+license=('GPL3')
+depends=('libcap')
+makedepends=('git')
+options=('!libtool')
+source=("$pkgname::git+https://github.com/alxhoff/$pkgname.git")
+md5sums=('SKIP')
+
+build() {
+  cd "$pkgname"
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "$pkgname"
+    make DESTDIR="$pkgdir/" install
+}
