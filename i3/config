@@ -171,7 +171,17 @@ bindsym $mod+e          layout toggle split
 bindsym $mod+Shift+e       exec --no-startup-id nemo
 
 bindsym $mod+r          exec $term -e ranger
-bindsym $mod+Shift+r        exec $term -e sudo ranger /
+# Set shut down, restart and locking features
+bindsym $mod+Shift+r mode "$mode_rotate"
+set $mode_rotate (r)otated, (l)andscape
+mode "$mode_rotate" {
+    bindsym r exec --no-startup-id xrandr -o 1 && xinput set-prop $(xinput list | grep -iPo 'stylus.*id=\K\d+') --type=float "Coordinate Transformation Matrix" 0 -1 1 1 0 0 0 0 1, mode "default"
+    bindsym l exec --no-startup-id xrandr -o 0 && xinput set-prop $(xinput list | grep -iPo 'stylus.*id=\K\d+') --type=float "Coordinate Transformation Matrix" 0 0 0 0 0 0 0 0 0, mode "default"
+
+# exit system mode: "Enter" or "Escape"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
 
 bindsym $mod+t          split toggle
 bindsym $mod+Shift+t        gaps inner current set 15; gaps outer current set 15
