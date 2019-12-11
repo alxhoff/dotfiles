@@ -13,7 +13,7 @@ set $shutdown sudo -A shutdown -h now
 set $reboot sudo -A reboot
 set $netrefresh --no-startup-id sudo -A systemctl restart NetworkManager
 set $hibernate sudo -A systemctl suspend
-set $background --no-startup-id  feh --bg-fill ~/Pictures/wallpaper.jpg
+set $background feh --bg-fill ~/Pictures/wallpaper.jpg
 
 
 font pango:DejaVu Sans Mono 8
@@ -189,7 +189,7 @@ bindsym $mod+Shift+i        exec --no-startup-id "bash ~/.scripts/i3resize up"
 bindsym $mod+Shift+o        exec --no-startup-id "bash ~/.scripts/i3resize right"
 
 #lock screen
-bindsym $mod+p exec --no-startup-id "bash ~/.configs/i3/lock.sh"
+bindsym $mod+p exec --no-startup-id "bash ~/.config/i3/interface_scripts/lock.sh"
 bindsym $mod+Shift+p        exec --no-startup-id lmc pause
 
 #bindsym $mod+a         exec --no-startup-id ddspawn dropdowncalc -f mono:pixelsize=24
