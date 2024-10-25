@@ -1,0 +1,3 @@
+add-auto-load-safe-path /home/alxhoff/git/GitHub/FreeRTOS-Emulator/bin/.gdbinit
+
+tui focus cmd
