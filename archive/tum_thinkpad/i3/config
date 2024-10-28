@@ -32,6 +32,7 @@ bindsym $mod+Shift+q kill
 
 # start program launcher
 bindsym $mod+d exec --no-startup-id rofi -show run
+bindsym $mod+o exec --no-startup-id ~/.config/i3/scripts/rofi-finder.sh
 
 # browsed
 bindsym $mod+c exec firefox
