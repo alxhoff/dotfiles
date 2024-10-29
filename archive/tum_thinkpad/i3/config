@@ -32,7 +32,7 @@ bindsym $mod+Shift+q kill
 
 # start program launcher
 bindsym $mod+d exec --no-startup-id rofi -show run
-bindsym $mod+o exec --no-startup-id ~/.config/i3/scripts/rofi-finder.sh
+bindsym $mod+o exec --no-startup-id ~/.i3/scripts/rofi-finder.sh
 
 # browsed
 bindsym $mod+c exec firefox
@@ -244,7 +244,7 @@ exec --no-startup-id pamac-tray
 exec --no-startup-id clipit
 exec_always --no-startup-id ff-theme-util
 exec_always --no-startup-id fix_xcursor
-exec_always --no-startup-id $HOME/.config/polybar/i3wmthemer_bar_launch.sh
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
 # Theme colors
 client.focused #bfbfbf #162025 #bfbfbf #39402e #4bffbc
