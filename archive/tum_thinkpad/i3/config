@@ -153,7 +153,6 @@ bindsym $mod+Shift+0 move container to workspace $ws0; workspace $ws0
 
 # Open specific applications in floating mode
 for_window [title="alsamixer"] floating enable border pixel 1
-for_window [class="Guake"] floating enable, sticky enable, move position 0px 0px
 for_window [class="Calamares"] floating enable border normal
 for_window [class="Clipgrab"] floating enable
 for_window [title="File Transfer*"] floating enable
