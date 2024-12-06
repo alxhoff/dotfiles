@@ -5,7 +5,7 @@
 # directories
 # Defaults to :
 # MENU=( home )
-MENU=(git downloads home)
+MENU=(kernel git cartken github downloads home)
 
 # For each item `X` defined in the MENU array, you have to define in `d_X` an
 # array of directories which will be search for file with `fd`.
@@ -15,7 +15,10 @@ MENU=(git downloads home)
 # arrays. See also `FD_OPTIONS` for global options.
 #
 # The array items will be subject to shell expansion.
+d_kernel=(~/git/Github/kernel_builder/kernels)
 d_git=(~/git)
+d_cartken=(~/git/cartken)
+d_github=(~/git/Github)
 d_downloads=(~/Downloads)
 d_home=(~/)
 
