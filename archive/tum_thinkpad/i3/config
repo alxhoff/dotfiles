@@ -15,8 +15,8 @@ font xft:URWGothic-Book 11
 exec --no-startup-id pasystray
 
 # Set desktop resolution and configuration
-exec ~/git/Configs/i3/home-displays.sh
-exec feh --bg-fill /home/alxhoff/Pictures/wallpaper.jpg 
+#exec ~/git/Configs/i3/home-displays.sh
+#exec feh --bg-fill /home/alxhoff/Pictures/wallpaper.jpg 
 
 mode "passthrough" {
     bindsym Mod1+Escape mode "default"
@@ -234,16 +234,16 @@ mode "resize" {
 }
 
 # Autostart applications
-exec_always --no-startup-id $HOME/.screenlayout/default.sh
+#exec_always --no-startup-id $HOME/.screenlayout/default.sh
 exec --no-startup-id nitrogen --restore; sleep 1; compton -b
 exec --no-startup-id nm-applet
-exec --no-startup-id guake
-exec --no-startup-id xfce4-power-manager
-exec --no-startup-id pamac-tray
+#exec --no-startup-id guake
+#exec --no-startup-id xfce4-power-manager
+#exec --no-startup-id pamac-tray
 exec --no-startup-id clipit
 exec_always --no-startup-id ff-theme-util
 exec_always --no-startup-id fix_xcursor
-exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+#exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
 # Theme colors
 client.focused #bfbfbf #162025 #bfbfbf #39402e #4bffbc
@@ -298,7 +298,7 @@ mode "$mode_gaps_outer" {
 }
 
 # set power-manager and volume control
-exec --no-startup-id mate-power-manager
+#exec --no-startup-id mate-power-manager
 
 bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -c 0 -q set Master 2dB+ unmute
 bindsym XF86AudioLowerVolume exec --no-startup-id amixer -c 0 -q set Master 2db- unmute

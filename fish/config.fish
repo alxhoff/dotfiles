@@ -1,3 +1,5 @@
+set -x GOOGLE_CLOUD_PROJECT cartken-ai-assistants
+
 if status is-interactive
     # Commands to run in interactive sessions can go here
 end
@@ -148,7 +150,7 @@ end
 
 function ubunt
     # Define the IPs and credentials
-    set local_ip 192.168.1.178
+    set local_ip usbdock
     set meshnet_ip ubuntu
     set user alxhoff
     set password 008637hh
@@ -234,5 +236,141 @@ end
 
 function kb
     cd /home/alxhoff/git/Github/kernel_builder
+end
+
+function kernels
+    cd /home/alxhoff/git/Github/kernel_builder/kernels
+end
+
+function fv
+    # Find files matching the pattern
+    set results (find . -name "$argv" -exec realpath {} \; 2>/dev/null)
+
+    # Count the number of results
+    set count (count $results)
+
+    if test $count -eq 0
+        echo "No files found matching '$argv'"
+        return 1
+    else if test $count -eq 1
+        # Open the single result in Vim
+        vim $results[1]
+    else
+        # Multiple results found, list them with indexes
+        echo "Multiple files found:"
+        for i in (seq 1 $count)
+            echo "[$i] $results[$i]"
+        end
+
+        # Prompt the user to choose a file
+        echo -n "Select a file to open (1-$count): "
+        read choice
+
+        # Validate user input
+        if test $choice -ge 1 -a $choice -le $count
+            vim $results[$choice]
+        else
+            echo "Invalid choice. Exiting."
+            return 1
+        end
+    end
+end
+
+function gcp
+    if test (count $argv) -eq 0
+        echo "Usage: gcp <commit1> [commit2] [commit3] ..."
+        return 1
+    end
+
+    for commit in $argv
+        echo "Cherry-picking: $commit"
+        git cherry-pick $commit
+        if test $status -ne 0
+            echo "Error cherry-picking $commit. Resolve conflicts and run 'git cherry-pick --continue' or 'git cherry-pick --abort'."
+            return 1
+        end
+    end
+
+    echo "All commits cherry-picked successfully."
+end
+
+function windows
+    if test (count $argv) -gt 0
+        switch $argv[1]
+            case start
+                echo "Starting Windows Docker container..."
+                cd ~/ && docker compose up -d windows
+                sleep 3
+                firefox --new-window http://localhost:8006/ &
+            case pause
+                echo "Pausing Windows Docker container..."
+                docker pause windows
+            case resume
+                echo "Resuming Windows Docker container..."
+                docker unpause windows
+                sleep 3
+                firefox --new-window http://localhost:8006/ &
+            case stop
+                echo "Stopping Windows Docker container..."
+                docker compose down windows
+			case rebuild
+                echo "Rebuilding Windows Docker container (preserving data)..."
+                docker compose down
+                docker compose build windows
+                docker compose up -d windows
+                sleep 3
+                firefox --new-window http://localhost:8006/ &
+			case rebuild-hard
+			echo "⚠️ Full rebuild of Windows container..."
+				# Try deletion
+				if not rm -rf ~/windows/* 2>/dev/null
+					echo "⚠️ Could not delete files. Run this manually:"
+					echo "    sudo rm -rf ~/windows/*"
+					echo -n "Press Enter when done..."
+					read
+				end
+
+				echo "Rebuilding container..."
+				docker compose down
+				docker compose build windows
+				docker compose up -d windows
+				echo "Starting browser..."
+				sleep 3
+				firefox --new-window http://localhost:8006/ &
+			case '*'
+				echo "Usage: windows {start|pause|resume|stop|rebuild|rebuild-hard}"
+        end
+    else
+        echo "Usage: windows {start|pause|resume|stop|rebuild|rebuild-hard}"
+    end
+end
+
+function spaces
+    if test (count $argv) -ne 1
+        echo "Usage: spaces <directory>"
+        return 1
+    end
+
+    set dir $argv[1]
+
+    if not test -d $dir
+        echo "Error: '$dir' is not a valid directory"
+        return 1
+    end
+
+    find $dir -type f -exec sed -i 's/\t/    /g' {} +
+
+    echo "Converted all tabs to spaces in: $dir"
+end
+
+function rmpatch
+    find . -type f \( -name '*.orig' -o -name '*.rej' \) -print -delete
+end
+
+function alert
+    # run the command with all arguments
+    $argv 2>&1
+    # play a standard notification sound
+	paplay /usr/share/sounds/freedesktop/stereo/complete.oga 
 end
 

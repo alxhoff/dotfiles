@@ -49,6 +49,7 @@ if [ "$PRIMARY_CONNECTED" ] || [ "$WORK_PRIMARY_CONNECTED" ]; then
     echo "Primary is connected: $PRIMARY_MONITOR"
     MONITOR=$PRIMARY_MONITOR polybar topmain &
     MONITOR=$PRIMARY_MONITOR polybar bottommain &
+    MONITOR=$FALLBACK_MONITOR polybar topsecondary &
 elif [ "$FALLBACK_CONNECTED" ]; then
     MONITOR=$FALLBACK_MONITOR polybar topmain &
     MONITOR=$FALLBACK_MONITOR polybar bottommain &
