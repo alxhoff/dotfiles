@@ -29,6 +29,12 @@ migrate_resolve_old_root() {
 }
 
 migrate_old_home() {
+    # Explicit path (e.g. btrfs @home mounted at /mnt/btrfs-backup → .../alxhoff)
+    if [[ -n "${OLD_HOME:-}" && -d "$OLD_HOME" ]]; then
+        echo "$OLD_HOME"
+        return 0
+    fi
+
     local old_root=$1
     local old_user=${OLD_USER:-alxhoff}
     local home="$old_root/home/$old_user"
@@ -38,9 +44,15 @@ migrate_old_home() {
         return 0
     fi
 
+    # Manjaro/Arch btrfs: @home subvolume mounted directly (no home/ prefix)
+    if [[ -d "$old_root/$old_user" ]]; then
+        echo "$old_root/$old_user"
+        return 0
+    fi
+
     # Fallback: first user home with a git/ directory (common after username change)
     local h
-    for h in "$old_root"/home/*; do
+    for h in "$old_root"/home/* "$old_root"/*; do
         [[ -d "$h/git" ]] || continue
         echo "$h"
         return 0

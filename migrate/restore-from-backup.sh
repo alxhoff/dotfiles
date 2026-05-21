@@ -25,15 +25,21 @@ MANIFEST=${MANIFEST:-$SCRIPT_DIR/manifest.conf}
 OLD_USER=${OLD_USER:-alxhoff}
 NEW_HOME=$(migrate_new_home)
 
-if ! OLD_ROOT=$(migrate_resolve_old_root); then
-    migrate_die "Could not find old root. Mount the DD backup and set OLD_ROOT=/mnt/oldroot"
+OLD_ROOT=${OLD_ROOT:-}
+if [[ -n "${OLD_HOME:-}" && -d "$OLD_HOME" ]]; then
+    OLD_ROOT=${OLD_ROOT:-$(dirname "$(dirname "$OLD_HOME")")}
+    migrate_log "Using OLD_HOME directly (btrfs @home or explicit path)"
+elif OLD_ROOT=$(migrate_resolve_old_root); then
+    :
+else
+    migrate_die "Mount the DD backup (see migrate/mount-btrfs-backup.sh) and set OLD_ROOT or OLD_HOME"
 fi
 
 if ! OLD_HOME=$(migrate_old_home "$OLD_ROOT"); then
-    migrate_die "Could not find home for OLD_USER=$OLD_USER under $OLD_ROOT/home/"
+    migrate_die "Could not find home for OLD_USER=$OLD_USER (set OLD_HOME=/path/to/alxhoff if needed)"
 fi
 
-migrate_log "Old root:  $OLD_ROOT"
+migrate_log "Old root:  ${OLD_ROOT:-<not used>}"
 migrate_log "Old home:  $OLD_HOME"
 migrate_log "New home:  $NEW_HOME"
 migrate_log "Manifest:  $MANIFEST"
