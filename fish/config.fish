@@ -148,43 +148,6 @@ function sc
     ssh-copy-id $user@$ip
 end
 
-function ubunt
-    # Define the IPs and credentials
-    set local_ip usbdock
-    set meshnet_ip ubuntu
-    set user alxhoff
-    set password 008637hh
-    set domain .
-
-    # Test connectivity to local IP first
-    if ping -c 1 -W 1 $local_ip > /dev/null
-        echo "Connecting to local address: $local_ip"
-        xfreerdp3 /v:$local_ip /d:$domain /u:$user /p:$password &
-    else
-        echo "Local address not reachable, connecting to meshnet: $meshnet_ip"
-        xfreerdp3 /v:$meshnet_ip /d:$domain /u:$user /p:$password &
-    end
-
-    # Save the process ID of xfreerdp to a file
-    echo $last_pid > ~/.rdp_session.pid
-    echo "RDP session started with PID $last_pid."
-end
-
-function dubunt
-    # Kill the background RDP connection
-    if test -f ~/.rdp_session.pid
-        set pid (cat ~/.rdp_session.pid)
-        if kill $pid > /dev/null ^&1
-            echo "Disconnected from the remote session (PID: $pid)."
-        else
-            echo "Failed to kill process. It may already be terminated."
-        end
-        rm ~/.rdp_session.pid
-    else
-        echo "No active RDP session found."
-    end
-end
-
 function sync
     # Get the username of the caller
     set user (whoami)

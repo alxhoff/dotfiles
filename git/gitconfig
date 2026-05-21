@@ -1,0 +1,9 @@
+[user]
+	email = alxhoff@gmail.com
+	name = Alexander Hoffman
+[core]
+	editor = vim
+[safe]
+	directory = /home/alxhoff/git/Github/kernel_builder/scripts/rootfs/5.1.5/Linux_for_Tegra/kernel_src
+[init]
+	defaultBranch = master

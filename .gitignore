@@ -1,1 +1,14 @@
 tags
+*.swp
+*~
+.DS_Store
+
+# Generated / local only
+*.dotfiles-backup.*
+
+# Never commit secrets or runtime state
+**/spotify/prefs
+.env
+*.pem
+id_rsa
+id_ed25519

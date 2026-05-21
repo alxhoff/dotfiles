@@ -1,0 +1,4 @@
+#!/bin/bash
+# Requires: spotify (pacman) and spotify-adblock.so in /usr/local/lib/
+# Build from ~/git/Github/spotify-adblock — see docs/spotify-adblock.md
+LD_PRELOAD=/usr/local/lib/spotify-adblock.so exec spotify "$@" &

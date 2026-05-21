@@ -1,0 +1,25 @@
+# Windows VM via dockurr/windows — used by the `windows` fish function.
+# Symlink or copy to ~/compose.yaml:  ln -sf ~/git/Github/dotfiles/docker/compose.yaml ~/compose.yaml
+services:
+  windows:
+    image: dockurr/windows
+    container_name: windows
+    environment:
+      VERSION: "11"
+      RAM_SIZE: "4G"
+      CPU_CORES: "2"
+      DISK_SIZE: "64G"
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "8006:8006"
+      - "3389:3389/tcp"
+      - "3389:3389/udp"
+    volumes:
+      - ./windows:/storage
+      - ./window_data:/data
+    restart: always
+    stop_grace_period: 2m

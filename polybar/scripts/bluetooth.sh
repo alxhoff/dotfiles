@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-bt_connected_icon=""
-bt_disconnected_icon=""
+bt_connected_icon="BT"
+bt_disconnected_icon="--"
 
 device_name=$(bluetoothctl info | sed -n "s/Name: //p" | awk '{$1=$1};1')
 

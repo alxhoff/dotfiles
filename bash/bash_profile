@@ -1,0 +1,5 @@
+#
+# ~/.bash_profile — managed in dotfiles (bash/bash_profile)
+#
+
+[[ -f ~/.bashrc ]] && . ~/.bashrc
