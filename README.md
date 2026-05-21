@@ -8,9 +8,12 @@ Migration to **EndeavourOS + Hyprland** is documented in [docs/MIGRATION.md](doc
 ```bash
 git clone --recurse-submodules git@github.com:alxhoff/dotfiles.git ~/git/Github/dotfiles
 cd ~/git/Github/dotfiles
+./packages/install-packages.sh   # pacman / yay / flatpak (after selecting — see packages/README.md)
 ./install.sh
 vim +PlugInstall +qall
 ```
+
+**Package selection (on old machine):** `./packages/export-inventory.sh` then `./packages/select-packages.sh`
 
 ## Restore from DD backup
 

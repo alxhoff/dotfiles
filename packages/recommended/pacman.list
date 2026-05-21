@@ -1,0 +1,41 @@
+# Suggested for EndeavourOS + Hyprland + dotfiles (edit via select-packages.sh)
+# Shell & editor
+fish
+vim
+git
+openssh
+rsync
+fzf
+xclip
+# Docker / VM
+docker
+docker-compose
+# Hyprland stack (adjust to taste)
+hyprland
+waybar
+wofi
+mako
+hyprlock
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-gtk
+polkit-kde-agent
+qt5-wayland
+qt6-wayland
+# Audio / network / bluetooth
+pipewire
+pipewire-pulse
+wireplumber
+network-manager-applet
+bluez
+bluez-utils
+blueman
+# Browser & utilities
+firefox
+curl
+wget
+unzip
+p7zip
+# Build tools (AUR helper)
+base-devel
+# btrfs (same as current system)
+btrfs-progs

@@ -1,0 +1,8 @@
+org.freedesktop.Platform
+org.freedesktop.Platform.codecs-extra
+org.freedesktop.Platform.GL.default
+org.freedesktop.Sdk
+org.kicad.KiCad.Library.Footprints
+org.kicad.KiCad.Library.Packages3D
+org.kicad.KiCad.Library.Symbols
+org.kicad.KiCad.Library.Templates

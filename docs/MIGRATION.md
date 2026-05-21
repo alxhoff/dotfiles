@@ -79,9 +79,20 @@ Update git safe directories if kernel paths moved:
 git config --global --add safe.directory ~/git/Github/kernel_builder/scripts/rootfs/5.1.5/Linux_for_Tegra/kernel_src
 ```
 
-## Phase 6 — Link dotfiles
+## Phase 6 — Install packages & link dotfiles
+
+On the **old** machine, export and choose packages (see [packages/README.md](../packages/README.md)):
 
 ```bash
+./packages/export-inventory.sh
+./packages/select-packages.sh --merge-recommended
+git add packages/selected && git commit -m "Package selection for new install"
+```
+
+On the **new** machine:
+
+```bash
+./packages/install-packages.sh
 ./install.sh
 vim +PlugInstall +qall
 ```

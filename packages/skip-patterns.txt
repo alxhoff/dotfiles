@@ -1,0 +1,13 @@
+# Regex patterns — packages matching these are highlighted in README for manual exclusion.
+# install-packages.sh skips manjaro-/pamac/mhwd AUR entries automatically.
+^manjaro-
+^mhwd
+^pamac
+^i3-
+^i3blocks
+^i3status
+^i3-gaps
+^i3exit
+^compton
+^xfce4-power-manager
+^manjaro-
