@@ -65,6 +65,15 @@ ONLY=git OLD_ROOT=/mnt/oldroot ./migrate/restore-from-backup.sh
 ONLY=ssh,.gnupg,.config/Cursor,.cursor OLD_ROOT=/mnt/oldroot ./migrate/restore-from-backup.sh
 ```
 
+**Cursor chats:** Quit Cursor before restore. After restoring `.config/Cursor` / `.cursor`, the script deduplicates workspace IDs, rebuilds the Glass agent chat index, and symlinks duplicate IDs to restored data. If you opened Cursor too early:
+
+```bash
+# Cursor must be fully quit first
+./migrate/fix-cursor-workspaces.sh
+```
+
+Re-running `./install.sh` (with Cursor closed) also invokes this repair automatically.
+
 Edit `migrate/manifest.conf` to add paths (e.g. `Cartken`) or comment out what you skip.
 
 After restore, fix root-owned files if needed:

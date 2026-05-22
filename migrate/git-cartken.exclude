@@ -1,0 +1,4 @@
+# Excluded from git/cartken restore (paths relative to cartken/).
+# SDK Manager docker output: ~17G, rebuildable, root-owned JetPack rootfs
+# (apt/dpkg locks) causes rsync permission errors on read-only backup.
+sdkmanager/sdkmanager_docker_output/

@@ -1,0 +1,8 @@
+# Excluded from kernel_builder "core" pass — restored in dedicated later steps.
+# Paths relative to git/Github/kernel_builder/
+storage/
+scripts/rootfs/
+scripts/usb_disk/
+scripts/ota/
+scripts/flash/
+scripts/utils/

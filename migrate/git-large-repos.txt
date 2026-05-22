@@ -1,0 +1,11 @@
+# Top-level dirs under ~/git/Github/ restored in later steps (rsync --exclude-from).
+# One pattern per line; trailing slash optional.
+kernel_builder/
+kernel_patcher/
+my_ubuntu/
+pizero_linux_from_scratch/
+realsense_mipi_platform_driver/
+linux/
+fish_bot/
+linux-tegra-5.10/
+kicad/

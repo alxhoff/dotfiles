@@ -141,3 +141,19 @@ fi
 echo ""
 echo "Done. For vim plugins: vim +PlugInstall +qall"
 echo "For migration from DD backup: ./migrate/restore-from-backup.sh"
+
+# --- Cursor chat history (duplicate workspace IDs after opening Cursor too early) ---
+if [[ "$DRY_RUN" != 1 && -d "$TARGET_HOME/.config/Cursor/User/workspaceStorage" ]]; then
+    # shellcheck source=migrate/lib.sh
+    source "$DOTFILES_DIR/migrate/lib.sh"
+    MIGRATE_SCRIPT_DIR="$DOTFILES_DIR/migrate"
+    if migrate_cursor_running; then
+        echo ""
+        echo "Cursor is running — quit it completely, then run:"
+        echo "  cd $DOTFILES_DIR && ./migrate/fix-cursor-workspaces.sh"
+    else
+        echo ""
+        echo "Repairing Cursor workspace / chat bindings..."
+        migrate_fix_cursor_workspaces "$TARGET_HOME" 0 || true
+    fi
+fi

@@ -11,12 +11,14 @@
 #   MIGRATE_YES=1      — skip confirmation prompts
 #   SKIP_GIT=1         — skip ~/git (if you will copy it separately)
 #   ONLY=git,ssh       — comma-separated subset of manifest paths
-#   MANIFEST=path      — alternate manifest file
+#   SKIP_CURSOR_FIX=1  — skip post-restore workspace/chat repair
+#   ALLOW_CURSOR_OPEN=1 — allow restore while Cursor is running (not recommended)
 #
 set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 DOTFILES_DIR=$(cd "$SCRIPT_DIR/.." && pwd)
+MIGRATE_SCRIPT_DIR=$SCRIPT_DIR
 # shellcheck source=migrate/lib.sh
 source "$SCRIPT_DIR/lib.sh"
 
@@ -24,6 +26,14 @@ DRY_RUN=${DRY_RUN:-0}
 MANIFEST=${MANIFEST:-$SCRIPT_DIR/manifest.conf}
 OLD_USER=${OLD_USER:-alxhoff}
 NEW_HOME=$(migrate_new_home)
+
+if [[ "${SKIP_ENSURE_MOUNT:-}" != 1 ]]; then
+    migrate_ensure_backup_mounted "$SCRIPT_DIR" || true
+fi
+
+if migrate_restore_includes_cursor; then
+    migrate_require_cursor_closed
+fi
 
 OLD_ROOT=${OLD_ROOT:-}
 if [[ -n "${OLD_HOME:-}" && -d "$OLD_HOME" ]]; then
@@ -87,6 +97,10 @@ while IFS= read -r relpath || [[ -n "$relpath" ]]; do
     fi
 done < "$MANIFEST"
 
+if [[ "$DRY_RUN" != 1 ]] && migrate_restore_includes_cursor; then
+    migrate_fix_cursor_workspaces "$NEW_HOME" 0
+fi
+
 # --- System-level: spotify-adblock library ---
 adb_src="$OLD_ROOT/usr/local/lib/spotify-adblock.so"
 if [[ -f "$adb_src" && "$DRY_RUN" != 1 ]]; then
@@ -105,3 +119,4 @@ fi
 
 migrate_log "Restore pass finished."
 migrate_log "Next: ./install.sh && git submodule update --init vim"
+migrate_log "If chats still missing: quit Cursor, then ./migrate/fix-cursor-workspaces.sh"
