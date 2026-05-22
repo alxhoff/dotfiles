@@ -51,7 +51,7 @@ MIGRATE_YES=1 ./migrate/restore-from-backup.sh
 - [ ] Run full `~/git` restore when ready (hours).
 - [ ] Symlink or standardize `git/Github` vs `git/GitHub` for Cursor workspace paths.
 - [ ] `OLD_ROOT` mount if `spotify-adblock.so` needed from old `/usr/local/lib`.
-- [ ] Hyprland config (Phase 7 in MIGRATION.md).
+- [x] Hyprland via ML4W starter (`~/.config/hypr` → `.mydotfiles`). Dotfiles: `endeavour/` snippets + [docs/ENDEAVOUROS.md](../docs/ENDEAVOUROS.md).
 
 ### 2025-05-22 — Ownership bug (root:root after restore)
 

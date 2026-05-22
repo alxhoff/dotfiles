@@ -1,0 +1,15 @@
+# Home dock (from i3 home-displays.sh / polybar launch.sh)
+# Layout: 2560x1440 left, 3840x2160 center-right, laptop below or off when clamshell
+#
+# REPLACE monitor names with output from discover-monitors.sh
+# Old xrandr names → typical Hypr names (verify!):
+#   DP2-1 → DP-3 or similar
+#   DP2-2 → DP-1 (4K primary)
+#   eDP1  → eDP-1
+
+# External 1440p — left
+monitor=DP-3,2560x1440@60,0x0,1
+# External 4K — center (primary)
+monitor=DP-1,3840x2160@60,2560x0,1
+# Laptop panel — below docked monitors (or use home-no-laptop.hypr to disable)
+monitor=eDP-1,1920x1080@60,640x1440,1

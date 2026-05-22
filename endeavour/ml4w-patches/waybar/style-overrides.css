@@ -1,0 +1,42 @@
+
+/* --- dotfiles waybar overrides (do not remove marker) --- */
+/* Text widgets: never use Font Awesome (avoids "file" → icon in window titles) */
+* {
+    font-family: "Fira Sans", "Fira Sans Semibold", Roboto, Helvetica, Arial, sans-serif;
+}
+
+#window,
+#workspaces,
+#workspaces button,
+#clock,
+#cpu,
+#memory,
+#custom-appmenu,
+#disk,
+#hyprland-language {
+    font-family: "Fira Sans", "Fira Sans Semibold", sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.03em;
+}
+
+#workspaces button {
+    padding: 0px 8px;
+    min-width: 22px;
+}
+
+/* Icon-only modules */
+#battery,
+#network,
+#pulseaudio,
+#custom-exit,
+#custom-quicklink1,
+#custom-quicklink2,
+#custom-quicklink3,
+#keyboard-state,
+#idle_inhibitor {
+    font-family: "Font Awesome 7 Free", "Font Awesome 6 Free", FontAwesome, sans-serif;
+}
+
+#custom-system {
+    font-family: "Fira Sans", sans-serif;
+}

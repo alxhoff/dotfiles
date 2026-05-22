@@ -1,50 +1,46 @@
 # dotfiles
 
-Personal configs for fish, bash, vim, Docker dev containers, and legacy i3/polybar.  
-Migration to **EndeavourOS + Hyprland** is documented in [docs/MIGRATION.md](docs/MIGRATION.md).
+Configs for **EndeavourOS**, Hyprland (via [ML4W starter](https://github.com/mylinuxforwork/hyprland-starter)), fish, vim, and Docker dev workflows.
 
-## Quick start (new machine)
+| Doc | When |
+|-----|------|
+| [docs/ENDEAVOUROS.md](docs/ENDEAVOUROS.md) | **Daily use** on the new system |
+| [docs/MIGRATION.md](docs/MIGRATION.md) | Backup disk restore (mostly done) |
+| [migrate/SESSION-LOG.md](migrate/SESSION-LOG.md) | Agent notes + Cursor repair history |
+| [packages/README.md](packages/README.md) | pacman / yay / flatpak selection |
+
+## Quick start
 
 ```bash
 git clone --recurse-submodules git@github.com:alxhoff/dotfiles.git ~/git/Github/dotfiles
 cd ~/git/Github/dotfiles
-./packages/install-packages.sh   # pacman / yay / flatpak (after selecting — see packages/README.md)
+./packages/install-packages.sh
 ./install.sh
+./endeavour/setup-hyprland.sh    # ML4W Hyprland — see docs/HYPRLAND-SETUP.md
 vim +PlugInstall +qall
 ```
 
-**Package selection (on old machine):** `./packages/export-inventory.sh` then `./packages/select-packages.sh`
-
-## Restore from DD backup
-
-After mounting the old root (e.g. `/mnt/oldroot`):
-
-```bash
-OLD_ROOT=/mnt/oldroot OLD_USER=alxhoff ./migrate/restore-from-backup.sh
-```
-
-`~/git` (~770 GB) is restored from the backup, **not** stored in this repo.
+Quit Cursor before `./install.sh` if you want automatic workspace/chat repair.
 
 ## Layout
 
 | Path | Purpose |
 |------|---------|
-| `fish/` | Fish config + `conf.d/ub.fish` (ub20/22/24 Docker) |
-| `bash/` | bashrc, profile, fzf |
-| `vim/` | Submodule — vimrc, runtime, plugins |
-| `docker/compose.yaml` | dockurr/windows VM (`windows` fish function) |
-| `git/gitconfig` | Global git config |
-| `bin/` | User scripts (e.g. spotify-adblock) |
-| `polybar/`, `rofi/`, `i3/` | Legacy X11 desktop (reference) |
-| `migrate/` | DD backup + rsync restore from old disk |
-| `install.sh` | Symlink configs into `$HOME` |
-| `archive/` | Old machine snapshots |
+| `fish/` | Fish + `ub20`/`ub22`/`ub24` Docker shells |
+| `bash/`, `git/` | bashrc, gitconfig |
+| `vim/` | Submodule |
+| `docker/` | Windows VM compose (`windows` fish function) |
+| `bin/` | `spotify-adblock`, etc. |
+| `endeavour/` | **Hyprland setup** (`setup-hyprland.sh`), ML4W patches, displays |
+| `packages/` | Install lists for pacman/yay/flatpak |
+| `migrate/` | DD backup restore + Cursor fixes |
+| `i3/`, `polybar/`, `rofi/` | Legacy Manjaro/X11 (reference) |
 
-## Fish highlights
+## Fish
 
-- `ub22`, `ub24` — Ubuntu dev containers with home directory bind-mount
-- `windows` — Windows 11 VM via Docker (port 8006)
-- Search/git helpers: `g`, `f`, `fc`, `gcp`, …
+- `ub22`, `ub24` — Ubuntu dev containers
+- `windows` — Windows 11 in Docker (http://localhost:8006)
+- `g`, `f`, `fc`, `gcp`, … — search/git helpers
 
 ## License
 

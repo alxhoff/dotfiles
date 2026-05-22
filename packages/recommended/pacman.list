@@ -10,17 +10,28 @@ xclip
 # Docker / VM
 docker
 docker-compose
-# Hyprland stack (adjust to taste)
+# Hyprland stack — full list also in ml4w-pacman.list; installed by ./endeavour/setup-hyprland.sh
 hyprland
+hyprland-qt-support
+hyprlock
+hyprpaper
 waybar
 wofi
 mako
-hyprlock
+kanshi
+socat
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-gtk
 polkit-kde-agent
 qt5-wayland
 qt6-wayland
+kitty
+dunst
+rofi
+thunar
+brightnessctl
+otf-font-awesome
+ttf-fira-sans
 # Audio / network / bluetooth
 pipewire
 pipewire-pulse

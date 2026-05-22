@@ -5,6 +5,8 @@
 #   ./install.sh              # install everything
 #   ./install.sh --dry-run    # print actions only
 #   ./install.sh --only fish,vim,docker
+#   ./install.sh --only hypr           # vanilla Hyprland (replaces ML4W symlink)
+#   ./install.sh --only fish,wayland   # fish + Wayland Docker helpers
 #
 set -euo pipefail
 
@@ -73,6 +75,9 @@ if want fish; then
     mkdir -p "$TARGET_HOME/.config/fish/conf.d"
     link_path "$DOTFILES_DIR/fish/config.fish" "$TARGET_HOME/.config/fish/config.fish"
     link_path "$DOTFILES_DIR/fish/conf.d/ub.fish" "$TARGET_HOME/.config/fish/conf.d/ub.fish"
+    if [[ -f "$DOTFILES_DIR/fish/conf.d/wayland.fish" ]]; then
+        link_path "$DOTFILES_DIR/fish/conf.d/wayland.fish" "$TARGET_HOME/.config/fish/conf.d/wayland.fish"
+    fi
 fi
 
 # --- Bash ---
@@ -108,6 +113,10 @@ fi
 if want rofi; then
     link_path "$DOTFILES_DIR/rofi" "$TARGET_HOME/.config/rofi"
 fi
+if want hypr; then
+    mkdir -p "$TARGET_HOME/.config"
+    link_path "$DOTFILES_DIR/hypr" "$TARGET_HOME/.config/hypr"
+fi
 if want i3; then
     mkdir -p "$TARGET_HOME/.config"
     link_path "$DOTFILES_DIR/i3" "$TARGET_HOME/.config/i3"
@@ -140,7 +149,9 @@ fi
 
 echo ""
 echo "Done. For vim plugins: vim +PlugInstall +qall"
-echo "For migration from DD backup: ./migrate/restore-from-backup.sh"
+echo "EndeavourOS guide: docs/ENDEAVOUROS.md"
+echo "Hyprland (ML4W):   ./endeavour/setup-hyprland.sh  (see docs/HYPRLAND-SETUP.md)"
+echo "Migration (if needed): ./migrate/restore-all.sh — see docs/MIGRATION.md"
 
 # --- Cursor chat history (duplicate workspace IDs after opening Cursor too early) ---
 if [[ "$DRY_RUN" != 1 && -d "$TARGET_HOME/.config/Cursor/User/workspaceStorage" ]]; then

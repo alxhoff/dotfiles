@@ -119,4 +119,5 @@ fi
 
 migrate_log "Restore pass finished."
 migrate_log "Next: ./install.sh && git submodule update --init vim"
+migrate_log "Hyprland: ./endeavour/setup-hyprland.sh"
 migrate_log "If chats still missing: quit Cursor, then ./migrate/fix-cursor-workspaces.sh"

@@ -162,3 +162,4 @@ done
 echo ""
 migrate_log "Staged restore complete."
 migrate_log "Next: cd $DOTFILES_DIR && ./install.sh && git submodule update --init vim"
+migrate_log "Hyprland: ./endeavour/setup-hyprland.sh  (see docs/HYPRLAND-SETUP.md)"

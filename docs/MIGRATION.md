@@ -108,7 +108,7 @@ vim +PlugInstall +qall
 
 ## Phase 7 — Hyprland
 
-New configs are not in this repo yet. Start with Endeavour’s Hyprland edition or minimal `~/.config/hypr/hyprland.conf`. Fish/docker/vim work unchanged; `ub.fish` may need Wayland/XWayland tweaks instead of `xhost +` over time.
+Hyprland: run `./endeavour/setup-hyprland.sh` after `./install.sh` — see [HYPRLAND-SETUP.md](HYPRLAND-SETUP.md). Fish/docker/vim work unchanged; `ub.fish` may need Wayland/XWayland tweaks instead of `xhost +` over time.
 
 ## What not to put in git
 

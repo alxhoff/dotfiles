@@ -1,0 +1,11 @@
+# ML4W Hyprland Starter dependencies (used by endeavour/setup-hyprland-default.sh --ml4w)
+kitty
+dunst
+rofi
+thunar
+brightnessctl
+wireplumber
+xdotool
+networkmanager
+otf-font-awesome
+ttf-fira-sans
