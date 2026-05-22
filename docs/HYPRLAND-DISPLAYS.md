@@ -18,28 +18,33 @@ Log out → on the login screen pick **Hyprland** → set as default if prompted
 
 ML4W configs under `~/.mydotfiles/com.ml4w.hyprlandstarter/` stay as-is; `~/.config/hypr` should already symlink there.
 
-## 2. Calibrate monitor names (required once per site)
+## 2. Reference display layouts (replaces arandr)
 
-Hyprland names differ from old **xrandr** names (`DisplayPort-7`, `DP2-2`, …).
+**Full guide:** [DISPLAY-SETUP.md](DISPLAY-SETUP.md)
 
-At **home dock**, in Hyprland:
+At each dock, in Hyprland:
 
 ```bash
 cd ~/git/Github/dotfiles/endeavour/displays
-./discover-monitors.sh | tee ~/monitor-discovery-home.txt
+./discover-monitors.sh | tee ~/monitor-discovery-home.txt   # or -work.txt
 ```
 
-At **work dock**, run again and save `~/monitor-discovery-work.txt`.
+Arrange screens (optional GUI: `nwg-displays`), then **capture** the live layout:
 
-Edit:
+```bash
+./capture-layout.sh home  > profiles/home.hypr
+./capture-layout.sh work  > profiles/work.hypr
+./capture-layout.sh laptop > profiles/laptop.hypr
+./apply-display-profile.sh home   # test
+```
 
 | File | Purpose |
 |------|---------|
-| `profiles/home.hypr` | Home + laptop panel |
+| `profiles/home.hypr` | Home dock (captured or hand-edited) |
 | `profiles/home-no-laptop.hypr` | Home, internal screen off |
-| `profiles/work.hypr` | Work triple 1920×1200 |
+| `profiles/work.hypr` | Work dock |
 | `profiles/laptop.hypr` | Undocked |
-| `kanshi.config` | Optional auto-switcher (description/name based) |
+| `kanshi.config` | Auto-switch on hotplug |
 
 Old reference layouts:
 

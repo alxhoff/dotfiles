@@ -26,6 +26,14 @@
 
 /* Icon-only modules */
 #battery,
+menu {
+    border-radius: 8px;
+    padding: 4px 0;
+}
+menuitem {
+    padding: 6px 16px;
+}
+
 #network,
 #pulseaudio,
 #custom-exit,
@@ -39,4 +47,15 @@
 
 #custom-system {
     font-family: "Fira Sans", sans-serif;
+}
+
+/* Apps launcher button — keep visible on dark bar */
+#custom-appmenu {
+    color: #1a1a1a;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 2px 12px;
+    margin: 2px 8px 2px 0;
+    min-width: 36px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
 }

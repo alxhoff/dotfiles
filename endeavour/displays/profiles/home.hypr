@@ -1,15 +1,16 @@
-# Home dock (from i3 home-displays.sh / polybar launch.sh)
-# Layout: 2560x1440 left, 3840x2160 center-right, laptop below or off when clamshell
+# Home dock — edit in nwg-displays, then re-save:
+#   ./capture-layout.sh home > profiles/home.hypr
 #
-# REPLACE monitor names with output from discover-monitors.sh
-# Old xrandr names → typical Hypr names (verify!):
-#   DP2-1 → DP-3 or similar
-#   DP2-2 → DP-1 (4K primary)
-#   eDP1  → eDP-1
+# Connector names (DP-7, DP-10, …) are updated on apply using the # description lines.
 
-# External 1440p — left
-monitor=DP-3,2560x1440@60,0x0,1
-# External 4K — center (primary)
-monitor=DP-1,3840x2160@60,2560x0,1
-# Laptop panel — below docked monitors (or use home-no-laptop.hypr to disable)
-monitor=eDP-1,1920x1080@60,640x1440,1
+# Dell Inc. DELL UP2516D
+monitor=DP-7,2560x1440@60,1920x192,1,transform,1
+
+# ViewSonic Corporation VX3276-QHD
+monitor=DP-8,2560x1440@60,3360x0,1
+
+# Acer Technologies B246WL
+monitor=DP-9,1920x1200@60,5920x192,1,transform,1
+
+# Lenovo Group Limited (laptop panel off at dock)
+monitor=eDP-1,disable

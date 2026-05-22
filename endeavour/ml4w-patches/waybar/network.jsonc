@@ -1,0 +1,20 @@
+  "network": {
+    "format": "{ifname}",
+    "format-wifi": " {essid} ({signalStrength}%)",
+    "format-ethernet": "  {ifname}",
+    "format-disconnected": "Disconnected ⚠",
+    "tooltip-format": " {ifname} via {gwaddri}",
+    "tooltip-format-wifi": "  {ifname} @ {essid}\nIP: {ipaddr}\nStrength: {signalStrength}%\nFreq: {frequency}MHz\nUp: {bandwidthUpBits} Down: {bandwidthDownBits}",
+    "tooltip-format-ethernet": " {ifname}\nIP: {ipaddr}\n up: {bandwidthUpBits} down: {bandwidthDownBits}",
+    "tooltip-format-disconnected": "Disconnected",
+    "max-length": 50,
+    "on-click": "~/.config/ml4w/settings/networkmanager.sh",
+    "menu": "on-click-right",
+    "menu-file": "~/.config/waybar/network_menu.xml",
+    "menu-actions": {
+      "wifi-connect": "~/.config/ml4w/scripts/wifi-rofi.sh",
+      "wifi-rescan": "nmcli dev wifi rescan",
+      "wifi-toggle": "~/.config/ml4w/scripts/wifi-toggle.sh",
+      "nm-settings": "nm-connection-editor"
+    }
+  },

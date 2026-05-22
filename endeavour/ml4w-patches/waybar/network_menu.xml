@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <object class="GtkMenu" id="menu">
+    <child>
+      <object class="GtkMenuItem" id="wifi-connect">
+        <property name="label">Connect to Wi-Fi…</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="wifi-rescan">
+        <property name="label">Rescan networks</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="wifi-toggle">
+        <property name="label">Toggle Wi-Fi</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="delimiter1"/>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="nm-settings">
+        <property name="label">Network settings…</property>
+      </object>
+    </child>
+  </object>
+</interface>

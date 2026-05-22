@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-# Hyprland socket2 listener — re-apply display profile after dock hotplug
-# Add to hypr autostart: exec-once = ~/git/Github/dotfiles/endeavour/displays/hypr-display-listener.sh
-#
+# On hotplug: wait for outputs to settle, then apply the matching profile once.
 set -euo pipefail
 
 DOTFILES_DISPLAYS=${DOTFILES_DISPLAYS:-$HOME/git/Github/dotfiles/endeavour/displays}
@@ -11,27 +9,48 @@ source "$DOTFILES_DISPLAYS/config.env"
 
 [[ -x "$APPLY" ]] || exit 0
 
-apply_later() {
-    sleep "${HOTPLUG_SETTLE_SEC:-2}"
-    "$APPLY" auto
+PIDFILE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-listener.pid"
+DEBOUNCE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-debounce.pid"
+LOCK="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-apply.lock"
+COOLDOWN="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-cooldown"
+echo $$ >"$PIDFILE"
+
+cancel_debounce() {
+    if [[ -f "$DEBOUNCE" ]]; then
+        kill "$(cat "$DEBOUNCE")" 2>/dev/null || true
+        rm -f "$DEBOUNCE"
+    fi
 }
 
-handle() {
-    case $1 in
-        monitoradded*|monitorremoved*)
-            apply_later &
-            ;;
-    esac
+in_cooldown() {
+    [[ -f "$COOLDOWN" ]] && (( $(date +%s) < $(cat "$COOLDOWN") ))
+}
+
+run_apply() {
+    in_cooldown && return 0
+    (
+        exec 9>"$LOCK"
+        flock -n 9 || exit 0
+        in_cooldown && exit 0
+        "$APPLY" auto
+    )
+}
+
+schedule_apply() {
+    cancel_debounce
+    (
+        sleep "${HOTPLUG_SETTLE_SEC:-5}"
+        run_apply
+    ) &
+    echo $! >"$DEBOUNCE"
 }
 
 sig="${HYPRLAND_INSTANCE_SIGNATURE:-}"
-runtime="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-sock="$runtime/hypr/$sig/.socket2.sock"
-[[ -S "$sock" ]] || { echo "hypr socket2 not found: $sock" >&2; exit 1; }
-
-# Initial apply
-"$APPLY" auto
+sock="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/hypr/$sig/.socket2.sock"
+[[ -S "$sock" ]] || { echo "hypr socket2 not found" >&2; exit 1; }
 
 socat -u "UNIX-CONNECT:$sock" - | while read -r line; do
-    handle "$line"
+    case $line in
+        monitoradded*|monitorremoved*) schedule_apply ;;
+    esac
 done

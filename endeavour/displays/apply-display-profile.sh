@@ -1,103 +1,175 @@
 #!/usr/bin/env bash
-# Detect home / work / laptop and apply matching Hyprland monitor profile.
-#
-# Usage:
-#   ./apply-display-profile.sh              # auto-detect
-#   ./apply-display-profile.sh home       # force profile
-#   PROFILE=work ./apply-display-profile.sh
-#
-# Requires: Hyprland session, profiles in endeavour/displays/profiles/
-#
+# Apply a saved monitor profile (home / laptop / work).
 set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=endeavour/displays/config.env
 source "$SCRIPT_DIR/config.env"
 
-PROFILE=${1:-${PROFILE:-auto}}
+PROFILE=${1:-auto}
 PROFILES_DIR="$SCRIPT_DIR/profiles"
+MONITORS_CONF="${HOME}/.config/hypr/monitors.conf"
 STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-profile"
+COOLDOWN_FILE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-cooldown"
+MIGRATE="$SCRIPT_DIR/migrate-session.sh"
 
 log() { echo "displays: $*"; }
 
+set_cooldown() {
+    echo $(($(date +%s) + ${APPLY_COOLDOWN_SEC:-8})) >"$COOLDOWN_FILE"
+}
+
 require_hypr() {
     command -v hyprctl >/dev/null || { log "hyprctl missing"; exit 1; }
-    hyprctl version >/dev/null 2>&1 || { log "not in a Hyprland session"; exit 1; }
+    hyprctl version >/dev/null 2>&1 || { log "not in Hyprland"; exit 1; }
 }
 
-connected_names() {
-    hyprctl monitors -j | python3 -c "
+find_laptop_monitor() {
+    hyprctl monitors all -j | python3 -c "
 import json, sys
+pat = sys.argv[1]
 for m in json.load(sys.stdin):
-    print(m.get('name',''))
-"
-}
-
-has_pattern() {
-    local pat=$1
-    connected_names | grep -q "$pat"
-}
-
-count_external() {
-    local n=0
-    while read -r name; do
-        [[ -z "$name" ]] && continue
-        [[ "$name" =~ $LAPTOP_PATTERN ]] && continue
-        n=$((n + 1))
-    done < <(connected_names)
-    echo "$n"
-}
-
-has_resolution() {
-    local want_w=$1 want_h=$2
-    hyprctl monitors -j | python3 -c "
-import json, sys
-w, h = int(sys.argv[1]), int(sys.argv[2])
-for m in json.load(sys.stdin):
-    if m.get('width') == w and m.get('height') == h:
-        sys.exit(0)
-sys.exit(1)
-" "$want_w" "$want_h"
+    if pat in m.get('name', ''):
+        print(m['name'])
+        break
+" "$LAPTOP_PATTERN" 2>/dev/null || echo "eDP-1"
 }
 
 detect_profile() {
-    local ext
-    ext=$(count_external)
+    export HOME_DOCK_DESCRIPTIONS WORK_DOCK_DESCRIPTIONS LAPTOP_PATTERN
+    python3 <<'PY'
+import json, os, subprocess
 
-    # Work: HDMI present + multiple externals (old setup used HDMI-A-0)
-    if has_pattern "$WORK_HDMI_PATTERN" && [[ "$ext" -ge "${WORK_MIN_EXTERNAL:-2}" ]]; then
-        echo work
-        return
-    fi
+def outputs():
+    return json.loads(subprocess.check_output(["hyprctl", "monitors", "all", "-j"], text=True))
 
-    # Home: 4K panel present (3840x2160) + dock externals
-    if has_resolution 3840 2160 && [[ "$ext" -ge "${HOME_MIN_EXTERNAL:-2}" ]]; then
-        echo home
-        return
-    fi
+def live_externals(monitors, edp):
+    return [
+        m for m in monitors
+        if edp not in m.get("name", "")
+        and not m.get("disabled")
+        and m.get("width", 0) > 100
+        and m.get("height", 0) > 100
+    ]
 
-    # Home without counting 4K: many DisplayPorts
-    if has_pattern "$HOME_DP_PATTERNS" && [[ "$ext" -ge "${HOME_MIN_EXTERNAL:-2}" ]] && ! has_pattern "$WORK_HDMI_PATTERN"; then
-        echo home
-        return
-    fi
+edp = os.environ.get("LAPTOP_PATTERN", "eDP")
+descs = " ".join(m.get("description", "") for m in outputs())
+live = live_externals(
+    json.loads(subprocess.check_output(["hyprctl", "monitors", "-j"], text=True)), edp)
 
-    echo laptop
+def dock_match(env_key, min_count):
+    spec = os.environ.get(env_key, "").strip()
+    if not spec:
+        return False
+    parts = [p for p in spec.split("|") if p]
+    return len(parts) >= min_count and all(p in descs for p in parts) and len(live) >= min_count
+
+if dock_match("HOME_DOCK_DESCRIPTIONS", 3):
+    print("home")
+elif dock_match("WORK_DOCK_DESCRIPTIONS", 2):
+    print("work")
+elif len(live) == 0:
+    print("laptop")
+else:
+    print("skip")
+PY
 }
 
-apply_profile_file() {
-    local prof=$1
-    local file="$PROFILES_DIR/${prof}.hypr"
-    [[ -f "$file" ]] || { log "no profile file: $file"; return 1; }
+resolve_profile_lines() {
+    local prof_file=$1
+    export PROF_FILE="$prof_file" LAPTOP_PATTERN
+    python3 <<'PY'
+import json, os, subprocess, sys
+from pathlib import Path
 
-    log "applying profile: $prof"
-    while IFS= read -r line || [[ -n "$line" ]]; do
-        [[ "$line" =~ ^[[:space:]]*# ]] && continue
-        [[ "$line" =~ ^[[:space:]]*$ ]] && continue
-        [[ "$line" =~ ^monitor= ]] || continue
-        hyprctl keyword "$line"
-    done <"$file"
+path = Path(os.environ["PROF_FILE"])
+edp = os.environ.get("LAPTOP_PATTERN", "eDP")
+all_m = json.loads(subprocess.check_output(["hyprctl", "monitors", "all", "-j"], text=True))
+
+def find_name(desc_comment: str):
+    keys = []
+    for token in ("DELL UP2516D", "VX3276-QHD", "B246WL", "Lenovo", "ViewSonic", "Acer"):
+        if token.lower() in desc_comment.lower() or token in desc_comment:
+            keys.append(token)
+    if not keys:
+        chunk = desc_comment.lstrip("# ").strip()
+        if len(chunk) > 8:
+            keys.append(chunk[:24])
+    for key in keys:
+        for m in all_m:
+            if key in (m.get("description") or ""):
+                return m.get("name")
+    if "Lenovo" in desc_comment or edp in desc_comment:
+        for m in all_m:
+            if edp in m.get("name", ""):
+                return m.get("name")
+    return None
+
+out = []
+pending = None
+for raw in path.read_text().splitlines():
+    line = raw.strip()
+    if not line or line.startswith("# profile="):
+        continue
+    if line.startswith("#"):
+        pending = line
+        continue
+    if not line.startswith("monitor="):
+        continue
+    body = line[len("monitor="):]
+    parts = body.split(",")
+    rest = ",".join(parts[1:])
+    name = find_name(pending or "") if pending else None
+    if not name:
+        name = parts[0]
+    out.append(f"monitor={name},{rest}" if rest else f"monitor={name}")
+    pending = None
+
+if not out:
+    sys.exit("no monitor= lines", 1)
+for ln in out:
+    print(ln)
+PY
+}
+
+resolve_and_apply() {
+    local prof=$1
+    local prof_file="$PROFILES_DIR/${prof}.hypr"
+    local target_mon=""
+    local -a lines=()
+
+    if [[ ! -f "$prof_file" ]] || ! grep -q '^monitor=' "$prof_file" 2>/dev/null; then
+        log "profile '$prof' missing — run: ./capture-layout.sh $prof > profiles/$prof.hypr"
+        return 1
+    fi
+
+    mapfile -t lines < <(resolve_profile_lines "$prof_file") || return 1
+
+    # Undock only: move windows to laptop panel before disabling externals.
+    if [[ "$prof" == laptop ]]; then
+        target_mon=$(find_laptop_monitor)
+        if [[ -n "$target_mon" && -x "$MIGRATE" ]]; then
+            log "moving session → $target_mon"
+            "$MIGRATE" "$target_mon" || true
+        fi
+    fi
+
+    {
+        echo "# profile=$prof applied $(date -Iseconds)"
+        printf '%s\n' "${lines[@]}"
+    } >"$MONITORS_CONF"
+
+    log "applied $prof → $MONITORS_CONF"
+    printf '  %s\n' "${lines[@]}" >&2
+
+    set_cooldown
+    hyprctl reload
     echo "$prof" >"$STATE_FILE"
+
+    if [[ "$prof" == laptop && -n "$target_mon" ]]; then
+        hyprctl dispatch dpms on 2>/dev/null || true
+        hyprctl dispatch focusmonitor "$target_mon" 2>/dev/null || true
+    fi
 }
 
 main() {
@@ -105,10 +177,20 @@ main() {
 
     if [[ "$PROFILE" == auto ]]; then
         PROFILE=$(detect_profile)
-        log "detected: $PROFILE ($(connected_names | tr '\n' ' '))"
+        log "detected: $PROFILE"
+        [[ "$PROFILE" == skip ]] && { log "partial setup — no change"; exit 0; }
+        current=$(cat "$STATE_FILE" 2>/dev/null || true)
+        if [[ "$PROFILE" == "$current" ]]; then
+            log "already on $PROFILE — no change"
+            exit 0
+        fi
     fi
 
-    apply_profile_file "$PROFILE"
+    case "$PROFILE" in
+        home|laptop|work) resolve_and_apply "$PROFILE" || exit 1 ;;
+        recover) resolve_and_apply laptop || exit 1 ;;
+        *) log "unknown profile: $PROFILE"; exit 1 ;;
+    esac
 }
 
 main

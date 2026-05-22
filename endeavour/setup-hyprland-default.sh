@@ -50,6 +50,7 @@ ML4W_EXTRA_PKGS=(
     wireplumber
     xdotool
     networkmanager
+    network-manager-applet
     otf-font-awesome
     ttf-fira-sans
 )

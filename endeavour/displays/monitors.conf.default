@@ -1,0 +1,2 @@
+# Safe fallback until apply-display-profile.sh runs (laptop panel only)
+monitor=eDP-1,preferred,auto,1

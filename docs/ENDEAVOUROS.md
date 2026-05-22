@@ -27,7 +27,7 @@ Re-run after `git pull` to re-apply patches. Config overrides live in `endeavour
 
 **Minimal fallback (i3-style Alt binds):** [../hypr/README.md](../hypr/README.md) — `./install.sh --only hypr`
 
-**→ Home/work monitors (later):** [HYPRLAND-DISPLAYS.md](HYPRLAND-DISPLAYS.md)
+**→ Displays (no arandr):** [DISPLAY-SETUP.md](DISPLAY-SETUP.md) · [HYPRLAND-DISPLAYS.md](HYPRLAND-DISPLAYS.md)
 
 | Path | Role |
 |------|------|

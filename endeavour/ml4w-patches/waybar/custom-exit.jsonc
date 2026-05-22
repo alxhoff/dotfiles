@@ -1,0 +1,6 @@
+    "custom/exit": {
+        "format": "",
+        "tooltip-format": "Power menu (logout, shutdown, …)",
+        "on-click": "bash $HOME/.config/ml4w/scripts/powermenu.sh",
+        "tooltip": false
+    },

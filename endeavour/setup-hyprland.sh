@@ -53,7 +53,7 @@ cat <<EOF
 
 1. Log out and choose the **Hyprland** session (not Plasma).
 2. Default keybinds are **Super** (Windows key), not Alt — see ML4W binds.conf.
-3. Optional: home/work monitors — docs/HYPRLAND-DISPLAYS.md
+3. Displays: endeavour/displays/ — see docs/DISPLAY-SETUP.md
 
 Re-run anytime after git pull:
   ./endeavour/setup-hyprland.sh
