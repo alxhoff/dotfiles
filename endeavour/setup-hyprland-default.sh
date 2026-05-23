@@ -50,6 +50,7 @@ ML4W_EXTRA_PKGS=(
     kitty
     dunst
     rofi
+    waypaper
     thunar
     brightnessctl
     wireplumber

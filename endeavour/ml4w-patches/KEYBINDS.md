@@ -22,6 +22,10 @@
 - `Alt+Shift+1…0` — Move window and follow
 - `Alt+J/K/L/;` — Focus left/down/up/right
 - `Alt+Shift+J/K/L/;` or arrows — Move window (within workspace, then adjacent monitor)
+- `Alt+Ctrl+W` — Wallpaper picker (waypaper)
+- `Alt+Shift+W` — Random wallpaper
+- `Alt+Esc` — Game passthrough toggle (Hyprland stops grabbing input)
+- `Alt+Ctrl+G` — Steam Link game mode (focus + passthrough)
 - `Alt+H/V` — Split orientation
 - `Alt+F` — Fullscreen
 - `Alt+Shift+Space` — Floating toggle

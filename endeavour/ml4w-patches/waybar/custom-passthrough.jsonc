@@ -1,0 +1,7 @@
+    "custom/passthrough": {
+        "exec": "~/.config/ml4w/scripts/passthrough-waybar.sh",
+        "return-type": "json",
+        "interval": 1,
+        "format": "{}",
+        "tooltip": true
+    },

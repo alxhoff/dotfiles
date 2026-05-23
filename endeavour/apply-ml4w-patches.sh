@@ -34,6 +34,16 @@ for f in hyprlock.conf hypridle.conf; do
     install -m644 "$PATCHES/hypr/conf/$f" "$ML4W_CFG/hypr/$f"
     log "hypr/$f"
 done
+if [[ -f "$PATCHES/hypr/hyprpaper.conf" ]]; then
+    install -m644 "$PATCHES/hypr/hyprpaper.conf" "$ML4W_CFG/hypr/hyprpaper.conf"
+    log "hypr/hyprpaper.conf"
+fi
+
+mkdir -p "${HOME}/.config/waypaper"
+if [[ -f "$PATCHES/waypaper/config.ini" ]]; then
+    install -m644 "$PATCHES/waypaper/config.ini" "${HOME}/.config/waypaper/config.ini"
+    log "waypaper/config.ini"
+fi
 
 mkdir -p "${HOME}/.config/ml4w/settings" "${HOME}/.config/ml4w/scripts"
 for s in "$PATCHES/ml4w/settings/"*.sh; do
@@ -128,6 +138,7 @@ for name, file in (
     ("network", "network.jsonc"),
     ("custom/exit", "custom-exit.jsonc"),
     ("custom/appmenu", "custom-appmenu.jsonc"),
+    ("custom/passthrough", "custom-passthrough.jsonc"),
     ("mpris", "mpris.jsonc"),
     ("temperature", "temperature.jsonc"),
     ("disk", "disk.jsonc"),
@@ -140,7 +151,7 @@ for name, file in (
         continue
     snip = snip_path.read_text().strip()
     text, ok = replace_block(text, name, snip)
-    if not ok and name in ("mpris", "temperature"):
+    if not ok and name in ("mpris", "temperature", "custom/passthrough"):
         text, ok = append_module(text, name, snip)
     if not ok:
         print(f"warning: could not patch {name}", file=sys.stderr)
@@ -163,13 +174,31 @@ from pathlib import Path
 cfg = Path(os.environ["WAYBAR_CFG"])
 right = Path(os.environ["MODULES_RIGHT"]).read_text().strip()
 text = cfg.read_text()
-pat = r'"modules-right"\s*:\s*\[[^\]]*\]'
+pat = r'"modules-right"\s*:\s*\[[^\]]*\]\s*,?'
 new, n = re.subn(pat, right, text, count=1, flags=re.DOTALL)
 if n != 1:
     raise SystemExit("could not patch modules-right in waybar config")
 cfg.write_text(new)
 PY
     log "waybar/config (modules-right)"
+fi
+
+MODULES_LEFT="$PATCHES/waybar/config-modules-left.jsonc"
+if [[ -f "$WAYBAR_CFG" && -f "$MODULES_LEFT" ]]; then
+    WAYBAR_CFG="$WAYBAR_CFG" MODULES_LEFT="$MODULES_LEFT" python3 <<'PY'
+import os, re
+from pathlib import Path
+
+cfg = Path(os.environ["WAYBAR_CFG"])
+left = Path(os.environ["MODULES_LEFT"]).read_text().strip()
+text = cfg.read_text()
+pat = r'"modules-left"\s*:\s*\[[^\]]*\]\s*,?'
+new, n = re.subn(pat, left, text, count=1, flags=re.DOTALL)
+if n != 1:
+    raise SystemExit("could not patch modules-left in waybar config")
+cfg.write_text(new)
+PY
+    log "waybar/config (modules-left + passthrough)"
 fi
 
 STYLE="$ML4W_CFG/waybar/style.css"

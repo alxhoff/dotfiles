@@ -1,0 +1,6 @@
+    "modules-left": [
+        "custom/appmenu",
+        "hyprland/workspaces",
+        "custom/passthrough",
+        "group/quicklinks"
+    ],
