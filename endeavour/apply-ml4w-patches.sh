@@ -24,7 +24,7 @@ for s in "$DISPLAYS"/*.sh; do
 done
 log "displays/*.sh (executable)"
 
-for f in layouts.conf gestures.conf autostart.conf monitor.conf binds.conf binds-dotfiles.conf; do
+for f in layouts.conf gestures.conf autostart.conf monitor.conf binds.conf binds-dotfiles.conf windowrules-dotfiles.conf; do
     [[ -f "$PATCHES/hypr/conf/$f" ]] || continue
     cp "$PATCHES/hypr/conf/$f" "$ML4W_CFG/hypr/conf/$f"
     log "hypr/conf/$f"
@@ -51,6 +51,17 @@ HYPR_MAIN="$ML4W_CFG/hypr/hyprland.conf"
 if [[ -f "$HYPR_MAIN" ]] && ! grep -q 'binds-dotfiles.conf' "$HYPR_MAIN"; then
     echo 'source = ~/.config/hypr/conf/binds-dotfiles.conf' >>"$HYPR_MAIN"
     log "hyprland.conf (source binds-dotfiles.conf)"
+fi
+if [[ -f "$HYPR_MAIN" ]] && ! grep -q 'windowrules-dotfiles.conf' "$HYPR_MAIN"; then
+    echo 'source = ~/.config/hypr/conf/windowrules-dotfiles.conf' >>"$HYPR_MAIN"
+    log "hyprland.conf (source windowrules-dotfiles.conf)"
+fi
+
+mkdir -p "${HOME}/.local/share/applications"
+if [[ -f "$PATCHES/applications/com.valvesoftware.SteamLink.desktop" ]]; then
+    sed "s|@HOME@|$HOME|g" "$PATCHES/applications/com.valvesoftware.SteamLink.desktop" \
+        >"${HOME}/.local/share/applications/com.valvesoftware.SteamLink.desktop"
+    log "applications/com.valvesoftware.SteamLink.desktop"
 fi
 
 mkdir -p "${HOME}/.config/waybar"

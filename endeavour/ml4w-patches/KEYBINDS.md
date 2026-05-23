@@ -21,7 +21,7 @@
 - `Alt+Ctrl+1…0` — Move window, stay on workspace
 - `Alt+Shift+1…0` — Move window and follow
 - `Alt+J/K/L/;` — Focus left/down/up/right
-- `Alt+Shift+J/K/L/;` — Move window
+- `Alt+Shift+J/K/L/;` or arrows — Move window (within workspace, then adjacent monitor)
 - `Alt+H/V` — Split orientation
 - `Alt+F` — Fullscreen
 - `Alt+Shift+Space` — Floating toggle
