@@ -52,7 +52,7 @@ cat <<EOF
 ======== Done ========
 
 1. Log out and choose the **Hyprland** session (not Plasma).
-2. Default keybinds are **Super** (Windows key), not Alt — see ML4W binds.conf.
+2. Default keybinds use **Alt** (same as i3 Mod1) — see `hypr/conf/binds-dotfiles.conf`
 3. Displays: endeavour/displays/ — see docs/DISPLAY-SETUP.md
 
 Re-run anytime after git pull:

@@ -1,464 +1,440 @@
-# vim: filetype=i3
+# i3 config file (v4)
+# Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
-# #---Basic Definitions---# #
-# Needed for i3-gaps
-for_window [class="^.*"] border pixel 2
-gaps inner 5
-gaps outer 5
-set $term --no-startup-id $TERMINAL
+# Set mod key (Mod1=<Alt>, Mod4=<Super>)
 set $mod Mod1
-set $sup Mod4
-set $stoprec --no-startup-id dmenurecord kill
-set $shutdown sudo -A shutdown -h now
-set $reboot sudo -A reboot
-set $netrefresh --no-startup-id sudo -A systemctl restart NetworkManager
-set $hibernate sudo -A systemctl suspend
-set $background feh --bg-fill ~/Pictures/wallpaper.jpg
 
+# set default desktop layout (default is tiling)
+# workspace_layout tabbed <stacking|tabbed>
 
-font pango:DejaVu Sans Mono 8
+# Configure border style <normal|1pixel|pixel xx|none|pixel>
+default_border pixel 1
+default_floating_border normal
 
-#startup programs
-exec --no-startup-id feh --bg-fill Pictures/wallpaper.jpg
-exec --no-startup-id pasystray
-exec --no-startup-id owncloud
-exec --no-startup-id xfce4-power-manager
-exec --no-startup-id blueman-applet
-exec --no-startup-id gnome-encfs-manager
+# Hide borders
+hide_edge_borders none
 
-#presenting
-#assign [title="DS PDF Viewer - Audience Window"] 2
-#assign [title="DS PDF Viewer - Secondary Window"] 1
-for_window [ title="^pdfpc - present" ] border none floating enable
+# change borders
+bindsym $mod+u border none
+bindsym $mod+y border pixel 1
+bindsym $mod+n border normal
 
-set $mode_display Work (w), Home (h), Laptop (l)
-    mode "$mode_display" {
-        bindsym w exec --no-startup-id sh ~/.config/i3/display_scripts/work-displays.sh && $background, mode "default"
-            bindsym h exec --no-startup-id sh ~/.config/i3/display_scripts/home-displats.sh && $background, mode "default"
-            bindsym l exec --no-startup-id sh ~/.config/i3/display_scripts/laptop-displays.sh && $background, mode "default"
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+font xft:URWGothic-Book 11
 
-# back to normal: Enter or Escape
-            bindsym Return mode "default"
-            bindsym Escape mode "default"
-    }
-bindsym $mod+x mode "$mode_display"
+# Use Mouse+$mod to drag floating windows
+floating_modifier $mod
 
-#POWER
-set $mode_system System (l) logout, (s) suspend, (h) hibernate, (r) reboot, (p) shutdown
-mode "$mode_system" {
-    bindsym l exec --no-startup-id i3-msg exit, mode "default"
-        bindsym s exec --no-startup-id lock && systemctl suspend, mode "default"
-        bindsym h exec --no-startup-id systemctl hibernate, mode "default"
-        bindsym r exec --no-startup-id systemctl reboot, mode "default"
-        bindsym p exec --no-startup-id systemctl poweroff, mode "default"
+# start a terminal
+bindsym $mod+Return exec xfce4-terminal
+bindsym $mod+Shift+Return exec "xfce4-terminal -e 'fish -c ub'"
 
-# back to normal: Enter or Escape
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
+mode "passthrough" {
+    bindsym Mod1+Escape mode "default"
 }
-bindsym $mod+o mode "$mode_system"
+bindsym Mod1+Escape mode "passthrough"
 
-# #---Dropdown Windows---# #
+# kill focused window
+bindsym $mod+Shift+q kill
 
-# First I have a tmux window used for background scripts.
-# I'll later bind this to mod+u.
-for_window [instance="tmuxdd"] floating enable
-for_window [instance="tmuxdd"] resize set 625 400
-for_window [instance="tmuxdd"] move scratchpad
-for_window [instance="tmuxdd"] border pixel 3
-for_window [instance="tmuxdd"] sticky enable
+# start program launcher
+#bindsym $mod+d exec --no-startup-id dmenu_recency
+bindsym $mod+d exec --no-startup-id rofi -show run
+bindsym $mod+o exec --no-startup-id ~/.i3/scripts/rofi-finder.sh
 
-# Then I have a window running R I use for basic arithmetic
-# I'll later bind this to mod+a.
-for_window [instance="dropdowncalc"] floating enable
-for_window [instance="dropdowncalc"] resize set 800 300
-for_window [instance="dropdowncalc"] move scratchpad
-for_window [instance="dropdowncalc"] border pixel 2
-for_window [instance="dropdowncalc"] sticky enable
+# browser
+bindsym $mod+c exec firefox
 
-# #---Starting External Scripts---# #
-# Setting the background and colorscheme:
-exec --no-startup-id wal -Ri ~/.config/wall.png >/dev/null
-# Starts dunst for notifications:
-exec --no-startup-id dunst
-# Composite manager:
-exec --no-startup-id compton
-# Runs the key remapping scripts
-exec --no-startup-id ~/.scripts/remaps
-# Unclutter makes the mouse invisible after a brief period
-exec --no-startup-id unclutter
-# Run the script to update the mpd i3block on change.
-exec --no-startup-id i3mpdupdate
-# Remove recording icon if not properly closed on last shutdown.
-exec --no-startup-id rm -f ~/.larbs/.recording
-# Network manager applet
-exec --no-startup-id nm-applet
-# mpd startup
-exec --no-startup-id mpd
+# launch categorized menu
+bindsym $mod+z exec --no-startup-id morc_menu
 
-# Set Xresources colors:
-set_from_resource $darkblack    color0  #000000
-set_from_resource $black    color8  #000000
-set_from_resource $darkred  color1  #000000
-set_from_resource $red      color9  #000000
-set_from_resource $darkgreen    color2  #000000
-set_from_resource $green    color10 #000000
-set_from_resource $darkyellow   color3  #000000
-set_from_resource $yellow   color11 #000000
-set_from_resource $darkblue color4  #000000
-set_from_resource $blue     color12 #000000
-set_from_resource $darkmagenta  color5  #000000
-set_from_resource $magenta  color13 #000000
-set_from_resource $darkcyan color6  #000000
-set_from_resource $cyan     color14 #000000
-set_from_resource $darkwhite    color7  #000000
-set_from_resource $white    color15 #000000
-set $transparent        #00000000
+################################################################################################
+## sound-section - DO NOT EDIT if you wish to automatically upgrade Alsa -> Pulseaudio later! ##
+################################################################################################
 
-#                       BORDER      BACKGROUND  TEXT        INDICATOR   CHILD_BORDER
-client.focused      $red        $red        $magenta    $darkmagenta        $darkblue
-client.unfocused    $transparent    $blue       $white      $darkblue       $darkblack
-client.focused_inactive $transparent    $blue       $white      $darkblue       $darkblack
-client.urgent       $darkred    $darkred    $black      $darkred        $darkred
-client.background $black
+#exec --no-startup-id volumeicon
+#bindsym $mod+Ctrl+m exec terminal -e 'alsamixer'
+exec --no-startup-id pulseaudio
+exec --no-startup-id pa-applet
+bindsym $mod+Ctrl+m exec pavucontrol
 
-bar {
-    font pango:mono 10
-        colors {
-            background $darkblack
-                statusline $darkwhite
-                separator $cyan
-                focused_workspace  $blue $darkblue $darkblack
-                active_workspace   $blue $blue $darkwhite
-                inactive_workspace $darkblack $darkblack $white
-                urgent_workspace   $darkblack $darkblack $white
-        }
-    status_command i3blocks
-        position top
-        mode dock
-        modifier None
-}
+################################################################################################
 
-# #---Basic Bindings---# #
-bindsym $mod+Return         exec $term -e fish
-bindsym $mod+Shift+Return   exec --no-startup-id samedir
+# Screen brightness controls
+bindsym XF86MonBrightnessUp exec "xbacklight -inc 10; notify-send 'brightness up'"
+bindsym XF86MonBrightnessDown exec "xbacklight -dec 10; notify-send 'brightness down'"
 
-bindsym $mod+Shift+space    floating toggle
-bindsym $mod+space      focus mode_toggle
+# Start Applications
+bindsym $mod+Ctrl+b exec terminal -e 'bmenu'
+#bindsym $mod+F2 exec palemoon
+#bindsym $mod+F3 exec pcmanfm
+# bindsym $mod+F3 exec ranger
+bindsym $mod+Shift+F3 exec pcmanfm_pkexec
+bindsym $mod+F5 exec terminal -e 'mocp'
+bindsym $mod+t exec --no-startup-id pkill picom
+bindsym $mod+Ctrl+t exec --no-startup-id picom -b
+bindsym $mod+Shift+d --release exec "killall dunst; exec notify-send 'restart dunst'"
+bindsym Print exec --no-startup-id i3-scrot
+bindsym $mod+Print --release exec --no-startup-id i3-scrot -w
+bindsym $mod+Shift+Print --release exec --no-startup-id i3-scrot -s
+bindsym $mod+Shift+h exec xdg-open /usr/share/doc/manjaro/i3_help.pdf
+bindsym $mod+Ctrl+x --release exec --no-startup-id xkill
 
-bindsym $mod+Escape     workspace prev
-bindsym $mod+Shift+Escape   exec --no-startup-id prompt "Exit i3?" "i3-msg exit"
+# focus_follows_mouse no
 
-# bindsym $mod+BackSpace
-bindsym $mod+Shift+BackSpace    exec --no-startup-id prompt "Reboot computer?" "$reboot"
+# change focus
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+semicolon focus right
 
-##bindsym $mod+grave
-##bindsym $mod+asciitilde
+# alternatively, you can use the cursor keys:
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
 
-#STOP/HIDE EVERYTHING:
-bindsym $mod+Shift+Delete   exec --no-startup-id lmc truemute ; exec $truepause ; exec --no-startup-id pauseallmpv; workspace 0; exec $term -e htop ; exec $term -e ranger
+# move focused window
+bindsym $mod+Shift+j move left
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+l move up
+bindsym $mod+Shift+semicolon move right
 
-# #---Letter Key Bindings---# #
-bindsym $mod+q          [con_id="__focused__" instance="^(?!dropdowncalc|tmuxdd).*$"] kill
-bindsym $mod+Shift+q        [con_id="__focused__" instance="^(?!dropdowncalc|tmuxdd).*$"] kill
+# alternatively, you can use the cursor keys:
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
 
-bindsym $mod+c          exec --no-startup-id $BROWSER
-bindsym $mod+Shift+c        exec --no-startup-id $BROWSER
+# workspace back and forth (with/without active container)
+workspace_auto_back_and_forth yes
+bindsym $mod+b workspace back_and_forth
+bindsym $mod+Shift+b move container to workspace back_and_forth; workspace back_and_forth
 
-bindsym $mod+m          exec $term -e neomutt
+# split orientation
+bindsym $mod+h split h;exec notify-send 'tile horizontally'
+bindsym $mod+v split v;exec notify-send 'tile vertically'
+bindsym $mod+q split toggle
 
-bindsym $mod+e          layout toggle split
-bindsym $mod+Shift+e       exec --no-startup-id nemo
+# toggle fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
 
-bindsym $mod+r          exec $term -e ranger
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# toggle sticky
+bindsym $mod+Shift+s sticky toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+
+# move the currently focused window to the scratchpad
+bindsym $mod+Shift+minus move scratchpad
+
+# Show the next scratchpad window or hide the focused scratchpad window.
+# If there are multiple scratchpad windows, this command cycles through them.
+bindsym $mod+minus scratchpad show
+
+#navigate workspaces next / previous
+bindsym $mod+Ctrl+Right workspace next
+bindsym $mod+Ctrl+Left workspace prev
+
+# Workspace names
+# to display names or symbols instead of plain workspace numbers you can use
+# something like: set $ws1 1:mail
+#                 set $ws2 2:
+set $ws1 1
+set $ws2 2
+set $ws3 3
+set $ws4 4
+set $ws5 5
+set $ws6 6
+set $ws7 7
+set $ws8 8
+set $ws9 9
+set $ws0 0 
+
+# switch to workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws0
+
+# Move focused container to workspace
+bindsym $mod+Ctrl+1 move container to workspace $ws1
+bindsym $mod+Ctrl+2 move container to workspace $ws2
+bindsym $mod+Ctrl+3 move container to workspace $ws3
+bindsym $mod+Ctrl+4 move container to workspace $ws4
+bindsym $mod+Ctrl+5 move container to workspace $ws5
+bindsym $mod+Ctrl+6 move container to workspace $ws6
+bindsym $mod+Ctrl+7 move container to workspace $ws7
+bindsym $mod+Ctrl+8 move container to workspace $ws8
+bindsym $mod+Ctrl+9 move container to workspace $ws9
+bindsym $mod+Ctrl+0 move container to workspace $ws0
+
+# Move to workspace with focused container
+bindsym $mod+Shift+1 move container to workspace $ws1; workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2; workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3; workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4; workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5; workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6; workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7; workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8; workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9; workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws0; workspace $ws0
+
+# Open applications on specific workspaces
+# assign [class="Thunderbird"] $ws1
+# assign [class="Pale moon"] $ws2
+# assign [class="Pcmanfm"] $ws3
+# assign [class="Skype"] $ws5
+
+# Open specific applications in floating mode
+for_window [title="alsamixer"] floating enable border pixel 1
+for_window [class="calamares"] floating enable border normal
+for_window [class="Clipgrab"] floating enable
+for_window [title="File Transfer*"] floating enable
+for_window [class="fpakman"] floating enable
+for_window [class="Galculator"] floating enable border pixel 1
+for_window [class="GParted"] floating enable border normal
+for_window [title="i3_help"] floating enable sticky enable border normal
+for_window [class="Lightdm-settings"] floating enable
+for_window [class="Lxappearance"] floating enable sticky enable border normal
+for_window [class="Manjaro-hello"] floating enable
+for_window [class="Manjaro Settings Manager"] floating enable border normal
+for_window [title="MuseScore: Play Panel"] floating enable
+for_window [class="Nitrogen"] floating enable sticky enable border normal
+for_window [class="Oblogout"] fullscreen enable
+for_window [class="octopi"] floating enable
+for_window [title="About Pale Moon"] floating enable
+for_window [class="Pamac-manager"] floating enable
+for_window [class="Pavucontrol"] floating enable
+for_window [class="qt5ct"] floating enable sticky enable border normal
+for_window [class="Qtconfig-qt4"] floating enable sticky enable border normal
+for_window [class="Simple-scan"] floating enable border normal
+for_window [class="(?i)System-config-printer.py"] floating enable border normal
+for_window [class="Skype"] floating enable border normal
+for_window [class="Timeset-gui"] floating enable border normal
+for_window [class="(?i)virtualbox"] floating enable border normal
+for_window [class="Xfburn"] floating enable
+for_window [class="Steam"] move to workspace current
+assign [class="Steam"] 9:steam
+
+# switch to workspace with urgent window automatically
+for_window [urgent=latest] focus
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+
+#file explorer
+bindsym $mod+Shift+e exec --no-startup-id nemo
+
 # Set shut down, restart and locking features
-bindsym $mod+Shift+r mode "$mode_rotate"
-set $mode_rotate (r)otated, (l)andscape
-mode "$mode_rotate" {
-    bindsym r exec --no-startup-id xrandr -o 1 && xinput set-prop $(xinput list | grep -iPo 'stylus.*id=\K\d+') --type=float "Coordinate Transformation Matrix" 0 -1 1 1 0 0 0 0 1, mode "default"
-    bindsym l exec --no-startup-id xrandr -o 0 && xinput set-prop $(xinput list | grep -iPo 'stylus.*id=\K\d+') --type=float "Coordinate Transformation Matrix" 0 0 0 0 0 0 0 0 0, mode "default"
+bindsym $mod+Shift+p mode "$mode_system"
+set $mode_system (l)ock, (e)xit, switch_(u)ser, (s)uspend, (h)ibernate, (r)eboot, (Shift+s)hutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id i3exit lock, mode "default"
+    bindsym s exec --no-startup-id i3exit suspend, mode "default"
+    bindsym u exec --no-startup-id i3exit switch_user, mode "default"
+    bindsym e exec --no-startup-id i3exit logout, mode "default"
+    bindsym h exec --no-startup-id i3exit hibernate, mode "default"
+    bindsym r exec --no-startup-id i3exit reboot, mode "default"
+    bindsym Shift+s exec --no-startup-id i3exit shutdown, mode "default"
 
-# exit system mode: "Enter" or "Escape"
+    # exit system mode: "Enter" or "Escape"
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
 
-bindsym $mod+t          split toggle
-bindsym $mod+Shift+t        gaps inner current set 15; gaps outer current set 15
+# Resize window (you can also use the mouse for that)
+bindsym $mod+r mode "resize"
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
+        bindsym j resize shrink width 5 px or 5 ppt
+        bindsym k resize grow height 5 px or 5 ppt
+        bindsym l resize shrink height 5 px or 5 ppt
+        bindsym semicolon resize grow width 5 px or 5 ppt
 
-bindsym $mod+y          exec $term -e calcurse
-bindsym $mod+Shift+y        exec --no-startup-id "bash ~/.scripts/i3resize left"
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 5 px or 5 ppt
+        bindsym Down resize grow height 5 px or 5 ppt
+        bindsym Up resize shrink height 5 px or 5 ppt
+        bindsym Right resize grow width 5 px or 5 ppt
 
-bindsym $mod+u          exec --no-startup-id ddspawn tmuxdd
-bindsym $mod+Shift+u        exec --no-startup-id "bash ~/.scripts/i3resize down"
+        # exit resize mode: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
 
-bindsym $mod+i          exec $term -e htop
-bindsym $mod+Shift+i        exec --no-startup-id "bash ~/.scripts/i3resize up"
+# Lock screen
+bindsym $mod+p exec --no-startup-id blurlock
 
-#bindsym $mod+o         sticky toggle
-bindsym $mod+Shift+o        exec --no-startup-id "bash ~/.scripts/i3resize right"
+# Autostart applications
+exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec --no-startup-id nitrogen --restore; sleep 1; picom -b
+#exec --no-startup-id manjaro-hello
+exec --no-startup-id nm-applet
+exec --no-startup-id xfce4-power-manager
+exec --no-startup-id pamac-tray
+exec --no-startup-id clipit
+exec --no-startup-id blueman-applet
+# exec_always --no-startup-id sbxkb
+exec --no-startup-id start_conky_maia
+# exec --no-startup-id start_conky_green
+exec --no-startup-id xautolock -time 10 -locker blurlock
+exec_always --no-startup-id ff-theme-util
+exec_always --no-startup-id fix_xcursor
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
-#lock screen
-bindsym $mod+p exec --no-startup-id "bash ~/.config/i3/interface_scripts/lock.sh"
-bindsym $mod+Shift+p        exec --no-startup-id lmc pause
+# Color palette used for the terminal ( ~/.Xresources file )
+# Colors are gathered based on the documentation:
+# https://i3wm.org/docs/userguide.html#xresources
+# Change the variable name at the place you want to match the color
+# of your terminal like this:
+# [example]
+# If you want your bar to have the same background color as your 
+# terminal background change the line 362 from:
+# background #14191D
+# to:
+# background $term_background
+# Same logic applied to everything else.
+set_from_resource $term_background background
+set_from_resource $term_foreground foreground
+set_from_resource $term_color0     color0
+set_from_resource $term_color1     color1
+set_from_resource $term_color2     color2
+set_from_resource $term_color3     color3
+set_from_resource $term_color4     color4
+set_from_resource $term_color5     color5
+set_from_resource $term_color6     color6
+set_from_resource $term_color7     color7
+set_from_resource $term_color8     color8
+set_from_resource $term_color9     color9
+set_from_resource $term_color10    color10
+set_from_resource $term_color11    color11
+set_from_resource $term_color12    color12
+set_from_resource $term_color13    color13
+set_from_resource $term_color14    color14
+set_from_resource $term_color15    color15
 
-#bindsym $mod+a         exec --no-startup-id ddspawn dropdowncalc -f mono:pixelsize=24
-bindsym $mod+Shift+a        exec $term -e pulsemixer
+# Start i3bar to display a workspace bar (plus the system information i3status if available)
+# bar {
+#     i3bar_command i3bar
+#     status_command i3status
+#     position bottom
+#
+# ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
+# #	tray_output primary
+# #	tray_output eDP1
+#
+#     bindsym button4 nop
+#     bindsym button5 nop
+# #   font xft:URWGothic-Book 11
+#     strip_workspace_numbers yes
+#
+#     colors {
+#         background #222D31
+#         statusline #F9FAF9
+#         separator  #454947
+#
+# #                      border  backgr. text
+#         focused_workspace  #F9FAF9 #16a085 #292F34
+#         active_workspace   #595B5B #353836 #FDF6E3
+#         inactive_workspace #595B5B #222D31 #EEE8D5
+#         binding_mode       #16a085 #2C2C2C #F9FAF9
+#         urgent_workspace   #16a085 #FDF6E3 #E5201D
+#     }
+# }
 
-#bindsym $mod+s         gaps inner current plus 5
-#bindsym $mod+Shift+s       gaps inner current minus 5
-bindsym $mod+s          layout stacking
+# hide/unhide i3status bar
+bindsym $mod+m bar mode toggle
 
-bindsym $mod+d          exec --no-startup-id dmenu_run
-bindsym $mod+Shift+d        gaps inner current set 0; gaps outer current set 0
+# Theme colors
+# class                   border  backgr. text    indic.   child_border
+  client.focused          #556064 #556064 #80FFF9 #FDF6E3
+  client.focused_inactive #2F3D44 #2F3D44 #1ABC9C #454948
+  client.unfocused        #2F3D44 #2F3D44 #1ABC9C #454948
+  client.urgent           #CB4B16 #FDF6E3 #1ABC9C #268BD2
+  client.placeholder      #000000 #0c0c0c #ffffff #000000 
 
-set $freeze Distraction-free mode (mod+shift+esc to exit)
-    mode "$freeze" { bindsym $mod+Shift+Escape mode "default"
-    }
+  client.background       #2B2C2B
 
-bindsym $mod+f          fullscreen toggle
-bindsym $mod+Shift+f        mode "$freeze"
+#############################
+### settings for i3-gaps: ###
+#############################
 
-bindsym $mod+g          workspace prev
-bindsym $mod+Shift+g        exec --no-startup-id gimp;
+# Set inner/outer gaps
+gaps inner 14
+gaps outer -2
 
-#bindsym $mod+h         focus left
-bindsym $mod+h          split h
-bindsym $mod+Shift+h        move left 30
+# Additionally, you can issue commands with the following syntax. This is useful to bind keys to changing the gap size.
+# gaps inner|outer current|all set|plus|minus <px>
+# gaps inner all set 10
+# gaps outer all plus 5
 
-bindsym $mod+j          focus down
-bindsym $mod+Shift+j        move down 30
+# Smart gaps (gaps used if only more than one container on the workspace)
+smart_gaps on
 
-bindsym $mod+k          focus up
-bindsym $mod+Shift+k        move up 30
+# Smart borders (draw borders around container only if it is not the only container on this workspace) 
+# on|no_gaps (on=always activate and no_gaps=only activate if the gap size to the edge of the screen is 0)
+smart_borders on
 
-bindsym $mod+l          focus right
-bindsym $mod+Shift+l        move right 30
+# Press $mod+Shift+g to enter the gap mode. Choose o or i for modifying outer/inner gaps. Press one of + / - (in-/decrement for current workspace) or 0 (remove gaps for current workspace). If you also press Shift with these keys, the change will be global for all workspaces.
+set $mode_gaps Gaps: (o) outer, (i) inner
+set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
+bindsym $mod+Shift+g mode "$mode_gaps"
 
-bindsym $mod+z          gaps outer current plus 5
-bindsym $mod+Shift+z        gaps outer current minus 5
+mode "$mode_gaps" {
+        bindsym o      mode "$mode_gaps_outer"
+        bindsym i      mode "$mode_gaps_inner"
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_inner" {
+        bindsym plus  gaps inner current plus 5
+        bindsym minus gaps inner current minus 5
+        bindsym 0     gaps inner current set 0
 
-#bindsym $mod+x         exec --no-startup-id lockscreen
-bindsym $mod+Shift+x        exec --no-startup-id prompt "Shutdown computer?" "$shutdown"
+        bindsym Shift+plus  gaps inner all plus 5
+        bindsym Shift+minus gaps inner all minus 5
+        bindsym Shift+0     gaps inner all set 0
 
-#bindsym $mod+c         exec --no-startup-id camtoggle
-##bindsym $mod+Shift+c
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_outer" {
+        bindsym plus  gaps outer current plus 5
+        bindsym minus gaps outer current minus 5
+        bindsym 0     gaps outer current set 0
 
-bindsym $mod+w          layout tabbed
+        bindsym Shift+plus  gaps outer all plus 5
+        bindsym Shift+minus gaps outer all minus 5
+        bindsym Shift+0     gaps outer all set 0
 
-#bindsym $mod+v         exec $term -e ncmpcpp -s visualizer
-bindsym $mod+v          split v
-bindsym $mod+Shift+v        exec --no-startup-id projectM-pulseaudio
-
-bindsym $mod+b          bar mode toggle
-bindsym $mod+Shift+b        floating toggle; sticky toggle; exec --no-startup-id bottomleft
-
-bindsym $mod+n          exec $term -e newspod
-##bindsym $mod+Shift+n
-
-#bindsym $mod+m             exec --no-startup-id $term -e ncmpcpp
-bindsym $mod+Shift+m        exec --no-startup-id lmc mute
-
-# #---Workspace Bindings---# #
-bindsym $mod+Home       workspace $ws1
-bindsym $mod+Shift+Home     move container to workspace $ws1
-bindsym $mod+End        workspace $ws10
-bindsym $mod+Shift+End      move container to workspace $ws10
-bindsym $mod+Prior      workspace prev
-bindsym $mod+Shift+Prior    move container to workspace prev
-bindsym $mod+Next       workspace next
-bindsym $mod+Shift+Next     move container to workspace next
-bindsym $mod+Tab        workspace back_and_forth
-bindsym $mod+XF86Back       workspace prev
-##bindsym $mod+Shift+XF86Back
-bindsym $mod+XF86Forward    workspace next
-##bindsym $mod+Shift+XF86Forward
-bindsym $mod+semicolon      workspace next
-bindsym $mod+apostrophe     split horizontal ;; exec $term -e fish
-bindsym $mod+slash      split vertical ;; exec $term -e fish
-bindsym $mod+Shift+slash    kill
-bindsym $mod+backslash      workspace back_and_forth
-
-set $ws1 "1:Internet"
-set $ws2 "2:Code"
-set $ws3 "3:Message"
-set $ws4 "4:Code 2"
-set $ws5 "5:Referencing"
-set $ws6 "6:Email"
-set $ws7 "7"
-set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
-
-# switch to workspace
-bindsym $mod+1      workspace $ws1
-bindsym $mod+2      workspace $ws2
-bindsym $mod+3      workspace $ws3
-bindsym $mod+4      workspace $ws4
-bindsym $mod+5      workspace $ws5
-bindsym $mod+6      workspace $ws6
-bindsym $mod+7      workspace $ws7
-bindsym $mod+8      workspace $ws8
-bindsym $mod+9      workspace $ws9
-bindsym $mod+0      workspace $ws10
-
-# move focused container to workspace
-bindsym $mod+Shift+1    move container to workspace $ws1
-bindsym $mod+Shift+2    move container to workspace $ws2
-bindsym $mod+Shift+3    move container to workspace $ws3
-bindsym $mod+Shift+4    move container to workspace $ws4
-bindsym $mod+Shift+5    move container to workspace $ws5
-bindsym $mod+Shift+6    move container to workspace $ws6
-bindsym $mod+Shift+7    move container to workspace $ws7
-bindsym $mod+Shift+8    move container to workspace $ws8
-bindsym $mod+Shift+9    move container to workspace $ws9
-bindsym $mod+Shift+0    move container to workspace $ws10
-
-for_window [class="Pinentry"] sticky enable
-for_window [class="sent"] border pixel 0px
-for_window [class="Blender"] move to workspace $ws6
-for_window [class="marble"] move to workspace $ws7
-for_window [title="GIMP Startup"] move workspace $ws5
-for_window [class="Gimp"] move workspace $ws5
-for_window [window_role="GtkFileChooserDialog"] resize shrink height 10 px
-for_window [title="Default - Wine desktop"] floating enable
-
-# Bindings to make the webcam float and stick.
-for_window [title="mpvfloat"] floating enable
-for_window [title="mpvfloat"] sticky enable
-for_window [title="mpvfloat"] border pixel 0
-no_focus [title="mpvfloat"]
-
-# #---Function Buttons---# #
-bindsym $mod+F1     exec --no-startup-id zathura ~/.config/i3/i3_guide.pdf
-bindsym $mod+F2     restart
-bindsym $mod+F3     exec --no-startup-id displayselect
-bindsym $mod+F4     exec --no-startup-id prompt "Hibernate computer?" "$hibernate"
-bindsym $mod+F5     exec --no-startup-id $netrefresh
-bindsym $mod+F6     exec --no-startup-id $term -e transmission-remote-cli
-bindsym $mod+F7     exec --no-startup-id td-toggle
-bindsym $mod+F8     exec --no-startup-id ~/.config/mutt/etc/mailsync.sh
-bindsym $mod+F9     exec --no-startup-id dmenumount
-bindsym $mod+F10    exec --no-startup-id dmenuumount
-bindsym $mod+F11    exec --no-startup-id ducksearch
-bindsym $mod+F12    exec $term -e sudo -A wifi-menu
-
-# #---Arrow Keys---# #
-bindsym $mod+Left       focus left
-bindsym $mod+Down       focus down
-bindsym $mod+Up         focus up
-bindsym $mod+Right      focus right
-bindsym $mod+Shift+Left     move left
-bindsym $mod+Shift+Down     move down
-bindsym $mod+Shift+Up       move up
-bindsym $mod+Shift+Right    move right
-
-# #---Media Keys---# #
-
-# Volume keys
-bindsym $mod+plus       exec --no-startup-id lmc up 5
-bindsym $mod+Shift+plus     exec --no-startup-id lmc up 15
-bindsym $mod+minus      exec --no-startup-id lmc down 5
-bindsym $mod+Shift+minus    exec --no-startup-id lmc down 15
-bindsym $mod+less       exec --no-startup-id lmc prev
-bindsym $mod+Shift+less     exec --no-startup-id lmc replay
-bindsym $mod+greater        exec --no-startup-id lmc next
-bindsym $mod+Shift+greater  exec --no-startup-id lmc next
-
-# For advancing forward/backward in an mpd song
-bindsym $mod+bracketleft    exec --no-startup-id lmc back 10
-bindsym $mod+Shift+bracketleft  exec --no-startup-id lmc back 120
-bindsym $mod+bracketright   exec --no-startup-id lmc forward 10
-bindsym $mod+Shift+bracketright exec --no-startup-id lmc forward 120
-
-# For screenshots and recording
-bindsym Print           exec --no-startup-id scrot
-bindsym Shift+Print         exec --no-startup-id scrot -u
-bindsym $mod+Print      exec --no-startup-id dmenurecord
-bindsym $mod+Scroll_Lock    exec --no-startup-id "killall screenkey || screenkey"
-bindsym $mod+Delete     exec $stoprec
-bindsym XF86Launch1     exec $stoprec & xset dpms force off
-
-# #---Extra XF86 Keys---# #
-# These are the extra media keys that some keyboards have.
-bindsym XF86AudioMute       exec --no-startup-id lmc mute
-bindsym XF86AudioLowerVolume    exec --no-startup-id lmc down 5
-bindsym Shift+XF86AudioLowerVolume  exec --no-startup-id lmc down 10
-bindsym Control+XF86AudioLowerVolume    exec --no-startup-id lmc down 1
-bindsym XF86AudioRaiseVolume    exec --no-startup-id lmc up 5
-bindsym Shift+XF86AudioRaiseVolume  exec --no-startup-id lmc up 10
-bindsym Control+XF86AudioRaiseVolume    exec --no-startup-id lmc up 1
-bindsym XF86PowerOff        exec --no-startup-id prompt "Shutdown computer?" "$shutdown"
-##bindsym XF86Copy      exec
-##bindsym XF86Open      exec
-##bindsym XF86Paste     exec
-##bindsym XF86Cut       exec
-##bindsym XF86MenuKB        exec
-bindsym XF86Calculator      exec $term -e R -q --no-save
-##bindsym XF86Sleep     This binding is typically mapped by systemd automatically.
-##bindsym XF86WakeUp        exec
-bindsym XF86Explorer        exec $term -e ranger
-##bindsym XF86Send      exec
-##bindsym XF86Xfer      exec
-bindsym XF86WWW         exec --no-startup-id $BROWSER
-##bindsym XF86DOS       exec
-bindsym XF86ScreenSaver     exec exec --no-startup-id lockscreen
-##bindsym XF86RotateWindows exec
-##bindsym XF86TaskPane      exec
-##bindsym XF86Favorites     exec
-bindsym XF86MyComputer      exec $term -e ranger
-##bindsym XF86Back      exec
-##bindsym XF86Forward       exec
-bindsym XF86Eject       exec --no-startup-id dmenuumount
-bindsym XF86AudioNext       exec --no-startup-id lmc next
-bindsym XF86AudioPlay       exec --no-startup-id lmc toggle
-bindsym XF86AudioPrev       exec --no-startup-id lmc prev
-bindsym XF86AudioStop       exec --no-startup-id lmc toggle
-##bindsym XF86AudioRecord
-bindsym XF86AudioRewind     exec --no-startup-id lmc back 10
-bindsym XF86AudioForward    exec --no-startup-id lmc forward 10
-##bindsym XF86Phone     exec
-##bindsym XF86Tools     exec
-bindsym XF86HomePage        exec $BROWSER https://lukesmith.xyz
-bindsym XF86Reload      restart
-##bindsym XF86ScrollUp      exec
-##bindsym XF86ScrollDown        exec
-##bindsym XF86New       exec
-##bindsym XF86LaunchA       exec
-##bindsym XF86LaunchB       exec
-##bindsym XF86Launch2       exec
-##bindsym XF86Launch3       exec
-##bindsym XF86Launch4       exec
-##bindsym XF86Launch5       exec
-##bindsym XF86Launch6       exec
-##bindsym XF86Launch7       exec
-##bindsym XF86Launch8       exec
-##bindsym XF86Launch9       exec
-#bindsym XF86AudioMicMute   exec $micmute
-bindsym XF86TouchpadToggle  exec --no-startup-id toggletouchpad
-bindsym XF86TouchpadOn      exec --no-startup-id synclient TouchpadOff=0
-bindsym XF86TouchpadOff     exec --no-startup-id synclient TouchpadOff=1
-bindsym XF86Suspend     exec --no-startup-id lockscreen
-bindsym XF86Close       kill
-bindsym XF86WebCam      exec --no-startup-id camtoggle
-bindsym XF86Mail        exec $term -e neomutt
-bindsym XF86Messenger       exec $term -e weechat
-bindsym XF86Search      exec $BROWSER https://duckduckgo.com
-##bindsym XF86Go            exec
-##bindsym XF86Finance       exec
-##bindsym XF86Game      exec
-bindsym XF86Shop        exec $BROWSER https://ebay.com
-bindsym XF86MonBrightnessDown   exec --no-startup-id xbacklight -dec 15
-bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 15
-bindsym XF86AudioMedia      exec --no-startup-id $term -e ncmpcpp
-bindsym XF86Display     exec --no-startup-id arandr
-#bindsym XF86KbdLightOnOff  exec
-bindsym XF86KbdBrightnessDown   exec --no-startup-id python3.6 ~/.scripts/kb-lights.py -
-bindsym XF86KbdBrightnessUp exec --no-startup-id python3.6 ~/.scripts/kb-lights.py +
-##bindsym XF86Reply     exec
-##bindsym XF86MailForward   exec
-##bindsym XF86Save      exec
-bindsym XF86Documents       exec $term -e ranger ~/Documents
-##bindsym XF86Battery       exec
-##bindsym XF86Bluetooth     exec
-bindsym XF86WLAN        exec $netrefresh
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}

@@ -24,7 +24,7 @@ for s in "$DISPLAYS"/*.sh; do
 done
 log "displays/*.sh (executable)"
 
-for f in layouts.conf gestures.conf autostart.conf monitor.conf binds-dotfiles.conf; do
+for f in layouts.conf gestures.conf autostart.conf monitor.conf binds.conf binds-dotfiles.conf; do
     [[ -f "$PATCHES/hypr/conf/$f" ]] || continue
     cp "$PATCHES/hypr/conf/$f" "$ML4W_CFG/hypr/conf/$f"
     log "hypr/conf/$f"
@@ -46,12 +46,6 @@ HYPR_MAIN="$ML4W_CFG/hypr/hyprland.conf"
 if [[ -f "$HYPR_MAIN" ]] && ! grep -q 'binds-dotfiles.conf' "$HYPR_MAIN"; then
     echo 'source = ~/.config/hypr/conf/binds-dotfiles.conf' >>"$HYPR_MAIN"
     log "hyprland.conf (source binds-dotfiles.conf)"
-fi
-
-BINDS="$ML4W_CFG/hypr/conf/binds.conf"
-if [[ -f "$BINDS" ]] && grep -qE 'bind = \$mainMod, J, togglesplit' "$BINDS"; then
-    sed -i 's/bind = $mainMod, J, togglesplit,/bind = $mainMod, J, layoutmsg, togglesplit # Hyprland 0.55+/' "$BINDS"
-    log "hypr/conf/binds.conf (togglesplit → layoutmsg)"
 fi
 
 mkdir -p "${HOME}/.config/waybar"
