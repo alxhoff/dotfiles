@@ -1,0 +1,7 @@
+    "disk": {
+        "interval": 60,
+        "format": " {percentage_used}% ",
+        "path": "/",
+        "tooltip-format": "Root {used} / {total} ({percentage_used}%)",
+        "on-click": "kitty -e btop"
+    },

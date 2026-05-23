@@ -28,6 +28,7 @@ WANTED_PKGS=(
     hyprland
     hyprland-qt-support
     hyprlock
+    hypridle
     hyprpaper
     waybar
     wofi
@@ -38,6 +39,10 @@ WANTED_PKGS=(
     qt6-wayland
     kanshi
     socat
+    cliphist
+    wl-clipboard
+    wl-clip-persist
+    playerctl
 )
 
 # What stock ML4W starter expects (kitty, dunst, rofi — not wofi/mako)

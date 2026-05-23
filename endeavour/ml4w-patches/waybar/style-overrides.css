@@ -1,8 +1,18 @@
 
 /* --- dotfiles waybar overrides (do not remove marker) --- */
-/* Text widgets: never use Font Awesome (avoids "file" → icon in window titles) */
+
+@define-color bar-bg rgba(18, 18, 22, 0.92);
+@define-color module-bg rgba(255, 255, 255, 0.06);
+@define-color module-fg #e8e8ec;
+@define-color accent #7eb8da;
+
 * {
     font-family: "Fira Sans", "Fira Sans Semibold", Roboto, Helvetica, Arial, sans-serif;
+}
+
+window#waybar {
+    background: transparent;
+    color: @module-fg;
 }
 
 #window,
@@ -11,21 +21,83 @@
 #clock,
 #cpu,
 #memory,
-#custom-appmenu,
 #disk,
+#temperature,
+#custom-appmenu,
+#mpris,
 #hyprland-language {
     font-family: "Fira Sans", "Fira Sans Semibold", sans-serif;
-    font-size: 14px;
-    letter-spacing: 0.03em;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+}
+
+#workspaces {
+    background: @bar-bg;
+    border-radius: 10px;
+    padding: 2px 6px;
+    margin: 4px 8px 4px 0;
 }
 
 #workspaces button {
-    padding: 0px 8px;
-    min-width: 22px;
+    padding: 0 8px;
+    min-width: 20px;
+    border-radius: 6px;
+    color: rgba(232, 232, 236, 0.55);
+    background: transparent;
 }
 
-/* Icon-only modules */
-#battery,
+#workspaces button.active {
+    background: @module-bg;
+    color: @accent;
+    font-weight: 600;
+}
+
+#workspaces button:hover {
+    background: @module-bg;
+    color: @module-fg;
+}
+
+#window {
+    background: @bar-bg;
+    border-radius: 10px;
+    padding: 4px 14px;
+    margin: 4px 0;
+    color: @module-fg;
+}
+
+#mpris {
+    background: @module-bg;
+    border-radius: 8px;
+    padding: 2px 12px;
+    margin: 4px 4px;
+    color: @module-fg;
+    min-width: 80px;
+}
+
+#mpris.paused {
+    color: rgba(232, 232, 236, 0.65);
+}
+
+#temperature,
+#disk,
+#cpu,
+#memory,
+#clock,
+#network,
+#pulseaudio,
+#battery {
+    background: @module-bg;
+    border-radius: 8px;
+    padding: 2px 10px;
+    margin: 4px 3px;
+    color: @module-fg;
+}
+
+#temperature.critical {
+    color: #f07178;
+    background: rgba(240, 113, 120, 0.15);
+}
+
 menu {
     border-radius: 8px;
     padding: 4px 0;
@@ -41,21 +113,43 @@ menuitem {
 #custom-quicklink2,
 #custom-quicklink3,
 #keyboard-state,
-#idle_inhibitor {
+#idle_inhibitor,
+#battery {
     font-family: "Font Awesome 7 Free", "Font Awesome 6 Free", FontAwesome, sans-serif;
 }
 
-#custom-system {
-    font-family: "Fira Sans", sans-serif;
+#idle_inhibitor {
+    background: @module-bg;
+    border-radius: 8px;
+    padding: 2px 10px;
+    margin: 4px 3px;
 }
 
-/* Apps launcher button — keep visible on dark bar */
+#idle_inhibitor.activated {
+    color: @accent;
+}
+
+#custom-exit {
+    background: @module-bg;
+    border-radius: 8px;
+    padding: 2px 10px;
+    margin: 4px 3px;
+}
+
 #custom-appmenu {
-    color: #1a1a1a;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 2px 12px;
-    margin: 2px 8px 2px 0;
+    color: #121216;
+    background-color: rgba(255, 255, 255, 0.92);
+    padding: 2px 14px;
+    margin: 4px 8px 4px 0;
     min-width: 36px;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    border-radius: 5px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+#tray {
+    background: @module-bg;
+    border-radius: 8px;
+    padding: 2px 8px;
+    margin: 4px 3px;
 }

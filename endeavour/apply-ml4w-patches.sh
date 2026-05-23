@@ -29,6 +29,11 @@ for f in layouts.conf gestures.conf autostart.conf monitor.conf binds.conf binds
     cp "$PATCHES/hypr/conf/$f" "$ML4W_CFG/hypr/conf/$f"
     log "hypr/conf/$f"
 done
+for f in hyprlock.conf hypridle.conf; do
+    [[ -f "$PATCHES/hypr/conf/$f" ]] || continue
+    install -m644 "$PATCHES/hypr/conf/$f" "$ML4W_CFG/hypr/$f"
+    log "hypr/$f"
+done
 
 mkdir -p "${HOME}/.config/ml4w/settings" "${HOME}/.config/ml4w/scripts"
 for s in "$PATCHES/ml4w/settings/"*.sh; do
@@ -89,6 +94,15 @@ def replace_block(text: str, key: str, snippet: str) -> tuple[str, bool]:
                 return text[:start] + replacement + text[end:], True
     return text, False
 
+def append_module(text: str, key: str, snippet: str) -> tuple[str, bool]:
+    if re.search(rf'"{re.escape(key)}"\s*:', text):
+        return text, False
+    snippet = snippet.strip().rstrip(",") + ",\n"
+    idx = text.rstrip().rfind("}")
+    if idx < 0:
+        return text, False
+    return text[:idx] + "\n" + snippet + text[idx:], True
+
 text = modules.read_text()
 # Remove orphan lines left by old broken patches
 text = re.sub(
@@ -102,12 +116,21 @@ for name, file in (
     ("hyprland/window", "hyprland-window.jsonc"),
     ("network", "network.jsonc"),
     ("custom/exit", "custom-exit.jsonc"),
+    ("custom/appmenu", "custom-appmenu.jsonc"),
+    ("mpris", "mpris.jsonc"),
+    ("temperature", "temperature.jsonc"),
+    ("disk", "disk.jsonc"),
+    ("cpu", "cpu.jsonc"),
+    ("memory", "memory.jsonc"),
+    ("idle_inhibitor", "idle-inhibitor.jsonc"),
 ):
     snip_path = patches / file
     if not snip_path.exists():
         continue
     snip = snip_path.read_text().strip()
     text, ok = replace_block(text, name, snip)
+    if not ok and name in ("mpris", "temperature"):
+        text, ok = append_module(text, name, snip)
     if not ok:
         print(f"warning: could not patch {name}", file=sys.stderr)
 
@@ -116,7 +139,26 @@ PY
     if ! [[ "$MODULES" -ef "${HOME}/.config/waybar/modules.json" ]]; then
         install -m644 "$MODULES" "${HOME}/.config/waybar/modules.json"
     fi
-    log "waybar/modules.json (workspaces + window + network)"
+    log "waybar/modules.json (workspaces + media + stats)"
+fi
+
+WAYBAR_CFG="$ML4W_CFG/waybar/config"
+MODULES_RIGHT="$PATCHES/waybar/config-modules-right.jsonc"
+if [[ -f "$WAYBAR_CFG" && -f "$MODULES_RIGHT" ]]; then
+    WAYBAR_CFG="$WAYBAR_CFG" MODULES_RIGHT="$MODULES_RIGHT" python3 <<'PY'
+import os, re
+from pathlib import Path
+
+cfg = Path(os.environ["WAYBAR_CFG"])
+right = Path(os.environ["MODULES_RIGHT"]).read_text().strip()
+text = cfg.read_text()
+pat = r'"modules-right"\s*:\s*\[[^\]]*\]'
+new, n = re.subn(pat, right, text, count=1, flags=re.DOTALL)
+if n != 1:
+    raise SystemExit("could not patch modules-right in waybar config")
+cfg.write_text(new)
+PY
+    log "waybar/config (modules-right)"
 fi
 
 STYLE="$ML4W_CFG/waybar/style.css"

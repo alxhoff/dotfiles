@@ -27,7 +27,7 @@ cd ~/git/Github/dotfiles/endeavour/displays
 
 ## Daily use
 
-Listener starts from Hyprland autostart. On plug/unplug it waits 3s and runs `apply-display-profile.sh auto`.
+Listener starts from Hyprland autostart. On plug/unplug it waits **5s**, then applies the matching profile **once** (with an 8s cooldown to avoid reload loops).
 
 ```bash
 ./restart-display-listener.sh
@@ -41,22 +41,27 @@ Manual:
 ./apply-display-profile.sh laptop
 ```
 
-When **home** applies, all workspaces and windows are moved to the primary external (`HOME_PRIMARY_DESCRIPTION`), then Hyprland **workspace rules** pin workspaces 1–10 to that monitor so they do not spread across screens. Same in reverse for **laptop** (everything → internal panel).
+On **laptop** profile, windows are moved to the internal panel before externals are disabled.
 
-**Super+Shift+H** — home  
-**Super+Shift+L** — force laptop panel on  
+**Alt+X** then **H** / **L** / **W** — home / laptop / work layout  
+Manual apply also works if hotplug mis-detects.
+
+If only 1–2 externals are connected (partial dock), auto mode does **nothing** (`skip`) until all home monitors appear or you apply manually.
 
 ## Office (later)
 
 ```bash
 ./discover-monitors.sh | tee ~/monitor-discovery-work.txt
-# Edit config.env WORK_DOCK_DESCRIPTIONS='...|...'
+# edit config.env WORK_DOCK_DESCRIPTIONS
 ./capture-layout.sh work > profiles/work.hypr
 ```
 
 ## Files
 
-- `config.env` — which descriptions mean home/work
-- `profiles/home.hypr`, `laptop.hypr`, `work.hypr` — your layouts
-- `apply-display-profile.sh` — detect + apply
-- `hypr-display-listener.sh` — hotplug → auto
+| Script | Role |
+|--------|------|
+| `apply-display-profile.sh` | detect + apply |
+| `hypr-display-listener.sh` | hotplug → auto |
+| `migrate-session.sh` | move windows before undock |
+| `capture-layout.sh` | save live layout |
+| `restart-display-listener.sh` | safe listener restart |

@@ -1,0 +1,9 @@
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "tooltip-format": "Stay awake (blocks auto-lock when active)",
+        "format-icons": {
+            "activated": "",
+            "deactivated": ""
+        },
+        "on-click-right": "hyprlock"
+    },

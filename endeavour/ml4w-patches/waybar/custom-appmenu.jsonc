@@ -1,0 +1,7 @@
+    "custom/appmenu": {
+        "format": "Apps",
+        "tooltip-format": "Launcher · Right-click: keybinds",
+        "on-click": "rofi -show drun -replace",
+        "on-click-right": "~/.config/ml4w/scripts/keybinds-cheatsheet.sh",
+        "tooltip": true
+    },
