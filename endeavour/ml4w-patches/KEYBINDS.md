@@ -17,7 +17,7 @@
 - `Alt+M` — Toggle waybar
 - `Alt+B` — Last workspace
 - `Alt+Tab` — (use `Alt+B` / workspace previous)
-- `Alt+1…0` — Workspaces
+- `Alt+1…0` — Workspaces (press again on the same number to jump back — i3-style)
 - `Alt+Ctrl+1…0` — Move window, stay on workspace
 - `Alt+Shift+1…0` — Move window and follow
 - `Alt+J/K/L/;` — Focus left/down/up/right
