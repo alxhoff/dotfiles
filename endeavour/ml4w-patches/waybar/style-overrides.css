@@ -166,6 +166,56 @@ menuitem {
     letter-spacing: 0.06em;
 }
 
+/* Minimal bar on portrait / secondary monitors */
+window#waybar.secondary {
+    font-size: 12px;
+}
+
+window#waybar.secondary #workspaces button {
+    padding: 2px 8px;
+    margin: 2px 2px;
+    min-width: 0;
+}
+
+window#waybar.secondary #clock {
+    padding: 2px 10px;
+    margin: 4px 0;
+}
+
+window#waybar.secondary #mpris {
+    font-size: 12px;
+    padding: 2px 8px;
+    margin: 4px 0;
+}
+
+window#waybar.secondary #pulseaudio {
+    font-family: "Font Awesome 7 Free", "Font Awesome 6 Free", FontAwesome, sans-serif;
+    font-size: 12px;
+    padding: 2px 8px;
+    margin: 4px 3px;
+}
+
+window#waybar.secondary #custom-passthrough.active {
+    padding: 2px 8px;
+    margin: 4px 4px 4px 0;
+    font-size: 11px;
+}
+
+#idle_inhibitor {
+    font-family: "Fira Sans", "Fira Sans Semibold", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+#idle_inhibitor.deactivated {
+    opacity: 0.75;
+}
+
+#idle_inhibitor.activated {
+    color: #f07178;
+}
+
 #tray {
     background: @module-bg;
     border-radius: 8px;

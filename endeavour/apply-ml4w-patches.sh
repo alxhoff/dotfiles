@@ -24,7 +24,7 @@ for s in "$DISPLAYS"/*.sh; do
 done
 log "displays/*.sh (executable)"
 
-for f in layouts.conf gestures.conf autostart.conf monitor.conf binds.conf binds-dotfiles.conf windowrules-dotfiles.conf; do
+for f in layouts.conf gestures.conf autostart.conf monitor.conf binds.conf binds-dotfiles.conf windowrules-dotfiles.conf general-dotfiles.conf; do
     [[ -f "$PATCHES/hypr/conf/$f" ]] || continue
     cp "$PATCHES/hypr/conf/$f" "$ML4W_CFG/hypr/conf/$f"
     log "hypr/conf/$f"
@@ -65,6 +65,10 @@ fi
 if [[ -f "$HYPR_MAIN" ]] && ! grep -q 'windowrules-dotfiles.conf' "$HYPR_MAIN"; then
     echo 'source = ~/.config/hypr/conf/windowrules-dotfiles.conf' >>"$HYPR_MAIN"
     log "hyprland.conf (source windowrules-dotfiles.conf)"
+fi
+if [[ -f "$HYPR_MAIN" ]] && ! grep -q 'general-dotfiles.conf' "$HYPR_MAIN"; then
+    echo 'source = ~/.config/hypr/conf/general-dotfiles.conf' >>"$HYPR_MAIN"
+    log "hyprland.conf (source general-dotfiles.conf)"
 fi
 
 mkdir -p "${HOME}/.local/share/applications"
@@ -164,10 +168,17 @@ PY
     log "waybar/modules.json (workspaces + media + stats)"
 fi
 
-WAYBAR_CFG="$ML4W_CFG/waybar/config"
+WAYBAR_PRIMARY="$PATCHES/waybar/config-primary.jsonc"
+if [[ -f "$WAYBAR_PRIMARY" ]]; then
+install -m644 "$PATCHES/waybar/config-primary.jsonc" "${HOME}/.config/waybar/config-primary.jsonc"
+install -m644 "$PATCHES/waybar/config-secondary.jsonc" "${HOME}/.config/waybar/config-secondary.jsonc"
+install -m644 "$PATCHES/waybar/config-primary.jsonc" "$ML4W_CFG/waybar/config-primary.jsonc"
+install -m644 "$PATCHES/waybar/config-secondary.jsonc" "$ML4W_CFG/waybar/config-secondary.jsonc"
+log "waybar/config-primary.jsonc + config-secondary.jsonc"
+
 MODULES_RIGHT="$PATCHES/waybar/config-modules-right.jsonc"
-if [[ -f "$WAYBAR_CFG" && -f "$MODULES_RIGHT" ]]; then
-    WAYBAR_CFG="$WAYBAR_CFG" MODULES_RIGHT="$MODULES_RIGHT" python3 <<'PY'
+if [[ -f "$WAYBAR_PRIMARY" && -f "$MODULES_RIGHT" ]]; then
+    WAYBAR_CFG="$WAYBAR_PRIMARY" MODULES_RIGHT="$MODULES_RIGHT" python3 <<'PY'
 import os, re
 from pathlib import Path
 
@@ -180,12 +191,12 @@ if n != 1:
     raise SystemExit("could not patch modules-right in waybar config")
 cfg.write_text(new)
 PY
-    log "waybar/config (modules-right)"
+    log "waybar/config-primary.jsonc (modules-right)"
 fi
 
 MODULES_LEFT="$PATCHES/waybar/config-modules-left.jsonc"
-if [[ -f "$WAYBAR_CFG" && -f "$MODULES_LEFT" ]]; then
-    WAYBAR_CFG="$WAYBAR_CFG" MODULES_LEFT="$MODULES_LEFT" python3 <<'PY'
+if [[ -f "$WAYBAR_PRIMARY" && -f "$MODULES_LEFT" ]]; then
+    WAYBAR_CFG="$WAYBAR_PRIMARY" MODULES_LEFT="$MODULES_LEFT" python3 <<'PY'
 import os, re
 from pathlib import Path
 
@@ -198,7 +209,14 @@ if n != 1:
     raise SystemExit("could not patch modules-left in waybar config")
 cfg.write_text(new)
 PY
-    log "waybar/config (modules-left + passthrough)"
+    log "waybar/config-primary.jsonc (modules-left + passthrough)"
+fi
+
+install -m644 "$WAYBAR_PRIMARY" "${HOME}/.config/waybar/config-primary.jsonc"
+install -m644 "$WAYBAR_PRIMARY" "$ML4W_CFG/waybar/config-primary.jsonc"
+install -m644 "$WAYBAR_PRIMARY" "$ML4W_CFG/waybar/config"
+install -m644 "$WAYBAR_PRIMARY" "${HOME}/.config/waybar/config"
+log "waybar/config (legacy copy of primary layout)"
 fi
 
 STYLE="$ML4W_CFG/waybar/style.css"

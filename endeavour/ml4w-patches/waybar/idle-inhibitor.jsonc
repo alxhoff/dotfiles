@@ -1,9 +1,10 @@
     "idle_inhibitor": {
         "format": "{icon}",
-        "tooltip-format": "Stay awake (blocks auto-lock when active)",
+        "tooltip-format-activated": "Stay awake: ON — auto-lock and dim are blocked. Click to turn off.",
+        "tooltip-format-deactivated": "Stay awake: OFF — screen locks after idle (10 min). Click to stay awake.",
         "format-icons": {
-            "activated": "",
-            "deactivated": ""
+            "activated": "Awake",
+            "deactivated": "Auto-lock"
         },
         "on-click-right": "hyprlock"
     },

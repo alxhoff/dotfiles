@@ -1,0 +1,36 @@
+{
+    "layer": "top",
+    "name": "primary",
+    "margin-top": 4,
+    "margin-bottom": 0,
+    "margin-left": 8,
+    "margin-right": 8,
+    "spacing": 0,
+
+    "include": [
+        "~/.config/ml4w/settings/waybar-quicklinks.json",
+        "~/.config/waybar/modules.json"
+    ],
+    "modules-left": [
+        "custom/appmenu",
+        "hyprland/workspaces",
+        "custom/passthrough",
+        "group/quicklinks"
+    ],
+    "modules-center": [
+        "hyprland/window"
+    ],
+    "modules-right": [
+        "idle_inhibitor",
+        "mpris",
+        "pulseaudio",
+        "network",
+        "temperature",
+        "disk",
+        "cpu",
+        "memory",
+        "battery",
+        "tray",
+        "custom/exit",
+        "clock"
+    ]}
