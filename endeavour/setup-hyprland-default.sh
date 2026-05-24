@@ -59,6 +59,9 @@ ML4W_EXTRA_PKGS=(
     network-manager-applet
     otf-font-awesome
     ttf-fira-sans
+    ttf-jetbrains-mono-nerd
+    jq
+    xorg-xhost
 )
 
 resolve_packages() {

@@ -44,6 +44,8 @@ run "$DOTFILES_DIR/endeavour/install-ml4w-starter.sh"
 if [[ "$SKIP_PACKAGES" != 1 ]]; then
     run "$DOTFILES_DIR/endeavour/setup-hyprland-default.sh" --ml4w
 fi
+run "$DOTFILES_DIR/install.sh"
+run "$DOTFILES_DIR/fish/install-theme.sh"
 run "$DOTFILES_DIR/endeavour/apply-ml4w-patches.sh"
 run "$DOTFILES_DIR/endeavour/fix-ml4w-waybar.sh"
 
@@ -52,8 +54,10 @@ cat <<EOF
 ======== Done ========
 
 1. Log out and choose the **Hyprland** session (not Plasma).
-2. Default keybinds use **Alt** (same as i3 Mod1) — see `hypr/conf/binds-dotfiles.conf`
-3. Displays: endeavour/displays/ — see docs/DISPLAY-SETUP.md
+2. Default keybinds use **Alt** (same as i3 Mod1) — see `endeavour/ml4w-patches/KEYBINDS.md`
+3. Fish shell uses **bobthefish** (Oh My Fish) — re-run `./fish/install-theme.sh` if the prompt looks wrong
+4. Displays: endeavour/displays/ — see docs/DISPLAY-SETUP.md
+5. Agent/onboarding doc: AGENTS.md
 
 Re-run anytime after git pull:
   ./endeavour/setup-hyprland.sh

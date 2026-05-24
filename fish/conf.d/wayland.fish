@@ -5,7 +5,9 @@ if status is-interactive
         if test -z "$DISPLAY"
             set -gx DISPLAY :0
         end
-        # Allow local rootless docker X11 clients
-        xhost +local: >/dev/null 2>&1
+        # Allow local rootless docker X11 clients (optional; needs xorg-xhost)
+        if type -q xhost
+            xhost +local: >/dev/null 2>&1
+        end
     end
 end

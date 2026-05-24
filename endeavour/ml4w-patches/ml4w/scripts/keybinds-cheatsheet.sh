@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Show Hyprland keybind cheat sheet in rofi
 set -euo pipefail
+DOTFILES=${DOTFILES:-$(cat "${HOME}/.config/dotfiles-path" 2>/dev/null || true)}
 DOTFILES=${DOTFILES:-$HOME/git/Github/dotfiles}
 sheet="$DOTFILES/endeavour/ml4w-patches/KEYBINDS.md"
 [[ -f "$sheet" ]] || { notify-send keybinds "Missing $sheet"; exit 1; }

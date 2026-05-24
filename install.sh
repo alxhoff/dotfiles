@@ -70,11 +70,18 @@ echo "Dotfiles: $DOTFILES_DIR"
 echo "Target:   $TARGET_HOME"
 [[ "$DRY_RUN" == 1 ]] && echo "(dry run)"
 
+if [[ "$DRY_RUN" != 1 ]]; then
+    mkdir -p "$TARGET_HOME/.config"
+    printf '%s\n' "$DOTFILES_DIR" >"$TARGET_HOME/.config/dotfiles-path"
+fi
+
 # --- Fish ---
 if want fish; then
     mkdir -p "$TARGET_HOME/.config/fish/conf.d"
     link_path "$DOTFILES_DIR/fish/config.fish" "$TARGET_HOME/.config/fish/config.fish"
     link_path "$DOTFILES_DIR/fish/conf.d/ub.fish" "$TARGET_HOME/.config/fish/conf.d/ub.fish"
+    link_path "$DOTFILES_DIR/fish/conf.d/omf.fish" "$TARGET_HOME/.config/fish/conf.d/omf.fish"
+    link_path "$DOTFILES_DIR/fish/conf.d/bobthefish.fish" "$TARGET_HOME/.config/fish/conf.d/bobthefish.fish"
     if [[ -f "$DOTFILES_DIR/fish/conf.d/wayland.fish" ]]; then
         link_path "$DOTFILES_DIR/fish/conf.d/wayland.fish" "$TARGET_HOME/.config/fish/conf.d/wayland.fish"
     fi

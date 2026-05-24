@@ -5,7 +5,7 @@ set -euo pipefail
 CFG="${HOME}/.config/waybar"
 STYLE="${CFG}/style.css"
 RUNTIME="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-waybar"
-CONFIG_ENV="${HOME}/git/Github/dotfiles/endeavour/displays/config.env"
+CONFIG_ENV="@DOTFILES@/endeavour/displays/config.env"
 
 [[ -f "$CONFIG_ENV" ]] && source "$CONFIG_ENV"
 : "${WAYBAR_PRIMARY_PATTERN:=VX3276-QHD}"

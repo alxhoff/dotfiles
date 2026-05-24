@@ -8,12 +8,14 @@ Post-migration reference for this machine. For backup/restore, see [MIGRATION.md
 cd ~/git/Github/dotfiles   # or ~/git/GitHub/dotfiles — keep path consistent for Cursor
 git pull --recurse-submodules
 ./packages/install-packages.sh
-./install.sh
+./endeavour/setup-hyprland.sh    # ML4W + Hyprland + install.sh + fish theme
 git submodule update --init vim
 vim +PlugInstall +qall
 ```
 
-`install.sh` symlinks fish, bash, vim, docker compose, spotify wrapper, etc. It also runs **Cursor workspace repair** if Cursor is quit (see below).
+`install.sh` is included in `setup-hyprland.sh`. Run it alone for partial updates: `./install.sh --only fish,vim`.
+
+**Agent context (for Cursor):** [../AGENTS.md](../AGENTS.md)
 
 ## Desktop: Hyprland (ML4W starter)
 
@@ -43,7 +45,7 @@ Reload: `hyprctl reload` or log out/in.
 
 | Tool | Notes |
 |------|--------|
-| Fish | `fish/config.fish`, `fish/conf.d/ub.fish` (Docker ub20/22/24) |
+| Fish | `fish/config.fish`, `fish/conf.d/ub.fish` (Docker ub20/22/24), **bobthefish** via `./fish/install-theme.sh` |
 | `windows` | `~/compose.yaml` → dockurr Windows VM |
 | Wayland | `fish/conf.d/wayland.fish` sets XWayland-friendly `DISPLAY` / `xhost` for GUI Docker |
 

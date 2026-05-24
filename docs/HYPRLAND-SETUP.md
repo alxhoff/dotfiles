@@ -11,12 +11,11 @@ git pull --recurse-submodules
 # Optional: install package lists first
 ./packages/install-packages.sh
 
-# Shell/editor/docker dotfiles
-./install.sh
-
-# Hyprland + ML4W (clone starter, packages, patches, symlinks)
+# Hyprland + ML4W + fish dotfiles + bobthefish (one shot)
 ./endeavour/setup-hyprland.sh
 ```
+
+That single script runs `install.sh`, `fish/install-theme.sh`, ML4W clone, packages, and patches. You can still run `./install.sh` alone if you only need shell/editor links.
 
 Log out → login session **Hyprland**.
 
@@ -25,11 +24,15 @@ Log out → login session **Hyprland**.
 | Step | Script | Purpose |
 |------|--------|---------|
 | 1 | `install-ml4w-starter.sh` | Clone [hyprland-starter](https://github.com/mylinuxforwork/hyprland-starter) → `~/.mydotfiles/`, symlink `~/.config/hypr`, waybar, … |
-| 2 | `setup-hyprland-default.sh --ml4w` | pacman: hyprland, waybar, kitty, dunst, rofi, fonts, kanshi, … |
-| 3 | `apply-ml4w-patches.sh` | Hypr 0.55 fixes + Waybar workspaces/icons (from `endeavour/ml4w-patches/`) |
-| 4 | `fix-ml4w-waybar.sh` | Font cache refresh (idempotent) |
+| 2 | `setup-hyprland-default.sh --ml4w` | pacman: hyprland, waybar, kitty, dunst, rofi, fonts, kanshi, jq, … |
+| 3 | `install.sh` | Symlink fish, vim, docker, git, bin, …; write `~/.config/dotfiles-path` |
+| 4 | `fish/install-theme.sh` | Oh My Fish + bobthefish + JetBrains Mono Nerd Font |
+| 5 | `apply-ml4w-patches.sh` | Hypr 0.55 fixes + Waybar + display scripts (from `endeavour/ml4w-patches/`) |
+| 6 | `fix-ml4w-waybar.sh` | Font cache refresh (idempotent) |
 
 All scripts are **safe to re-run** after `git pull`.
+
+**Agent / onboarding doc:** [AGENTS.md](../AGENTS.md)
 
 ## Config-only (packages already installed)
 

@@ -8,6 +8,22 @@ ML4W_CFG="${HOME}/.mydotfiles/com.ml4w.hyprlandstarter/.config"
 
 log() { echo "==> $*"; }
 
+# Replace @DOTFILES@ with the actual repo path (clone location may differ).
+install_with_dotfiles() {
+    local src=$1 dest=$2 mode=${3:-644}
+    if grep -q '@DOTFILES@' "$src" 2>/dev/null; then
+        sed "s|@DOTFILES@|$DOTFILES_DIR|g" "$src" >"$dest"
+    else
+        install -m"$mode" "$src" "$dest"
+        return
+    fi
+    chmod "$mode" "$dest"
+}
+
+mkdir -p "${HOME}/.config"
+printf '%s\n' "$DOTFILES_DIR" >"${HOME}/.config/dotfiles-path"
+log "wrote ~/.config/dotfiles-path"
+
 [[ -d "$ML4W_CFG/hypr" ]] || {
     echo "ML4W not installed. Run: $DOTFILES_DIR/endeavour/install-ml4w-starter.sh" >&2
     exit 1
@@ -26,7 +42,7 @@ log "displays/*.sh (executable)"
 
 for f in layouts.conf gestures.conf autostart.conf monitor.conf binds.conf binds-dotfiles.conf windowrules-dotfiles.conf general-dotfiles.conf; do
     [[ -f "$PATCHES/hypr/conf/$f" ]] || continue
-    cp "$PATCHES/hypr/conf/$f" "$ML4W_CFG/hypr/conf/$f"
+    install_with_dotfiles "$PATCHES/hypr/conf/$f" "$ML4W_CFG/hypr/conf/$f" 644
     log "hypr/conf/$f"
 done
 for f in hyprlock.conf hypridle.conf; do
@@ -53,7 +69,7 @@ for s in "$PATCHES/ml4w/settings/"*.sh; do
 done
 for s in "$PATCHES/ml4w/scripts/"*.sh; do
     [[ -f "$s" ]] || continue
-    install -m755 "$s" "${HOME}/.config/ml4w/scripts/$(basename "$s")"
+    install_with_dotfiles "$s" "${HOME}/.config/ml4w/scripts/$(basename "$s")" 755
     log "ml4w/scripts/$(basename "$s")"
 done
 

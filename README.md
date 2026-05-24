@@ -4,6 +4,7 @@ Configs for **EndeavourOS**, Hyprland (via [ML4W starter](https://github.com/myl
 
 | Doc | When |
 |-----|------|
+| [AGENTS.md](AGENTS.md) | **Cursor / agent onboarding** — architecture, reproduce steps, what's automated |
 | [docs/ENDEAVOUROS.md](docs/ENDEAVOUROS.md) | **Daily use** on the new system |
 | [docs/MIGRATION.md](docs/MIGRATION.md) | Backup disk restore (mostly done) |
 | [migrate/SESSION-LOG.md](migrate/SESSION-LOG.md) | Agent notes + Cursor repair history |
@@ -15,12 +16,11 @@ Configs for **EndeavourOS**, Hyprland (via [ML4W starter](https://github.com/myl
 git clone --recurse-submodules git@github.com:alxhoff/dotfiles.git ~/git/Github/dotfiles
 cd ~/git/Github/dotfiles
 ./packages/install-packages.sh
-./install.sh
-./endeavour/setup-hyprland.sh    # ML4W Hyprland — see docs/HYPRLAND-SETUP.md
+./endeavour/setup-hyprland.sh    # ML4W + install.sh + fish theme — docs/HYPRLAND-SETUP.md
 vim +PlugInstall +qall
 ```
 
-Quit Cursor before `./install.sh` if you want automatic workspace/chat repair.
+`setup-hyprland.sh` runs `install.sh` (symlinks vim, fish, docker, …). Quit Cursor first if you want automatic workspace/chat repair during that step.
 
 ## Layout
 

@@ -1,6 +1,7 @@
 # Suggested for EndeavourOS + Hyprland + dotfiles (edit via select-packages.sh)
 # Shell & editor
 fish
+ttf-jetbrains-mono-nerd
 vim
 git
 openssh
@@ -40,6 +41,8 @@ network-manager-applet
 bluez
 bluez-utils
 blueman
+jq
+xorg-xhost
 # Browser & utilities
 firefox
 curl
