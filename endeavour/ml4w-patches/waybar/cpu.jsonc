@@ -1,6 +1,6 @@
     "cpu": {
         "interval": 5,
-        "format": " {usage}% ",
-        "tooltip-format": "CPU {usage}%",
+        "format": "\uf2db {usage}% ",
+        "tooltip-format": "CPU: {usage}%",
         "on-click": "kitty -e btop"
     },

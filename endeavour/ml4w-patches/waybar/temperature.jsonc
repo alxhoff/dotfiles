@@ -2,8 +2,9 @@
         "interval": 5,
         "hwmon-path": "/sys/class/thermal/thermal_zone0/temp",
         "critical-threshold": 85,
-        "format-critical": " {temperatureC}°C ",
-        "format": " {temperatureC}°C ",
+        "format-critical": "\uf2c9 {temperatureC}°C ",
+        "format": "\uf2c9 {temperatureC}°C ",
         "tooltip": true,
+        "tooltip-format": "Temperature: {temperatureC}°C",
         "on-click": "kitty -e btop"
     },

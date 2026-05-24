@@ -2,5 +2,7 @@
         "custom/appmenu",
         "hyprland/workspaces",
         "custom/passthrough",
-        "group/quicklinks"
+        "group/quicklinks",
+        "custom/exit",
+        "idle_inhibitor"
     ],

@@ -2,7 +2,7 @@
         "format": "{player_icon} {dynamic}",
         "format-paused": "{status_icon} <i>{artist} — {title}</i>",
         "format-stopped": "",
-        "max-length": 42,
+        "max-length": 50,
         "tooltip-format": "{player}: {artist} — {title}\nClick: play/pause · Right: next",
         "on-click": "playerctl play-pause",
         "on-click-right": "playerctl next",

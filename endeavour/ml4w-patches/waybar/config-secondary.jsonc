@@ -18,9 +18,17 @@
         "mpris"
     ],
     "modules-right": [
-        "pulseaudio",
-        "clock"
+        "group/time"
     ],
+
+    "group/time": {
+        "orientation": "horizontal",
+        "modules": [
+            "pulseaudio",
+            "tray",
+            "clock"
+        ]
+    },
 
     "mpris": {
         "max-length": 28

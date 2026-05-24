@@ -1,14 +1,5 @@
     "modules-right": [
-        "idle_inhibitor",
-        "mpris",
-        "pulseaudio",
-        "network",
-        "temperature",
-        "disk",
-        "cpu",
-        "memory",
-        "battery",
-        "tray",
-        "custom/exit",
-        "clock"
+        "group/connect",
+        "group/stats",
+        "group/time"
     ]

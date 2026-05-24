@@ -15,22 +15,46 @@
         "custom/appmenu",
         "hyprland/workspaces",
         "custom/passthrough",
-        "group/quicklinks"
+        "group/quicklinks",
+        "custom/exit",
+        "idle_inhibitor"
     ],
     "modules-center": [
-        "hyprland/window"
+        "group/center"
     ],
+    "group/center": {
+        "orientation": "horizontal",
+        "modules": [
+            "hyprland/window",
+            "mpris"
+        ]
+    },
+    "group/stats": {
+        "orientation": "horizontal",
+        "modules": [
+            "temperature",
+            "disk",
+            "cpu",
+            "memory"
+        ]
+    },
+    "group/connect": {
+        "orientation": "horizontal",
+        "modules": [
+            "network",
+            "battery"
+        ]
+    },
+    "group/time": {
+        "orientation": "horizontal",
+        "modules": [
+            "pulseaudio",
+            "tray",
+            "clock"
+        ]
+    },
     "modules-right": [
-        "idle_inhibitor",
-        "mpris",
-        "pulseaudio",
-        "network",
-        "temperature",
-        "disk",
-        "cpu",
-        "memory",
-        "battery",
-        "tray",
-        "custom/exit",
-        "clock"
+        "group/connect",
+        "group/stats",
+        "group/time"
     ]}

@@ -20,10 +20,6 @@ window#waybar {
 #custom-passthrough,
 #workspaces button,
 #clock,
-#cpu,
-#memory,
-#disk,
-#temperature,
 #custom-appmenu,
 #mpris,
 #hyprland-language {
@@ -66,6 +62,31 @@ window#waybar {
     color: @module-fg;
 }
 
+#group-center,
+#center {
+    background: @bar-bg;
+    border-radius: 10px;
+    padding: 2px 6px;
+    margin: 2px 0;
+}
+
+#group-center #window,
+#center #window {
+    background: transparent;
+    border-radius: 0;
+    padding: 2px 10px;
+    margin: 0;
+}
+
+#group-center #mpris,
+#center #mpris {
+    background: @module-bg;
+    border-radius: 8px;
+    padding: 2px 10px;
+    margin: 0 0 0 6px;
+    min-width: 72px;
+}
+
 #mpris {
     background: @module-bg;
     border-radius: 8px;
@@ -79,19 +100,196 @@ window#waybar {
     color: rgba(232, 232, 236, 0.65);
 }
 
-#temperature,
-#disk,
-#cpu,
-#memory,
-#clock,
-#network,
-#pulseaudio,
-#battery {
+#clock {
     background: @module-bg;
     border-radius: 8px;
     padding: 2px 10px;
     margin: 2px 3px;
     color: @module-fg;
+}
+
+#group-stats,
+#stats {
+    background: @module-bg;
+    border-radius: 8px;
+    padding: 2px 4px;
+    margin: 2px 3px;
+}
+
+#group-stats #temperature,
+#group-stats #disk,
+#group-stats #cpu,
+#group-stats #memory,
+#stats #temperature,
+#stats #disk,
+#stats #cpu,
+#stats #memory {
+    background: transparent;
+    background-color: transparent;
+    border-radius: 0;
+    padding: 2px 8px;
+    margin: 0;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+}
+
+#group-stats #temperature,
+#stats #temperature {
+    padding-left: 10px;
+}
+
+#group-stats #memory,
+#stats #memory {
+    padding-right: 10px;
+}
+
+#group-stats #temperature,
+#group-stats #disk,
+#group-stats #cpu,
+#stats #temperature,
+#stats #disk,
+#stats #cpu {
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#group-stats #temperature.critical,
+#stats #temperature.critical {
+    color: #f07178;
+    background: transparent;
+    background-color: transparent;
+}
+
+#group-connect,
+#connect {
+    background: @module-bg;
+    border-radius: 8px;
+    padding: 2px 4px;
+    margin: 2px 3px;
+}
+
+#connect #network,
+#connect #network.ethernet,
+#connect #network.wifi,
+#connect #network.disconnected,
+#connect #battery,
+#connect #battery.charging,
+#connect #battery.plugged {
+    background: transparent;
+    background-color: transparent;
+    border-radius: 0;
+    padding: 2px 8px;
+    margin: 0;
+    color: @module-fg;
+    font-family: "Fira Sans", "Fira Sans Semibold", "Font Awesome 7 Free", "Font Awesome 6 Free", FontAwesome, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    opacity: 1;
+}
+
+#connect #network {
+    padding-left: 10px;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#connect #battery {
+    padding-right: 10px;
+}
+
+#connect #battery.critical:not(.charging) {
+    color: #f07178;
+    background: transparent;
+    background-color: transparent;
+    animation: none;
+}
+
+#group-time,
+#time {
+    background: @module-bg;
+    border-radius: 8px;
+    padding: 2px 4px;
+    margin: 2px 3px;
+    color: @module-fg;
+    border: 3px solid rgba(255, 255, 255, 0.88);
+}
+
+#time #pulseaudio,
+#time #pulseaudio.muted,
+#time #tray,
+#time #clock {
+    background: transparent;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 2px 10px;
+    margin: 0;
+    color: @module-fg;
+    font-family: "Fira Sans", "Fira Sans Semibold", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    opacity: 1;
+}
+
+#time #pulseaudio,
+#time #pulseaudio.muted {
+    font-family: "Fira Sans", "Fira Sans Semibold", "Font Awesome 7 Free", "Font Awesome 6 Free", FontAwesome, sans-serif;
+    padding-left: 10px;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#time #tray {
+    padding: 2px 6px;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#time #clock {
+    padding-right: 10px;
+}
+
+/* Pulseaudio + clock fallbacks when not grouped. */
+#pulseaudio,
+#pulseaudio.muted {
+    background: @module-bg;
+    background-color: @module-bg;
+    border-radius: 8px;
+    padding: 2px 10px;
+    margin: 2px 3px;
+    color: @module-fg;
+    font-family: "Fira Sans", "Fira Sans Semibold", "Font Awesome 7 Free", "Font Awesome 6 Free", FontAwesome, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    opacity: 1;
+}
+
+/* Override ML4W .wifi/.charging solid backgrounds when not inside #connect. */
+#network,
+#network.ethernet,
+#network.wifi,
+#network.disconnected,
+#battery,
+#battery.charging,
+#battery.plugged {
+    background: @module-bg;
+    background-color: @module-bg;
+    border-radius: 8px;
+    padding: 2px 10px;
+    margin: 2px 3px;
+    color: @module-fg;
+    font-family: "Fira Sans", "Fira Sans Semibold", "Font Awesome 7 Free", "Font Awesome 6 Free", FontAwesome, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    opacity: 1;
+}
+
+#battery.critical:not(.charging) {
+    color: #f07178;
+    background: rgba(240, 113, 120, 0.15);
+    background-color: rgba(240, 113, 120, 0.15);
+    animation: none;
 }
 
 #temperature.critical {
@@ -107,41 +305,61 @@ menuitem {
     padding: 6px 16px;
 }
 
-#network,
 #pulseaudio,
 #custom-exit,
 #custom-quicklink1,
 #custom-quicklink2,
 #custom-quicklink3,
-#keyboard-state,
-#idle_inhibitor,
-#battery {
+#keyboard-state {
     font-family: "Font Awesome 7 Free", "Font Awesome 6 Free", FontAwesome, sans-serif;
 }
 
-#idle_inhibitor {
-    background: @module-bg;
-    border-radius: 8px;
-    padding: 2px 10px;
-    margin: 2px 3px;
-}
-
-#idle_inhibitor.activated {
-    color: @accent;
+#stats #cpu,
+#stats #memory,
+#stats #disk,
+#stats #temperature,
+#group-stats #cpu,
+#group-stats #memory,
+#group-stats #disk,
+#group-stats #temperature {
+    font-family: "Font Awesome 7 Free", "Font Awesome 6 Free", FontAwesome, sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
 }
 
 #custom-exit {
     background: @module-bg;
     border-radius: 8px;
     padding: 2px 10px;
-    margin: 2px 3px;
+    margin: 2px 4px 2px 6px;
+    font-weight: 900;
+}
+
+#idle_inhibitor {
+    background: @module-bg;
+    border-radius: 8px;
+    padding: 2px 10px;
+    margin: 2px 4px 2px 0;
+    font-family: "Fira Sans", "Fira Sans Semibold", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+#idle_inhibitor.deactivated {
+    opacity: 0.75;
+}
+
+#idle_inhibitor.activated {
+    color: #f07178;
 }
 
 #custom-appmenu {
     color: #121216;
     background-color: rgba(255, 255, 255, 0.92);
     padding: 2px 14px;
-    margin: 2px 8px 2px 0;
+    margin: 2px 4px 2px 0;
     min-width: 36px;
     border: none;
     border-radius: 8px;
@@ -177,9 +395,42 @@ window#waybar.secondary #workspaces button {
     min-width: 0;
 }
 
-window#waybar.secondary #clock {
-    padding: 2px 10px;
-    margin: 4px 0;
+window#waybar.secondary #time {
+    background: @module-bg;
+    border-radius: 8px;
+    padding: 2px 4px;
+    margin: 2px 3px;
+    border: 3px solid rgba(255, 255, 255, 0.88);
+}
+
+window#waybar.secondary #time #pulseaudio,
+window#waybar.secondary #time #pulseaudio.muted,
+window#waybar.secondary #time #tray,
+window#waybar.secondary #time #clock {
+    background: transparent;
+    background-color: transparent;
+    border: none;
+    font-size: 12px;
+    padding: 2px 8px;
+    margin: 0;
+}
+
+window#waybar.secondary #time #tray {
+    padding: 2px 4px;
+}
+
+window#waybar.secondary #time #pulseaudio,
+window#waybar.secondary #time #pulseaudio.muted {
+    font-family: "Fira Sans", "Fira Sans Semibold", "Font Awesome 7 Free", "Font Awesome 6 Free", FontAwesome, sans-serif;
+}
+
+window#waybar.secondary #pulseaudio {
+    font-family: "Fira Sans", "Fira Sans Semibold", "Font Awesome 7 Free", "Font Awesome 6 Free", FontAwesome, sans-serif;
+    font-size: 12px;
+    padding: 2px 8px;
+    margin: 2px 3px;
+    background: @module-bg;
+    background-color: @module-bg;
 }
 
 window#waybar.secondary #mpris {
@@ -188,32 +439,17 @@ window#waybar.secondary #mpris {
     margin: 4px 0;
 }
 
-window#waybar.secondary #pulseaudio {
-    font-family: "Font Awesome 7 Free", "Font Awesome 6 Free", FontAwesome, sans-serif;
-    font-size: 12px;
-    padding: 2px 8px;
-    margin: 2px 3px;
+window#waybar.secondary #clock {
+    padding: 2px 10px;
+    margin: 4px 0;
+    background: @module-bg;
+    border-radius: 8px;
 }
 
 window#waybar.secondary #custom-passthrough.active {
     padding: 2px 8px;
     margin: 4px 4px 4px 0;
     font-size: 11px;
-}
-
-#idle_inhibitor {
-    font-family: "Fira Sans", "Fira Sans Semibold", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-}
-
-#idle_inhibitor.deactivated {
-    opacity: 0.75;
-}
-
-#idle_inhibitor.activated {
-    color: #f07178;
 }
 
 #tray {
