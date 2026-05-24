@@ -63,23 +63,31 @@ primary_cfg = read_jsonc(primary_tmpl)
 primary_out = runtime / "config-primary.json"
 secondary_out = runtime / "config-secondary.json"
 
-style = str(cfg_dir / "style.css")
-
 if not primary or not secondary:
     primary_cfg.pop("output", None)
     write_json(primary_out, primary_cfg)
-    os.execvp("waybar", ["waybar", "-c", str(primary_out), "-s", style])
+    secondary_out.unlink(missing_ok=True)
+else:
+    primary_cfg["output"] = primary
+    write_json(primary_out, primary_cfg)
 
-primary_cfg["output"] = primary
-write_json(primary_out, primary_cfg)
-
-if secondary_tmpl.exists():
-    secondary_cfg = read_jsonc(secondary_tmpl)
-    secondary_cfg["output"] = secondary
-    write_json(secondary_out, secondary_cfg)
-    subprocess.Popen(["waybar", "-c", str(primary_out), "-s", style])
-    os.execvp("waybar", ["waybar", "-c", str(secondary_out), "-s", style])
-
-write_json(primary_out, primary_cfg)
-os.execvp("waybar", ["waybar", "-c", str(primary_out), "-s", style])
+    if secondary_tmpl.exists():
+        secondary_cfg = read_jsonc(secondary_tmpl)
+        secondary_cfg["output"] = secondary
+        write_json(secondary_out, secondary_cfg)
+    else:
+        secondary_out.unlink(missing_ok=True)
 PY
+
+start_waybar() {
+    local name=$1
+    local config=$2
+    waybar -c "$config" -s "$STYLE" >>"${RUNTIME}/${name}.log" 2>&1 &
+}
+
+if [[ -f "${RUNTIME}/config-secondary.json" ]]; then
+    start_waybar primary "${RUNTIME}/config-primary.json"
+    start_waybar secondary "${RUNTIME}/config-secondary.json"
+else
+    start_waybar primary "${RUNTIME}/config-primary.json"
+fi

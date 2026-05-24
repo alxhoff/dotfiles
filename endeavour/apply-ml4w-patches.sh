@@ -40,7 +40,7 @@ for s in "$DISPLAYS"/*.sh; do
 done
 log "displays/*.sh (executable)"
 
-for f in layouts.conf gestures.conf autostart.conf monitor.conf binds.conf binds-dotfiles.conf windowrules-dotfiles.conf general-dotfiles.conf; do
+for f in layouts.conf gestures.conf autostart.conf monitor.conf binds.conf binds-dotfiles.conf windowrules-dotfiles.conf general-dotfiles.conf group-dotfiles.conf; do
     [[ -f "$PATCHES/hypr/conf/$f" ]] || continue
     install_with_dotfiles "$PATCHES/hypr/conf/$f" "$ML4W_CFG/hypr/conf/$f" 644
     log "hypr/conf/$f"
@@ -85,6 +85,10 @@ fi
 if [[ -f "$HYPR_MAIN" ]] && ! grep -q 'general-dotfiles.conf' "$HYPR_MAIN"; then
     echo 'source = ~/.config/hypr/conf/general-dotfiles.conf' >>"$HYPR_MAIN"
     log "hyprland.conf (source general-dotfiles.conf)"
+fi
+if [[ -f "$HYPR_MAIN" ]] && ! grep -q 'group-dotfiles.conf' "$HYPR_MAIN"; then
+    echo 'source = ~/.config/hypr/conf/group-dotfiles.conf' >>"$HYPR_MAIN"
+    log "hyprland.conf (source group-dotfiles.conf)"
 fi
 
 mkdir -p "${HOME}/.local/share/applications"

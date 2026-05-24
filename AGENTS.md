@@ -50,13 +50,15 @@ Do **not** edit ML4W files in place without also updating `ml4w-patches/` — ch
 | Autostart | `ml4w-patches/hypr/conf/autostart.conf` | waybar-launch, hyprpaper, waypaper, dunst, cliphist, hypridle, nm-applet, display listener |
 | Passthrough (games / Steam Link) | `binds-dotfiles.conf` | `Alt+Esc` toggles; `Alt+Ctrl+G` game mode; `Alt+Ctrl+U` ungrab helper |
 | Steam Link | `ml4w/scripts/steamlink*.sh`, `.local/share/applications/com.valvesoftware.SteamLink.desktop` | **`--windowed`** fixes mouse captive on Wayland; package: AUR `steamlink` |
+| WoW Classic (local Proton) | `ml4w/scripts/wow-classic.sh`, `ml4w/settings/wow-classic.env.example` | Deck-style: Battle.net as non-Steam game + GE-Proton; `wow-classic.sh setup` |
 
 ## Dual Waybar (per monitor)
 
 - **Launcher:** `~/.config/ml4w/scripts/waybar-launch.sh` (from patches).
 - **Primary monitor** (pattern in `endeavour/displays/config.env`: `WAYBAR_PRIMARY_PATTERN=VX3276-QHD`): full bar → `config-primary.jsonc`.
-- **Secondary / portrait:** minimal bar → `config-secondary.jsonc` (workspaces, passthrough, mpris, pulseaudio, clock).
+- **Secondary / portrait:** minimal bar → `config-secondary.jsonc` (workspaces, passthrough, mpris, pulseaudio, clock). **Tray only on primary** — SNI (nm-applet) cannot register on two bars.
 - **Restart on display change:** `endeavour/displays/dotfiles-display-hook.sh` calls waybar-launch after profile apply.
+- **Logs:** `$XDG_RUNTIME_DIR/dotfiles-waybar/{primary,secondary}.log` if a bar disappears.
 - **Idle inhibitor:** text labels “Awake” / “Auto-lock” (no Nerd Font icons in that module).
 
 ## Display profiles
@@ -86,6 +88,7 @@ Kitty font: **JetBrainsMono Nerd Font** (matches bobthefish `theme_nerd_fonts ye
 | `jq` | Steam Link / Hypr helper scripts |
 | `xorg-xhost` | Optional; rootless Docker X11 from fish |
 | `steamlink` | AUR; remote play client |
+| `steam`, `proton-ge-custom-bin` (AUR) | Local WoW Classic via Proton |
 | `waypaper` | Wallpaper picker (`Alt+Ctrl+W`) |
 
 Lists: `packages/recommended/pacman.list`, `packages/selected/`, `packages/selected/aur.list`.

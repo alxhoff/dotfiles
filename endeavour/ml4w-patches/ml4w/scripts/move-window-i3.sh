@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# i3-style move: reorder within workspace, or jump to the adjacent monitor's workspace.
+# i3-style move: reorder within workspace, re-nest dwindle splits, then adjacent monitor.
 set -euo pipefail
 
 dir=${1:?usage: move-window-i3.sh l|r|u|d}
@@ -7,7 +7,10 @@ case "$dir" in l|r|u|d) ;; *) exit 2 ;; esac
 
 export MOVE_DIR="$dir"
 python3 <<'PY'
-import json, os, subprocess, sys
+import json
+import os
+import subprocess
+import sys
 
 direction = os.environ["MOVE_DIR"]
 
@@ -32,15 +35,66 @@ def win_state():
         "monitor": w.get("monitor"),
         "workspace": ws.get("id"),
         "at": tuple(w.get("at") or []),
+        "size": tuple(w.get("size") or []),
     }
 
 
 def changed(before, after):
+    if not before or not after:
+        return False
     return (
         before["monitor"] != after["monitor"]
         or before["workspace"] != after["workspace"]
         or before["at"] != after["at"]
+        or before["size"] != after["size"]
     )
+
+
+def try_actions(before):
+    for action in (
+        ("movewindoworgroup", direction),
+        ("movewindow", direction),
+        ("swapwindow", direction),
+    ):
+        dispatch(*action)
+        after = win_state()
+        if changed(before, after):
+            return True
+    return False
+
+
+def try_restructure(before):
+    # Side-by-side dwindle nodes have no u/d sibling — rotate or toggle split, then retry.
+    restructure = (
+        ("layoutmsg", "togglesplit"),
+        ("layoutmsg", "rotatesplit", "90"),
+        ("layoutmsg", "swapsplit"),
+        ("layoutmsg", "rotatesplit", "-90"),
+    )
+    for msg in restructure:
+        dispatch(*msg)
+        if try_actions(before):
+            return True
+    return False
+
+
+def try_directional_move():
+    before = win_state()
+    if not before:
+        return True
+
+    if try_actions(before):
+        return True
+
+    if try_restructure(before):
+        return True
+
+    # Last resort: swap entire subtrees at the root (i3-like reparent when stuck).
+    dispatch("layoutmsg", "movetoroot", "active", "unstable")
+    if try_actions(before):
+        return True
+
+    return False
 
 
 def find_neighbor(monitors, current_name, dir_):
@@ -87,13 +141,11 @@ def find_neighbor(monitors, current_name, dir_):
     return best
 
 
-before = win_state()
-if not before:
+if try_directional_move():
     sys.exit(0)
 
-dispatch("movewindow", direction)
-after = win_state()
-if after and changed(before, after):
+before = win_state()
+if not before:
     sys.exit(0)
 
 monitors = hypr_json("monitors", "-j")

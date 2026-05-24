@@ -25,7 +25,6 @@
         "orientation": "horizontal",
         "modules": [
             "pulseaudio",
-            "tray",
             "clock"
         ]
     },
