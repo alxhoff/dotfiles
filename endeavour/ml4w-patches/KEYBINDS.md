@@ -2,6 +2,7 @@
 
 - `Alt+Return` — Terminal (kitty)
 - `Alt+Shift+Return` — Terminal with fish `ub`
+- `Alt+F12` — Dropdown terminal (Guake-style; press again to hide)
 - `Alt+Shift+Q` — Close window
 - `Alt+D` — App launcher (rofi)
 - `Alt+O` — File finder (rofi filebrowser)

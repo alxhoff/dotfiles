@@ -169,6 +169,7 @@ for name, file in (
     ("cpu", "cpu.jsonc"),
     ("memory", "memory.jsonc"),
     ("idle_inhibitor", "idle-inhibitor.jsonc"),
+    ("clock", "clock.jsonc"),
 ):
     snip_path = patches / file
     if not snip_path.exists():
