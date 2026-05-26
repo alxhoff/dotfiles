@@ -27,6 +27,7 @@
 - `Alt+S` — Stacked layout (tab bar with titles visible; press again to ungroup)
 - `Alt+H` — Horizontal split (windows side-by-side; persists for new windows)
 - `Alt+V` — Vertical split (windows stacked top/bottom; persists for new windows)
+- Portrait/rotated monitors auto-use vertical stack for new windows (`dwindle-auto-split.sh`)
 - `Alt+E` / `Alt+Q` — Toggle split orientation
 - `Alt+F` — Fullscreen
 - `Alt+Ctrl+W` — Wallpaper picker (waypaper)

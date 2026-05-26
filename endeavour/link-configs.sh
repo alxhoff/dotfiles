@@ -140,4 +140,7 @@ for f in config-primary.jsonc config-secondary.jsonc network_menu.xml; do
 done
 link_path "$PATCHES/waybar/config-primary.jsonc" "$ML4W_CFG/waybar/config"
 
+mkdir -p "$ML4W_CFG/kitty"
+link_path "$PATCHES/kitty/kitty.conf" "$ML4W_CFG/kitty/kitty.conf"
+
 log "Done. Re-run ./endeavour/apply-ml4w-patches.sh for waybar modules/style overlays."

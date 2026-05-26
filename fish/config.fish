@@ -337,3 +337,6 @@ function alert
 	paplay /usr/share/sounds/freedesktop/stereo/complete.oga 
 end
 
+
+# Ensure pip user scripts are on PATH (cartken-dev).
+fish_add_path -gm /home/alxhoff/.local/bin

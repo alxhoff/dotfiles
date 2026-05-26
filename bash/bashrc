@@ -5,6 +5,11 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+# Host terminal (kitty, etc.): erase char for local use and SSH PTY forwarding.
+if [[ -t 0 ]] && command -v stty >/dev/null; then
+	stty erase '^?' 2>/dev/null
+fi
+
 colors() {
 	local fgc bgc vals seq0
 
@@ -92,3 +97,6 @@ shopt -s histappend
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export GOOGLE_CLOUD_PROJECT=cartken-ai-assistants
+
+# Ensure pip user scripts are on PATH (cartken-dev).
+export PATH="/home/alxhoff/.local/bin:$PATH"

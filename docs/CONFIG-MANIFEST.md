@@ -29,6 +29,9 @@ Clone location can differ; `~/.config/dotfiles` always resolves correctly once l
 | `~/.config/ml4w/scripts/*.sh` (patched set) | `endeavour/ml4w-patches/ml4w/scripts/` |
 | `~/.config/ml4w/settings/networkmanager.sh` | `endeavour/ml4w-patches/ml4w/settings/` |
 | `~/.config/waybar/config-primary.jsonc`, `config-secondary.jsonc`, `config`, `network_menu.xml` | `endeavour/ml4w-patches/waybar/` |
+| `~/.config/kitty/kitty.conf` | `endeavour/ml4w-patches/kitty/kitty.conf` |
+| `~/.config/mimeapps.list` | `xdg/mimeapps.list` |
+| `~/.bashrc`, `~/.inputrc` | `bash/bashrc`, `bash/inputrc` |
 | `~/.config/fish/config.fish`, `conf.d/*` | `fish/` |
 | `~/.vim`, `~/.vimrc`, `~/.vim_runtime` | `vim/` (submodule) |
 | `~/.gitconfig` | `git/gitconfig` |
@@ -62,7 +65,8 @@ Installed by `install-ml4w-starter.sh` from [hyprland-starter](https://github.co
 
 - `~/.config/hypr/hyprland.conf` (+ append-only `source = *-dotfiles.conf` lines)
 - `~/.config/hypr/conf/{animations,decoration,general,input,...}.conf`
-- `~/.config/kitty`, `dunst`, `wlogout`, `alacritty`
+- `~/.config/kitty` (tree symlinked from ML4W; `kitty.conf` overridden by dotfiles)
+- `dunst`, `wlogout`, `alacritty`
 - ML4W scripts/settings not overridden in `ml4w-patches/`
 
 Pin with `ML4W_TAG=v… ./endeavour/install-ml4w-starter.sh` if you need reproducible upstream versions.

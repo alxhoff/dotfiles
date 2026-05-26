@@ -5,7 +5,12 @@ set -euo pipefail
 dir=${1:?usage: move-window-i3.sh l|r|u|d}
 case "$dir" in l|r|u|d) ;; *) exit 2 ;; esac
 
+CONFIG_ENV="${HOME}/.config/dotfiles/endeavour/displays/config.env"
+[[ -f "$CONFIG_ENV" ]] && source "$CONFIG_ENV"
+: "${PORTRAIT_MONITOR_PATTERNS:=Q27q-1L|B246WL|UP2516D}"
+
 export MOVE_DIR="$dir"
+export PORTRAIT_MONITOR_PATTERNS
 python3 <<'PY'
 import json
 import os
@@ -13,6 +18,7 @@ import subprocess
 import sys
 
 direction = os.environ["MOVE_DIR"]
+patterns = [p for p in os.environ.get("PORTRAIT_MONITOR_PATTERNS", "").split("|") if p]
 
 
 def hypr_json(*args):
@@ -50,6 +56,23 @@ def changed(before, after):
     )
 
 
+def is_portrait(mon: dict) -> bool:
+    desc = mon.get("description") or ""
+    if any(p in desc for p in patterns):
+        return True
+    if mon.get("transform", 0) in (1, 3):
+        return True
+    return mon.get("height", 0) > mon.get("width", 0)
+
+
+def current_monitor() -> dict | None:
+    before = win_state()
+    if not before:
+        return None
+    monitors = hypr_json("monitors", "-j")
+    return next((m for m in monitors if m.get("id") == before["monitor"]), None)
+
+
 def try_actions(before):
     for action in (
         ("movewindoworgroup", direction),
@@ -64,16 +87,46 @@ def try_actions(before):
 
 
 def try_restructure(before):
-    # Side-by-side dwindle nodes have no u/d sibling — rotate or toggle split, then retry.
-    restructure = (
-        ("layoutmsg", "togglesplit"),
-        ("layoutmsg", "rotatesplit", "90"),
-        ("layoutmsg", "swapsplit"),
-        ("layoutmsg", "rotatesplit", "-90"),
+    steps: list[tuple] = []
+    mon = current_monitor()
+    portrait = bool(mon and is_portrait(mon))
+
+    if direction in ("u", "d"):
+        # Portrait monitors often need a split flip before u/d swaps work.
+        steps.extend(
+            [
+                ("layoutmsg", "togglesplit"),
+                ("swapwindow", direction),
+                ("movewindow", direction),
+                ("layoutmsg", "swapsplit"),
+                ("swapwindow", direction),
+                ("movewindoworgroup", direction),
+            ]
+        )
+        if portrait:
+            steps.extend(
+                [
+                    ("layoutmsg", "movetoroot", "active", "unstable"),
+                    ("swapwindow", direction),
+                    ("movewindow", direction),
+                ]
+            )
+
+    steps.extend(
+        [
+            ("layoutmsg", "togglesplit"),
+            ("layoutmsg", "rotatesplit", "90"),
+            ("layoutmsg", "swapsplit"),
+            ("layoutmsg", "rotatesplit", "-90"),
+            ("swapwindow", direction),
+            ("movewindow", direction),
+        ]
     )
-    for msg in restructure:
+
+    for msg in steps:
         dispatch(*msg)
-        if try_actions(before):
+        after = win_state()
+        if changed(before, after):
             return True
     return False
 
@@ -89,7 +142,6 @@ def try_directional_move():
     if try_restructure(before):
         return True
 
-    # Last resort: swap entire subtrees at the root (i3-like reparent when stuck).
     dispatch("layoutmsg", "movetoroot", "active", "unstable")
     if try_actions(before):
         return True

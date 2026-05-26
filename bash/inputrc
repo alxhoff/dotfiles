@@ -1,0 +1,8 @@
+# Readline: accept both DEL (^?) and BS (^H) as backspace.
+# Cursor/kitty/xterm usually send ^?; some embedded/serial defaults use ^H.
+
+$if term=xterm-256color|xterm|screen*|vt100*|linux*|alacritty|rxvt*|Eterm*
+set enable-bracketed-paste on
+"\C-?": backward-delete-char
+"\C-h": backward-delete-char
+$endif

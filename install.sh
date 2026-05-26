@@ -87,11 +87,15 @@ if want fish; then
     if [[ -f "$DOTFILES_DIR/fish/conf.d/wayland.fish" ]]; then
         link_path "$DOTFILES_DIR/fish/conf.d/wayland.fish" "$TARGET_HOME/.config/fish/conf.d/wayland.fish"
     fi
+    if [[ -f "$DOTFILES_DIR/fish/conf.d/terminal-erase.fish" ]]; then
+        link_path "$DOTFILES_DIR/fish/conf.d/terminal-erase.fish" "$TARGET_HOME/.config/fish/conf.d/terminal-erase.fish"
+    fi
 fi
 
 # --- Bash ---
 if want bash; then
     link_path "$DOTFILES_DIR/bash/bashrc" "$TARGET_HOME/.bashrc"
+    link_path "$DOTFILES_DIR/bash/inputrc" "$TARGET_HOME/.inputrc"
     link_path "$DOTFILES_DIR/bash/bash_profile" "$TARGET_HOME/.bash_profile"
     link_path "$DOTFILES_DIR/bash/fzf.bash" "$TARGET_HOME/.fzf.bash"
     if [[ -f "$DOTFILES_DIR/bash/dir_colors" ]]; then
@@ -121,6 +125,9 @@ if want polybar; then
 fi
 if want rofi; then
     link_path "$DOTFILES_DIR/rofi" "$TARGET_HOME/.config/rofi"
+fi
+if want xdg || [[ -z "$ONLY" ]]; then
+    link_path "$DOTFILES_DIR/xdg/mimeapps.list" "$TARGET_HOME/.config/mimeapps.list"
 fi
 if want hypr; then
     mkdir -p "$TARGET_HOME/.config"
