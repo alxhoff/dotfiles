@@ -116,10 +116,12 @@ link_path "$PATCHES/waypaper/config.ini" "${HOME}/.config/waypaper/config.ini"
 mkdir -p "$ML4W_CFG/ml4w/scripts" "$ML4W_CFG/ml4w/settings"
 for s in "$PATCHES/ml4w/scripts/"*.sh; do
     [[ -f "$s" ]] || continue
+    [[ "$DRY_RUN" == 1 ]] || chmod +x "$s"
     link_path "$s" "$ML4W_CFG/ml4w/scripts/$(basename "$s")"
 done
 for s in "$PATCHES/ml4w/settings/"*.sh; do
     [[ -f "$s" ]] || continue
+    [[ "$DRY_RUN" == 1 ]] || chmod +x "$s"
     link_path "$s" "$ML4W_CFG/ml4w/settings/$(basename "$s")"
 done
 
