@@ -34,6 +34,11 @@ if [[ -f "$DISPLAYS/monitors.conf.default" ]] && [[ ! -f "${HOME}/.config/hypr/m
     install -m644 "$DISPLAYS/monitors.conf.default" "${HOME}/.config/hypr/monitors.conf"
     log "hypr/monitors.conf (safe default)"
 fi
+# shellcheck source=endeavour/displays/lib.sh
+source "$DISPLAYS/lib.sh"
+if link=$(link_display_profiles "$DOTFILES_DIR"); then
+    log "hypr/display-profiles -> $link (repo profiles)"
+fi
 for s in "$DISPLAYS"/*.sh; do
     [[ -f "$s" ]] || continue
     chmod +x "$s"
@@ -170,6 +175,7 @@ for name, file in (
     ("memory", "memory.jsonc"),
     ("idle_inhibitor", "idle-inhibitor.jsonc"),
     ("clock", "clock.jsonc"),
+    ("battery", "battery.jsonc"),
 ):
     snip_path = patches / file
     if not snip_path.exists():

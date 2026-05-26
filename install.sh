@@ -5,6 +5,7 @@
 #   ./install.sh              # install everything
 #   ./install.sh --dry-run    # print actions only
 #   ./install.sh --only fish,vim,docker
+#   ./install.sh --only displays        # symlink hypr display profiles from repo
 #   ./install.sh --only hypr           # vanilla Hyprland (replaces ML4W symlink)
 #   ./install.sh --only fish,wayland   # fish + Wayland Docker helpers
 #
@@ -152,6 +153,12 @@ fi
 # --- Misc dotfiles at repo root ---
 if want gdb; then
     link_path "$DOTFILES_DIR/.gdbinit" "$TARGET_HOME/.gdbinit"
+fi
+
+# --- Hyprland display profiles (repo is source of truth) ---
+if want displays; then
+    mkdir -p "$TARGET_HOME/.config/hypr"
+    link_path "$DOTFILES_DIR/endeavour/displays/profiles" "$TARGET_HOME/.config/hypr/display-profiles"
 fi
 
 echo ""

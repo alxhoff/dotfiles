@@ -2,9 +2,19 @@
 
 ## Idea
 
-1. **Save layouts** in `profiles/*.hypr` (from nwg-displays + `capture-layout.sh`).
+1. **Save layouts** in `profiles/*.hypr` in **this repo** (`endeavour/displays/profiles/`).
 2. **Detect** which dock is connected by monitor **description** (not `DP-7` vs `DP-10`).
 3. **Apply** the matching profile to `~/.config/hypr/monitors.conf` and reload.
+
+**Important:** `nwg-displays` only writes `~/.config/hypr/monitors.conf` (runtime). It does **not**
+update `profiles/*.hypr`. After arranging in nwg, run `./save-display-profile.sh work` (or `home`).
+
+| File | Role |
+|------|------|
+| `profiles/home.hypr` | Source of truth — in git |
+| `profiles/work.hypr` | Source of truth — in git |
+| `~/.config/hypr/display-profiles` | Symlink → repo `profiles/` |
+| `~/.config/hypr/monitors.conf` | Generated at runtime; overwritten on hotplug |
 
 | Profile | When |
 |---------|------|
@@ -21,8 +31,7 @@
 
 ```bash
 cd ~/git/Github/dotfiles/endeavour/displays
-./capture-layout.sh home > profiles/home.hypr
-./apply-display-profile.sh home    # test
+./save-display-profile.sh home
 ```
 
 ## Daily use
@@ -53,13 +62,16 @@ If only 1–2 externals are connected (partial dock), auto mode does **nothing**
 ```bash
 ./discover-monitors.sh | tee ~/monitor-discovery-work.txt
 # edit config.env WORK_DOCK_DESCRIPTIONS
-./capture-layout.sh work > profiles/work.hypr
+./save-display-profile.sh work
 ```
+
+Restore home from git if needed: `git checkout -- profiles/home.hypr` then `./apply-display-profile.sh home` at the home dock.
 
 ## Files
 
 | Script | Role |
 |--------|------|
+| `save-display-profile.sh` | capture live layout → profiles/ + apply |
 | `apply-display-profile.sh` | detect + apply |
 | `hypr-display-listener.sh` | hotplug → auto |
 | `migrate-session.sh` | move windows before undock |

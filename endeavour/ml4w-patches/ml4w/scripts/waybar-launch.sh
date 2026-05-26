@@ -9,6 +9,7 @@ CONFIG_ENV="@DOTFILES@/endeavour/displays/config.env"
 
 [[ -f "$CONFIG_ENV" ]] && source "$CONFIG_ENV"
 : "${WAYBAR_PRIMARY_PATTERN:=VX3276-QHD}"
+: "${WORK_WAYBAR_PRIMARY_PATTERN:=}"
 
 mkdir -p "$RUNTIME"
 
@@ -19,7 +20,7 @@ if ! command -v hyprctl >/dev/null 2>&1 || ! hyprctl monitors -j >/dev/null 2>&1
     exec waybar -c "${CFG}/config-primary.jsonc" -s "$STYLE"
 fi
 
-export CFG RUNTIME WAYBAR_PRIMARY_PATTERN
+export CFG RUNTIME WAYBAR_PRIMARY_PATTERN WORK_WAYBAR_PRIMARY_PATTERN
 python3 <<'PY'
 import json
 import os
@@ -30,7 +31,14 @@ from pathlib import Path
 
 cfg_dir = Path(os.environ["CFG"])
 runtime = Path(os.environ["RUNTIME"])
-pattern = os.environ.get("WAYBAR_PRIMARY_PATTERN", "")
+patterns = [
+    p.strip()
+    for p in (
+        os.environ.get("WAYBAR_PRIMARY_PATTERN", ""),
+        os.environ.get("WORK_WAYBAR_PRIMARY_PATTERN", ""),
+    )
+    if p.strip()
+]
 
 
 def read_jsonc(path: Path) -> dict:
@@ -48,10 +56,15 @@ def write_json(path: Path, data: dict) -> None:
 monitors = json.loads(subprocess.check_output(["hyprctl", "monitors", "-j"], text=True))
 active = [m for m in monitors if not m.get("disabled")]
 
-primary = next(
-    (m["name"] for m in active if pattern and pattern in m.get("description", "")),
-    None,
-)
+primary = None
+for pattern in patterns:
+    primary = next(
+        (m["name"] for m in active if pattern in m.get("description", "")),
+        None,
+    )
+    if primary:
+        break
+
 secondary = [m["name"] for m in active if m["name"] != primary]
 
 primary_tmpl = cfg_dir / "config-primary.jsonc"

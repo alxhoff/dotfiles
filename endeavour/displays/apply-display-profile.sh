@@ -5,9 +5,11 @@ set -euo pipefail
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=endeavour/displays/config.env
 source "$SCRIPT_DIR/config.env"
+# shellcheck source=endeavour/displays/lib.sh
+source "$SCRIPT_DIR/lib.sh"
 
 PROFILE=${1:-auto}
-PROFILES_DIR="$SCRIPT_DIR/profiles"
+PROFILES_DIR=$(resolve_profiles_dir "$SCRIPT_DIR")
 MONITORS_CONF="${HOME}/.config/hypr/monitors.conf"
 STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-profile"
 COOLDOWN_FILE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-cooldown"
@@ -191,6 +193,12 @@ main() {
             log "already on $PROFILE — no change"
             exit 0
         fi
+    fi
+
+    if [[ "$PROFILE" == detect ]]; then
+        PROFILE=$(detect_profile)
+        echo "$PROFILE"
+        exit 0
     fi
 
     case "$PROFILE" in
