@@ -1,3 +1,13 @@
-# Work dock — capture at the office:
-#   ./discover-monitors.sh
-#   arrange in nwg-displays, then: ./capture-layout.sh work > profiles/work.hypr
+# Captured profile: work
+# Date: 2026-05-26T09:53:10+02:00
+# Host: cartken-thinkpad
+# Re-capture: cd ~/git/Github/dotfiles/endeavour/displays && ./capture-layout.sh work > profiles/work.hypr
+#
+# Lenovo Group Limited Q27q-1L UBP0H43Y
+monitor=DP-8,2560x1440@60,7920x0,1,transform,3
+
+# Samsung Electric Company C34H89x H4ZT303038
+monitor=DP-9,3440x1440@60,4480x200,1
+
+# Lenovo Group Limited 0x41AD
+monitor=eDP-1,2560x1440@60,5360x1640,1

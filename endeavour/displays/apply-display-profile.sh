@@ -87,19 +87,20 @@ edp = os.environ.get("LAPTOP_PATTERN", "eDP")
 all_m = json.loads(subprocess.check_output(["hyprctl", "monitors", "all", "-j"], text=True))
 
 def find_name(desc_comment: str):
-    keys = []
-    for token in ("DELL UP2516D", "VX3276-QHD", "B246WL", "Lenovo", "ViewSonic", "Acer"):
-        if token.lower() in desc_comment.lower() or token in desc_comment:
-            keys.append(token)
-    if not keys:
-        chunk = desc_comment.lstrip("# ").strip()
-        if len(chunk) > 8:
-            keys.append(chunk[:24])
-    for key in keys:
-        for m in all_m:
-            if key in (m.get("description") or ""):
-                return m.get("name")
-    if "Lenovo" in desc_comment or edp in desc_comment:
+    # Most specific tokens first — avoid matching every "Lenovo" panel as eDP-1.
+    tokens = (
+        "DELL UP2516D", "VX3276-QHD", "B246WL",
+        "Q27q-1L", "C34H89x", "0x41AD",
+        "Samsung Electric Company", "ViewSonic", "Acer",
+    )
+    desc = desc_comment.lstrip("# ").strip()
+    matched = [t for t in tokens if t in desc or t.lower() in desc.lower()]
+    matched.sort(key=len, reverse=True)
+    for token in matched:
+        hits = [m for m in all_m if token in (m.get("description") or "")]
+        if len(hits) == 1:
+            return hits[0]["name"]
+    if edp in desc_comment:
         for m in all_m:
             if edp in m.get("name", ""):
                 return m.get("name")
@@ -169,6 +170,12 @@ resolve_and_apply() {
     if [[ "$prof" == laptop && -n "$target_mon" ]]; then
         hyprctl dispatch dpms on 2>/dev/null || true
         hyprctl dispatch focusmonitor "$target_mon" 2>/dev/null || true
+    fi
+
+    waybar_launch="${HOME}/.config/ml4w/scripts/waybar-launch.sh"
+    if [[ -x "$waybar_launch" ]]; then
+        log "relaunching waybar"
+        "$waybar_launch" &
     fi
 }
 
