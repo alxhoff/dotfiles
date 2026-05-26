@@ -61,6 +61,15 @@ Do **not** edit ML4W files in place without also updating `ml4w-patches/` — ch
 - **Logs:** `$XDG_RUNTIME_DIR/dotfiles-waybar/{primary,secondary}.log` if a bar disappears.
 - **Idle inhibitor:** text labels “Awake” / “Auto-lock” (no Nerd Font icons in that module).
 
+## Config deployment
+
+- **Manifest:** [docs/CONFIG-MANIFEST.md](docs/CONFIG-MANIFEST.md) — every symlinked vs generated path.
+- **Stable repo pointer:** `~/.config/dotfiles` → clone root (used in Hypr binds/autostart).
+- **Link all configs:** `./endeavour/link-configs.sh` or `./install.sh --only configs`.
+- **Link + waybar patches:** `./endeavour/apply-ml4w-patches.sh` (run after git pull).
+
+ML4W upstream lives in `~/.mydotfiles/`; dotfiles **symlink** overrides into that tree.
+
 ## Display profiles
 
 - **Profiles (git):** `endeavour/displays/profiles/*.hypr`

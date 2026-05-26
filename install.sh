@@ -6,6 +6,7 @@
 #   ./install.sh --dry-run    # print actions only
 #   ./install.sh --only fish,vim,docker
 #   ./install.sh --only displays        # symlink hypr display profiles from repo
+#   ./install.sh --only configs         # all repo-owned config symlinks (needs ML4W)
 #   ./install.sh --only hypr           # vanilla Hyprland (replaces ML4W symlink)
 #   ./install.sh --only fish,wayland   # fish + Wayland Docker helpers
 #
@@ -123,7 +124,11 @@ if want rofi; then
 fi
 if want hypr; then
     mkdir -p "$TARGET_HOME/.config"
-    link_path "$DOTFILES_DIR/hypr" "$TARGET_HOME/.config/hypr"
+    if [[ -z "$ONLY" ]] && [[ -d "$TARGET_HOME/.mydotfiles/com.ml4w.hyprlandstarter/.config/hypr" ]]; then
+        echo "skip vanilla hypr: ML4W installed (use --only hypr to replace with dotfiles/hypr)"
+    else
+        link_path "$DOTFILES_DIR/hypr" "$TARGET_HOME/.config/hypr"
+    fi
 fi
 if want i3; then
     mkdir -p "$TARGET_HOME/.config"
@@ -159,6 +164,19 @@ fi
 if want displays; then
     mkdir -p "$TARGET_HOME/.config/hypr"
     link_path "$DOTFILES_DIR/endeavour/displays/profiles" "$TARGET_HOME/.config/hypr/display-profiles"
+fi
+
+# --- ML4W / Hyprland dotfiles symlinks (requires install-ml4w-starter.sh) ---
+if want configs; then
+    if [[ -d "$TARGET_HOME/.mydotfiles/com.ml4w.hyprlandstarter/.config/hypr" ]]; then
+        if [[ "$DRY_RUN" == 1 ]]; then
+            echo "would run: $DOTFILES_DIR/endeavour/link-configs.sh --dry-run"
+        else
+            HOME="$TARGET_HOME" "$DOTFILES_DIR/endeavour/link-configs.sh"
+        fi
+    else
+        echo "skip configs: ML4W not installed (run ./endeavour/install-ml4w-starter.sh)"
+    fi
 fi
 
 echo ""

@@ -2,7 +2,7 @@
 # On hotplug: wait for outputs to settle, then apply the matching profile once.
 set -euo pipefail
 
-DOTFILES_DISPLAYS=${DOTFILES_DISPLAYS:-$HOME/git/Github/dotfiles/endeavour/displays}
+DOTFILES_DISPLAYS=${DOTFILES_DISPLAYS:-$HOME/.config/dotfiles/endeavour/displays}
 APPLY="$DOTFILES_DISPLAYS/apply-display-profile.sh"
 # shellcheck source=endeavour/displays/config.env
 source "$DOTFILES_DISPLAYS/config.env"

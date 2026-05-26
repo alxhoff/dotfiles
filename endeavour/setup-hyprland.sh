@@ -45,6 +45,7 @@ if [[ "$SKIP_PACKAGES" != 1 ]]; then
     run "$DOTFILES_DIR/endeavour/setup-hyprland-default.sh" --ml4w
 fi
 run "$DOTFILES_DIR/install.sh"
+run "$DOTFILES_DIR/endeavour/link-configs.sh"
 run "$DOTFILES_DIR/fish/install-theme.sh"
 run "$DOTFILES_DIR/endeavour/apply-ml4w-patches.sh"
 run "$DOTFILES_DIR/endeavour/fix-ml4w-waybar.sh"
@@ -60,10 +61,10 @@ cat <<EOF
 5. Agent/onboarding doc: AGENTS.md
 
 Re-run anytime after git pull:
-  ./endeavour/setup-hyprland.sh
+  ./endeavour/apply-ml4w-patches.sh
+  # or full: ./endeavour/setup-hyprland.sh --skip-packages
 
-Configs only (no pacman):
-  ./endeavour/setup-hyprland.sh --skip-packages
+Config map: docs/CONFIG-MANIFEST.md
 
 Errors: cat ~/.cache/hyprland/hyprland.log
        Hyprland --verify-config -c ~/.config/hypr/hyprland.conf

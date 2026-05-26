@@ -23,7 +23,7 @@ Agent overview: [../../AGENTS.md](../../AGENTS.md).
 | `monitor.conf` | ML4W monitor defaults |
 | `hyprlock.conf`, `hypridle.conf` | Lock / idle |
 
-Paths in templates use `@DOTFILES@`; substituted at apply time.
+Paths in Hyprland/scripts use `~/.config/dotfiles/…` (symlink to repo). Run `./endeavour/link-configs.sh` after clone.
 
 ## Waybar
 

@@ -2,6 +2,10 @@
 # Shared paths for display profile scripts (source, do not execute).
 
 resolve_dotfiles_dir() {
+    if [[ -L "${HOME}/.config/dotfiles" ]]; then
+        readlink -f "${HOME}/.config/dotfiles"
+        return
+    fi
     if [[ -f "${HOME}/.config/dotfiles-path" ]]; then
         cat "${HOME}/.config/dotfiles-path"
         return
