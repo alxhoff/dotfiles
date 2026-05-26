@@ -97,7 +97,7 @@ text = re.sub(
 for name, file in (
     ("hyprland/workspaces", "hyprland-workspaces.jsonc"),
     ("hyprland/window", "hyprland-window.jsonc"),
-    ("network", "network.jsonc"),
+    ("custom/network", "custom-network.jsonc"),
     ("custom/exit", "custom-exit.jsonc"),
     ("custom/appmenu", "custom-appmenu.jsonc"),
     ("custom/passthrough", "custom-passthrough.jsonc"),
@@ -115,7 +115,7 @@ for name, file in (
         continue
     snip = snip_path.read_text().strip()
     text, ok = replace_block(text, name, snip)
-    if not ok and name in ("mpris", "temperature", "custom/passthrough"):
+    if not ok and name in ("mpris", "temperature", "custom/passthrough", "custom/network"):
         text, ok = append_module(text, name, snip)
     if not ok:
         print(f"warning: could not patch {name}", file=sys.stderr)

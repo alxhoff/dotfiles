@@ -118,12 +118,43 @@ def workspace_folder_key(workspace_json: Path) -> str | None:
 
 
 def db_bytes(ws_dir: Path) -> int:
-    total = 0
-    for name in ("state.vscdb", "state.vscdb-wal", "state.vscdb-shm"):
-        path = ws_dir / name
-        if path.is_file() and not path.is_symlink():
-            total += path.stat().st_size
-    return total
+    """Main DB file only — WAL/SHM are transient and inflate empty workspaces."""
+    path = ws_dir / "state.vscdb"
+    if path.is_file() and not path.is_symlink():
+        return path.stat().st_size
+    return 0
+
+
+def workspace_composer_score(ws_dir: Path) -> int:
+    """Prefer workspaces whose local composer.composerData has real chat history."""
+    db = ws_dir / "state.vscdb"
+    if not db.is_file():
+        return 0
+    conn = sqlite3.connect(db)
+    try:
+        row = conn.execute(
+            "SELECT value FROM ItemTable WHERE key = 'composer.composerData'"
+        ).fetchone()
+        if not row:
+            return 0
+        try:
+            data = json.loads(row[0])
+        except json.JSONDecodeError:
+            return len(row[0])
+        composers = data.get("allComposers", [])
+        if not isinstance(composers, list):
+            return len(row[0])
+        score = len(row[0])
+        for composer in composers:
+            if not isinstance(composer, dict) or composer.get("type") != "head":
+                continue
+            if composer.get("name") or composer.get("isArchived"):
+                score += 50_000
+        return score
+    except sqlite3.Error:
+        return 0
+    finally:
+        conn.close()
 
 
 def composer_count(ws_id: str, composers: list) -> int:
@@ -141,7 +172,10 @@ def score_workspace(
     backup_ws_dir: Path | None,
     composers: list,
 ) -> int:
-    score = composer_count(ws_id, composers) * 100_000
+    # Local workspace DB is authoritative; global headers get repointed after
+    # opening a folder once and would otherwise pick the empty duplicate.
+    score = workspace_composer_score(ws_dir) * 100
+    score += composer_count(ws_id, composers) * 1_000
     score += db_bytes(ws_dir)
     if backup_ws_dir and backup_ws_dir.is_dir():
         score += 1_000_000
@@ -209,6 +243,74 @@ def composer_folder_uri(composer: dict) -> str | None:
     return None
 
 
+def load_workspace_composers(ws_dir: Path) -> list:
+    db = ws_dir / "state.vscdb"
+    if not db.is_file():
+        return []
+    conn = sqlite3.connect(db)
+    try:
+        row = conn.execute(
+            "SELECT value FROM ItemTable WHERE key = 'composer.composerData'"
+        ).fetchone()
+        if not row:
+            return []
+        data = json.loads(row[0])
+        composers = data.get("allComposers", [])
+        return composers if isinstance(composers, list) else []
+    except (sqlite3.Error, json.JSONDecodeError):
+        return []
+    finally:
+        conn.close()
+
+
+def resolve_ws_dir(ws_root: Path, ws_id: str) -> Path:
+    ws_dir = ws_root / ws_id
+    if ws_dir.is_symlink():
+        target = os.readlink(ws_dir)
+        target_path = Path(target)
+        ws_dir = target_path if target_path.is_absolute() else ws_root / target
+    return ws_dir
+
+
+def build_composer_folder_index(
+    ws_root: Path, canonical_for_folder: dict[str, str]
+) -> dict[str, tuple[str, str]]:
+    """Map composerId -> (folder_uri, canonical workspace id) from local workspace DBs."""
+    index: dict[str, tuple[str, str]] = {}
+    for folder_uri, ws_id in canonical_for_folder.items():
+        if not folder_uri.startswith("file://"):
+            continue
+        if "/.config/Cursor/Workspaces/" in folder_uri:
+            continue
+        ws_dir = resolve_ws_dir(ws_root, ws_id)
+        for composer in load_workspace_composers(ws_dir):
+            if not isinstance(composer, dict):
+                continue
+            composer_id = composer.get("composerId")
+            if isinstance(composer_id, str) and composer_id:
+                index[composer_id] = (folder_uri, ws_id)
+    return index
+
+
+def orphan_workspace_ids(ws_root: Path) -> set[str]:
+    """Workspace IDs whose saved .code-workspace / workspace.json file is gone."""
+    orphans: set[str] = set()
+    if not ws_root.is_dir():
+        return orphans
+    for entry in ws_root.iterdir():
+        if not entry.is_dir() or entry.is_symlink():
+            continue
+        data = read_json(entry / "workspace.json")
+        if not isinstance(data, dict):
+            continue
+        workspace = data.get("workspace")
+        if isinstance(workspace, str) and "Cursor/Workspaces" in workspace:
+            path = Path(workspace.removeprefix("file://"))
+            if not path.exists():
+                orphans.add(entry.name)
+    return orphans
+
+
 def merge_workspace_db(target_dir: Path, source_dir: Path, dry_run: bool) -> int:
     target_db = target_dir / "state.vscdb"
     source_db = source_dir / "state.vscdb"
@@ -241,7 +343,11 @@ def remap_composers(
     id_map: dict[str, str],
     canonical_for_folder: dict[str, str],
     folder_uri_alias: dict[str, str],
+    composer_folder_index: dict[str, tuple[str, str]] | None = None,
+    orphan_ids: set[str] | None = None,
 ) -> tuple[list, int]:
+    composer_folder_index = composer_folder_index or {}
+    orphan_ids = orphan_ids or set()
     changed = 0
     for composer in composers:
         if not isinstance(composer, dict):
@@ -257,12 +363,19 @@ def remap_composers(
             canonical_id = canonical_for_folder[folder_uri]
         elif ws.get("id") in id_map:
             canonical_id = id_map[ws.get("id")]
+        elif ws.get("id") in orphan_ids:
+            composer_id = composer.get("composerId")
+            if isinstance(composer_id, str) and composer_id in composer_folder_index:
+                folder_uri, canonical_id = composer_folder_index[composer_id]
 
         if canonical_id and ws.get("id") != canonical_id:
             ws["id"] = canonical_id
             changed += 1
+            if ws.get("configPath"):
+                del ws["configPath"]
+                changed += 1
 
-        if folder_uri:
+        if folder_uri and folder_uri in canonical_for_folder:
             fs_path = folder_uri.removeprefix("file://")
             uri = ws.get("uri")
             if isinstance(uri, dict):
@@ -520,8 +633,20 @@ def main() -> int:
         if canonical_uri in canonical_for_folder:
             canonical_for_folder[alias_uri] = canonical_for_folder[canonical_uri]
 
+    composer_folder_index = build_composer_folder_index(ws_root, canonical_for_folder)
+    orphan_ids = orphan_workspace_ids(ws_root)
+    if orphan_ids:
+        print(f"Found {len(orphan_ids)} orphaned workspace file ID(s) (missing .code-workspace):")
+        for oid in sorted(orphan_ids):
+            print(f"  {oid}")
+
     composers, composer_changes = remap_composers(
-        composers, id_map, canonical_for_folder, folder_uri_alias
+        composers,
+        id_map,
+        canonical_for_folder,
+        folder_uri_alias,
+        composer_folder_index,
+        orphan_ids,
     )
 
     glass_projects: list = []

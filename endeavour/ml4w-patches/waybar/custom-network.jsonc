@@ -1,0 +1,16 @@
+    "custom/network": {
+        "exec": "~/.config/ml4w/scripts/network-status.sh",
+        "return-type": "json",
+        "interval": 5,
+        "format": "{}",
+        "tooltip": true,
+        "on-click": "~/.config/ml4w/settings/networkmanager.sh",
+        "menu": "on-click-right",
+        "menu-file": "~/.config/waybar/network_menu.xml",
+        "menu-actions": {
+            "wifi-connect": "~/.config/ml4w/scripts/wifi-rofi.sh",
+            "wifi-rescan": "nmcli dev wifi rescan",
+            "wifi-toggle": "~/.config/ml4w/scripts/wifi-toggle.sh",
+            "nm-settings": "nm-connection-editor"
+        }
+    },

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Full Waybar on the primary monitor; minimal bar on portrait/secondary outputs.
+# Full Waybar on the primary monitor; minimal bar on each secondary output.
 set -euo pipefail
 
 CFG="${HOME}/.config/waybar"
@@ -53,6 +53,10 @@ def write_json(path: Path, data: dict) -> None:
     path.write_text(json.dumps(data, indent=4) + "\n")
 
 
+for old in runtime.glob("config-secondary*.json"):
+    old.unlink(missing_ok=True)
+runtime.joinpath("config-secondary.json").unlink(missing_ok=True)
+
 monitors = json.loads(subprocess.check_output(["hyprctl", "monitors", "-j"], text=True))
 active = [m for m in monitors if not m.get("disabled")]
 
@@ -65,6 +69,9 @@ for pattern in patterns:
     if primary:
         break
 
+if not primary and active:
+    primary = max(active, key=lambda m: m.get("width", 0) * m.get("height", 0))["name"]
+
 secondary = [m["name"] for m in active if m["name"] != primary]
 
 primary_tmpl = cfg_dir / "config-primary.jsonc"
@@ -74,22 +81,20 @@ if not primary_tmpl.exists():
 
 primary_cfg = read_jsonc(primary_tmpl)
 primary_out = runtime / "config-primary.json"
-secondary_out = runtime / "config-secondary.json"
 
-if not primary or not secondary:
+if not secondary:
     primary_cfg.pop("output", None)
     write_json(primary_out, primary_cfg)
-    secondary_out.unlink(missing_ok=True)
 else:
     primary_cfg["output"] = primary
     write_json(primary_out, primary_cfg)
 
     if secondary_tmpl.exists():
-        secondary_cfg = read_jsonc(secondary_tmpl)
-        secondary_cfg["output"] = secondary
-        write_json(secondary_out, secondary_cfg)
-    else:
-        secondary_out.unlink(missing_ok=True)
+        secondary_base = read_jsonc(secondary_tmpl)
+        for name in secondary:
+            secondary_cfg = dict(secondary_base)
+            secondary_cfg["output"] = name
+            write_json(runtime / f"config-secondary-{name}.json", secondary_cfg)
 PY
 
 start_waybar() {
@@ -98,9 +103,13 @@ start_waybar() {
     waybar -c "$config" -s "$STYLE" >>"${RUNTIME}/${name}.log" 2>&1 &
 }
 
-if [[ -f "${RUNTIME}/config-secondary.json" ]]; then
-    start_waybar primary "${RUNTIME}/config-primary.json"
-    start_waybar secondary "${RUNTIME}/config-secondary.json"
-else
-    start_waybar primary "${RUNTIME}/config-primary.json"
-fi
+start_waybar primary "${RUNTIME}/config-primary.json"
+
+shopt -s nullglob
+secondary_cfgs=("${RUNTIME}"/config-secondary-*.json)
+shopt -u nullglob
+
+for cfg in "${secondary_cfgs[@]}"; do
+    name=$(basename "$cfg" .json)
+    start_waybar "$name" "$cfg"
+done

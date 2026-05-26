@@ -169,9 +169,14 @@ window#waybar {
 }
 
 #connect #network,
+#connect #custom-network,
 #connect #network.ethernet,
 #connect #network.wifi,
 #connect #network.disconnected,
+#connect #custom-network.wifi,
+#connect #custom-network.ethernet,
+#connect #custom-network.vpn,
+#connect #custom-network.disconnected,
 #connect #battery,
 #connect #battery.charging,
 #connect #battery.plugged {
@@ -188,9 +193,23 @@ window#waybar {
     opacity: 1;
 }
 
-#connect #network {
+#connect #network,
+#connect #custom-network {
     padding-left: 10px;
     border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#connect #custom-network.vpn {
+    color: #7fd4b8;
+}
+
+#connect #custom-network.vpn.ethernet,
+#connect #custom-network.vpn.wifi {
+    color: @module-fg;
+}
+
+#connect #custom-network .vpn-segment {
+    color: #7fd4b8;
 }
 
 #connect #battery {
@@ -266,9 +285,14 @@ window#waybar {
 
 /* Override ML4W .wifi/.charging solid backgrounds when not inside #connect. */
 #network,
+#custom-network,
 #network.ethernet,
 #network.wifi,
 #network.disconnected,
+#custom-network.wifi,
+#custom-network.ethernet,
+#custom-network.vpn,
+#custom-network.disconnected,
 #battery,
 #battery.charging,
 #battery.plugged {

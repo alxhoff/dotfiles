@@ -41,7 +41,7 @@
     "group/connect": {
         "orientation": "horizontal",
         "modules": [
-            "network",
+            "custom/network",
             "battery"
         ]
     },
