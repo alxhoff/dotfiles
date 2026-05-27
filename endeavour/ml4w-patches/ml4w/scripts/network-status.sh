@@ -16,7 +16,7 @@ ETH_PREFIXES = ("en", "eth", "enx")
 ICON_WIFI = "\uf1eb"
 ICON_ETH = "\uf6ff"
 ICON_VPN = "\uf023"
-SEP = " · "
+SEP = "   ·   "
 
 
 def run(*args: str) -> str:
@@ -152,7 +152,13 @@ def collect() -> tuple[list[dict], list[dict], list[dict]]:
 
 
 def default_mark(is_default: bool) -> str:
-    return "•" if is_default else ""
+    return " *" if is_default else ""
+
+
+def short_ssid(name: str, limit: int = 10) -> str:
+    if len(name) <= limit:
+        return name
+    return name[: limit - 1] + "…"
 
 
 def build() -> dict:
@@ -164,7 +170,8 @@ def build() -> dict:
     for w in wifi:
         sig = w["signal"] or "—"
         mark = default_mark(w["default"])
-        parts.append(f"{ICON_WIFI}{sig}%{mark}")
+        ssid = short_ssid(w["ssid"])
+        parts.append(f"{ICON_WIFI} {ssid} {sig}%{mark}")
         tooltip_lines.append(f"Wi-Fi ({w['ifname']}) — {w['ssid']}")
         if w["ips"]:
             tooltip_lines.append(f"  IP: {', '.join(w['ips'])}")
@@ -179,7 +186,7 @@ def build() -> dict:
 
     for e in ethernet:
         mark = default_mark(e["default"])
-        parts.append(f"{ICON_ETH}{mark}")
+        parts.append(f"{ICON_ETH} Eth{mark}")
         tooltip_lines.append(f"Ethernet ({e['ifname']})")
         if e["ips"]:
             tooltip_lines.append(f"  IP: {', '.join(e['ips'])}")
@@ -193,7 +200,7 @@ def build() -> dict:
 
     for v in vpn:
         mark = default_mark(v["default"])
-        parts.append(f'<span foreground="#7fd4b8">{ICON_VPN}{mark}</span>')
+        parts.append(f'<span foreground="#7fd4b8">{ICON_VPN} VPN{mark}</span>')
         tooltip_lines.append(f"VPN ({v['ifname']})")
         if v["ips"]:
             tooltip_lines.append(f"  IP: {', '.join(v['ips'])}")

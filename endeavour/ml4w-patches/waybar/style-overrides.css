@@ -212,7 +212,7 @@ window#waybar {
 #connect {
     background: @module-bg;
     border-radius: 8px;
-    padding: 2px 4px;
+    padding: 2px 8px;
     margin: 2px 3px;
 }
 
@@ -243,10 +243,10 @@ window#waybar {
 
 #connect #network,
 #connect #custom-network {
-    padding-left: 8px;
-    padding-right: 6px;
+    padding: 2px 12px;
     border-right: 1px solid rgba(255, 255, 255, 0.08);
-    font-size: 12px;
+    font-size: 13px;
+    letter-spacing: 0.03em;
 }
 
 #connect #custom-network.vpn {
