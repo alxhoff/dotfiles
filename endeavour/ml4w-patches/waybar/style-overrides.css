@@ -405,11 +405,31 @@ menuitem {
     letter-spacing: 0.04em;
 }
 
+#custom-quicklink1,
+#custom-quicklink2,
+#custom-quicklink3,
+#custom-quicklinkempty {
+    margin-right: 0;
+    padding: 2px 6px;
+    font-size: 14px;
+}
+
+#custom-quicklink3 {
+    padding-right: 4px;
+}
+
+#custom-quicklinkempty {
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    font-size: 0;
+}
+
 #custom-exit {
     background: @module-bg;
     border-radius: 8px;
     padding: 2px 10px;
-    margin: 2px 4px 2px 6px;
+    margin: 2px 4px 2px 0;
     font-weight: 900;
 }
 
@@ -455,7 +475,7 @@ menuitem {
     color: #f07178;
     border-radius: 8px;
     padding: 2px 10px;
-    margin: 2px 6px 2px 0;
+    margin: 2px 0 2px 8px;
     font-weight: 600;
     font-size: 12px;
     letter-spacing: 0.06em;

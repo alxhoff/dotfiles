@@ -135,6 +135,12 @@ install_example_if_missing \
     "$PATCHES/ml4w/settings/dropdown-spotify.env.example" \
     "${HOME}/.config/ml4w/dropdown-spotify.env"
 
+mkdir -p "${HOME}/.config/ml4w/settings"
+if [[ -f "$PATCHES/ml4w/settings/waybar-quicklinks.json" ]]; then
+    link_path "$PATCHES/ml4w/settings/waybar-quicklinks.json" \
+        "${HOME}/.config/ml4w/settings/waybar-quicklinks.json"
+fi
+
 # --- Waybar (static files symlinked; modules.json/style.css patched by apply-ml4w-patches.sh) ---
 mkdir -p "$ML4W_CFG/waybar"
 for f in config-primary.jsonc config-secondary.jsonc network_menu.xml; do

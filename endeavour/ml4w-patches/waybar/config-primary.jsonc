@@ -14,15 +14,30 @@
     "modules-left": [
         "custom/appmenu",
         "hyprland/workspaces",
-        "custom/passthrough",
-        "hyprland/window",
         "group/quicklinks",
         "custom/exit",
-        "idle_inhibitor"
+        "idle_inhibitor",
+        "custom/passthrough"
     ],
+    "group/quicklinks": {
+        "orientation": "horizontal",
+        "spacing": 0,
+        "modules": [
+            "custom/quicklink1",
+            "custom/quicklink2",
+            "custom/quicklink3"
+        ]
+    },
     "modules-center": [
-        "group/media-row"
+        "group/center"
     ],
+    "group/center": {
+        "orientation": "horizontal",
+        "modules": [
+            "hyprland/window",
+            "group/media-row"
+        ]
+    },
     "group/media-row": {
         "orientation": "horizontal",
         "modules": [

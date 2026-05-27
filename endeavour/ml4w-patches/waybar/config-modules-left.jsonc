@@ -1,8 +1,8 @@
     "modules-left": [
         "custom/appmenu",
         "hyprland/workspaces",
-        "custom/passthrough",
         "group/quicklinks",
         "custom/exit",
-        "idle_inhibitor"
+        "idle_inhibitor",
+        "custom/passthrough"
     ],

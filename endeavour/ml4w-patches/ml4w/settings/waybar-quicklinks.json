@@ -1,0 +1,26 @@
+{
+    "custom/quicklink1": {
+        "format": "\uf013 ",
+        "on-click": "flatpak run com.ml4w.hyprlandsettings",
+        "tooltip-format": "Open Hyprland Settings"
+    },
+    "custom/quicklink2": {
+        "format": "\uf269 ",
+        "on-click": "~/.config/ml4w/settings/browser.sh",
+        "tooltip-format": "Open the browser"
+    },
+    "custom/quicklink3": {
+        "format": "\uf07b ",
+        "on-click": "~/.config/ml4w/settings/filemanager.sh",
+        "tooltip-format": "Open the filemanager"
+    },
+    "group/quicklinks": {
+        "orientation": "horizontal",
+        "spacing": 0,
+        "modules": [
+            "custom/quicklink1",
+            "custom/quicklink2",
+            "custom/quicklink3"
+        ]
+    }
+}
