@@ -131,6 +131,9 @@ install_example_if_missing \
 install_example_if_missing \
     "$PATCHES/ml4w/settings/dropdown-terminal.env.example" \
     "${HOME}/.config/ml4w/dropdown-terminal.env"
+install_example_if_missing \
+    "$PATCHES/ml4w/settings/dropdown-spotify.env.example" \
+    "${HOME}/.config/ml4w/dropdown-spotify.env"
 
 # --- Waybar (static files symlinked; modules.json/style.css patched by apply-ml4w-patches.sh) ---
 mkdir -p "$ML4W_CFG/waybar"

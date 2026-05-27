@@ -3,6 +3,7 @@
 - `Alt+Return` — Terminal (kitty)
 - `Alt+Shift+Return` — Terminal with fish `ub`
 - `Alt+F12` — Dropdown terminal (Guake-style; press again to hide)
+- `Alt+F11` — Dropdown Spotify (toggle; also captures Spotify opened from the launcher)
 - `Alt+Shift+Q` — Close window
 - `Alt+D` — App launcher (rofi)
 - `Alt+O` — File finder (rofi filebrowser)
