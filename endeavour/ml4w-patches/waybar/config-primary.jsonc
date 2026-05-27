@@ -73,5 +73,6 @@
     },
     "modules-right": [
         "group/connect",
+        "group/stats",
         "group/time"
     ]}

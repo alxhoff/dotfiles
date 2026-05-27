@@ -30,19 +30,8 @@
         "exec": "MEDIA_BLOCK_WIDTH=16 ~/.config/ml4w/scripts/media-title.sh"
     },
     "modules-right": [
-        "group/stats",
         "group/time"
     ],
-
-    "group/stats": {
-        "orientation": "horizontal",
-        "modules": [
-            "temperature",
-            "disk",
-            "cpu",
-            "memory"
-        ]
-    },
 
     "group/time": {
         "orientation": "horizontal",
