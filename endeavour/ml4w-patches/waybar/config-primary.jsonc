@@ -15,18 +15,21 @@
         "custom/appmenu",
         "hyprland/workspaces",
         "custom/passthrough",
+        "hyprland/window",
         "group/quicklinks",
         "custom/exit",
         "idle_inhibitor"
     ],
     "modules-center": [
-        "group/center"
+        "group/media-row"
     ],
-    "group/center": {
+    "group/media-row": {
         "orientation": "horizontal",
         "modules": [
-            "hyprland/window",
-            "mpris"
+            "custom/media-title",
+            "custom/media-prev",
+            "custom/media-play",
+            "custom/media-next"
         ]
     },
     "group/stats": {
@@ -55,6 +58,5 @@
     },
     "modules-right": [
         "group/connect",
-        "group/stats",
         "group/time"
     ]}

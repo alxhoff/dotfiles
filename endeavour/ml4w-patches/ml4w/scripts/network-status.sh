@@ -15,6 +15,8 @@ VPN_PREFIXES = ("tun", "tap", "wg", "ppp")
 ETH_PREFIXES = ("en", "eth", "enx")
 ICON_WIFI = "\uf1eb"
 ICON_ETH = "\uf6ff"
+ICON_VPN = "\uf023"
+SEP = " · "
 
 
 def run(*args: str) -> str:
@@ -89,12 +91,6 @@ def wifi_meta(name: str) -> tuple[str, str]:
     return (ssid or name), signal
 
 
-def short_ifname(name: str) -> str:
-    if name.startswith("en") and len(name) > 6:
-        return "Eth"
-    return name
-
-
 def collect() -> tuple[list[dict], list[dict], list[dict]]:
     wifi: list[dict] = []
     ethernet: list[dict] = []
@@ -155,8 +151,8 @@ def collect() -> tuple[list[dict], list[dict], list[dict]]:
     return wifi, ethernet, vpn
 
 
-def ip_label(ips: list[str]) -> str:
-    return ips[0] if ips else "no IP"
+def default_mark(is_default: bool) -> str:
+    return "•" if is_default else ""
 
 
 def build() -> dict:
@@ -166,13 +162,9 @@ def build() -> dict:
     classes: list[str] = []
 
     for w in wifi:
-        ssid = w["ssid"]
-        if len(ssid) > 14:
-            ssid = ssid[:13] + "…"
-        sig = f" {w['signal']}%" if w["signal"] else ""
-        ip = ip_label(w["ips"])
-        mark = " *" if w["default"] else ""
-        parts.append(f"{ICON_WIFI} {ssid}{sig} {ip}{mark}")
+        sig = w["signal"] or "—"
+        mark = default_mark(w["default"])
+        parts.append(f"{ICON_WIFI}{sig}%{mark}")
         tooltip_lines.append(f"Wi-Fi ({w['ifname']}) — {w['ssid']}")
         if w["ips"]:
             tooltip_lines.append(f"  IP: {', '.join(w['ips'])}")
@@ -186,10 +178,8 @@ def build() -> dict:
         classes.append("wifi")
 
     for e in ethernet:
-        ip = ip_label(e["ips"])
-        mark = " *" if e["default"] else ""
-        label = short_ifname(e["ifname"])
-        parts.append(f"{ICON_ETH} {label} {ip}{mark}")
+        mark = default_mark(e["default"])
+        parts.append(f"{ICON_ETH}{mark}")
         tooltip_lines.append(f"Ethernet ({e['ifname']})")
         if e["ips"]:
             tooltip_lines.append(f"  IP: {', '.join(e['ips'])}")
@@ -202,9 +192,8 @@ def build() -> dict:
         classes.append("ethernet")
 
     for v in vpn:
-        ip = ip_label(v["ips"])
-        mark = " *" if v["default"] else ""
-        parts.append(f"VPN {ip}{mark}")
+        mark = default_mark(v["default"])
+        parts.append(f'<span foreground="#7fd4b8">{ICON_VPN}{mark}</span>')
         tooltip_lines.append(f"VPN ({v['ifname']})")
         if v["ips"]:
             tooltip_lines.append(f"  IP: {', '.join(v['ips'])}")
@@ -225,9 +214,7 @@ def build() -> dict:
     while tooltip_lines and tooltip_lines[-1] == "":
         tooltip_lines.pop()
 
-    text = "   ".join(parts)
-    if len(text) > 72:
-        text = text[:69] + "…"
+    text = SEP.join(parts)
 
     return {
         "text": text,

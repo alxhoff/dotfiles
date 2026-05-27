@@ -1,0 +1,5 @@
+    "custom/media-prev": {
+        "format": "  ",
+        "tooltip-format": "Previous track",
+        "on-click": "playerctl previous"
+    },

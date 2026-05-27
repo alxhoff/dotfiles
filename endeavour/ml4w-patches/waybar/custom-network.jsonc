@@ -3,6 +3,7 @@
         "return-type": "json",
         "interval": 5,
         "format": "{}",
+        "escape": false,
         "tooltip": true,
         "on-click": "~/.config/ml4w/settings/networkmanager.sh",
         "menu": "on-click-right",

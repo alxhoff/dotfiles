@@ -1,6 +1,6 @@
     "hyprland/window": {
         "format": "{title}",
-        "max-length": 80,
+        "max-length": 40,
         "rewrite": {
             "(.*) - Brave": "$1",
             "(.*) - Chromium": "$1",

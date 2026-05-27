@@ -15,11 +15,34 @@
         "custom/passthrough"
     ],
     "modules-center": [
-        "mpris"
+        "group/media-row"
     ],
+    "group/media-row": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/media-title",
+            "custom/media-prev",
+            "custom/media-play",
+            "custom/media-next"
+        ]
+    },
+    "custom/media-title": {
+        "exec": "MEDIA_BLOCK_WIDTH=16 ~/.config/ml4w/scripts/media-title.sh"
+    },
     "modules-right": [
+        "group/stats",
         "group/time"
     ],
+
+    "group/stats": {
+        "orientation": "horizontal",
+        "modules": [
+            "temperature",
+            "disk",
+            "cpu",
+            "memory"
+        ]
+    },
 
     "group/time": {
         "orientation": "horizontal",
@@ -27,9 +50,5 @@
             "pulseaudio",
             "clock"
         ]
-    },
-
-    "mpris": {
-        "max-length": 28
     }
 }

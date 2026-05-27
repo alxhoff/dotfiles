@@ -1,11 +1,12 @@
     "mpris": {
-        "format": "{player_icon} {dynamic}",
-        "format-paused": "{status_icon} <i>{artist} — {title}</i>",
+        "format": "{dynamic}",
+        "format-paused": "<i>{artist} — {title}</i>",
         "format-stopped": "",
         "max-length": 50,
-        "tooltip-format": "{player}: {artist} — {title}\nClick: play/pause · Right: next",
+        "tooltip-format": "{player}: {artist} — {title}",
         "on-click": "playerctl play-pause",
         "on-click-right": "playerctl next",
+        "on-click-middle": "playerctl previous",
         "on-scroll-up": "playerctl volume 0.05+",
         "on-scroll-down": "playerctl volume 0.05-",
         "ignored-players": ["firefox", "chromium", "brave"]

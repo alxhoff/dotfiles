@@ -1,0 +1,5 @@
+    "custom/media-next": {
+        "format": "  ",
+        "tooltip-format": "Next track",
+        "on-click": "playerctl next"
+    },

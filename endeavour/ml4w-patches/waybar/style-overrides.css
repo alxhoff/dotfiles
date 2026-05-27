@@ -78,13 +78,61 @@ window#waybar {
     margin: 0;
 }
 
-#group-center #mpris,
-#center #mpris {
+#group-center #group-media-row #custom-media-title,
+#group-media-row #custom-media-title {
     background: @module-bg;
-    border-radius: 8px;
-    padding: 2px 10px;
-    margin: 0 0 0 6px;
-    min-width: 72px;
+    border-radius: 8px 0 0 8px;
+    padding: 1px 8px 2px;
+    margin: 0;
+    font-family: "JetBrainsMono Nerd Font", "DejaVu Sans Mono", monospace;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+#group-center #group-media-row #custom-media-title label,
+#group-media-row #custom-media-title label {
+    letter-spacing: 0;
+    font-family: "JetBrainsMono Nerd Font", "DejaVu Sans Mono", monospace;
+    font-size: 11px;
+}
+
+#group-center #group-media-row #custom-media-prev,
+#group-center #group-media-row #custom-media-play,
+#group-center #group-media-row #custom-media-next,
+#group-media-row #custom-media-prev,
+#group-media-row #custom-media-play,
+#group-media-row #custom-media-next {
+    background: @module-bg;
+    font-family: "Font Awesome 7 Free", "Font Awesome 6 Free", FontAwesome, sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    padding: 2px 0;
+    margin: 0;
+    color: @module-fg;
+}
+
+#group-center #group-media-row #custom-media-prev,
+#group-media-row #custom-media-prev {
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    padding-left: 2px;
+}
+
+#group-center #group-media-row #custom-media-next,
+#group-media-row #custom-media-next {
+    border-radius: 0 8px 8px 0;
+    padding-right: 6px;
+}
+
+#group-center #group-media-row #custom-media-title.paused,
+#group-media-row #custom-media-title.paused {
+    color: rgba(232, 232, 236, 0.65);
+    font-style: italic;
+}
+
+#group-center #hyprland-window,
+#center #window,
+#hyprland-window {
+    margin-right: 6px;
 }
 
 #mpris {
@@ -195,8 +243,10 @@ window#waybar {
 
 #connect #network,
 #connect #custom-network {
-    padding-left: 10px;
+    padding-left: 8px;
+    padding-right: 6px;
     border-right: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 12px;
 }
 
 #connect #custom-network.vpn {
@@ -331,6 +381,9 @@ menuitem {
 
 #pulseaudio,
 #custom-exit,
+#custom-media-prev,
+#custom-media-play,
+#custom-media-next,
 #custom-quicklink1,
 #custom-quicklink2,
 #custom-quicklink3,
@@ -457,10 +510,22 @@ window#waybar.secondary #pulseaudio {
     background-color: @module-bg;
 }
 
-window#waybar.secondary #mpris {
-    font-size: 12px;
-    padding: 2px 8px;
-    margin: 4px 0;
+window#waybar.secondary #group-media-row #custom-media-title,
+window#waybar.secondary #group-media-row #custom-media-prev,
+window#waybar.secondary #group-media-row #custom-media-play,
+window#waybar.secondary #group-media-row #custom-media-next {
+    font-size: 11px;
+    margin: 4px 0 0 0;
+    padding: 2px 0;
+}
+
+window#waybar.secondary #group-media-row #custom-media-title {
+    padding: 1px 6px 2px;
+    font-size: 10px;
+}
+
+window#waybar.secondary #group-media-row #custom-media-title label {
+    font-size: 10px;
 }
 
 window#waybar.secondary #clock {

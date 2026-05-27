@@ -101,6 +101,10 @@ for name, file in (
     ("custom/exit", "custom-exit.jsonc"),
     ("custom/appmenu", "custom-appmenu.jsonc"),
     ("custom/passthrough", "custom-passthrough.jsonc"),
+    ("custom/media-prev", "custom-media-prev.jsonc"),
+    ("custom/media-play", "custom-media-play.jsonc"),
+    ("custom/media-next", "custom-media-next.jsonc"),
+    ("custom/media-title", "custom-media-title.jsonc"),
     ("mpris", "mpris.jsonc"),
     ("temperature", "temperature.jsonc"),
     ("disk", "disk.jsonc"),
@@ -115,7 +119,16 @@ for name, file in (
         continue
     snip = snip_path.read_text().strip()
     text, ok = replace_block(text, name, snip)
-    if not ok and name in ("mpris", "temperature", "custom/passthrough", "custom/network"):
+    if not ok and name in (
+        "mpris",
+        "temperature",
+        "custom/passthrough",
+        "custom/network",
+        "custom/media-prev",
+        "custom/media-play",
+        "custom/media-next",
+        "custom/media-title",
+    ):
         text, ok = append_module(text, name, snip)
     if not ok:
         print(f"warning: could not patch {name}", file=sys.stderr)

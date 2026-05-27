@@ -1,0 +1,8 @@
+    "custom/media-play": {
+        "format": "{}",
+        "return-type": "json",
+        "exec": "~/.config/ml4w/scripts/media-play-status.sh",
+        "interval": 1,
+        "tooltip-format": "Play / pause",
+        "on-click": "playerctl play-pause"
+    },
