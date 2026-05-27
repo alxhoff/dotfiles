@@ -2,7 +2,10 @@
 # Waybar custom/media-play — Font Awesome play/pause icon from playerctl status.
 set -euo pipefail
 
-status=$(playerctl status 2>/dev/null || echo Stopped)
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+PLAYERCTL="$SCRIPT_DIR/media-playerctl.sh"
+
+status=$("$PLAYERCTL" status 2>/dev/null || echo Stopped)
 
 case "$status" in
 	Playing) icon=$'\uf04c' ;; # pause

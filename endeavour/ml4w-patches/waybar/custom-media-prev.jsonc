@@ -1,5 +1,5 @@
     "custom/media-prev": {
         "format": "  ",
         "tooltip-format": "Previous track",
-        "on-click": "playerctl previous"
+        "on-click": "~/.config/ml4w/scripts/media-playerctl.sh previous"
     },

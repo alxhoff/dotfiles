@@ -4,5 +4,5 @@
         "exec": "~/.config/ml4w/scripts/media-play-status.sh",
         "interval": 1,
         "tooltip-format": "Play / pause",
-        "on-click": "playerctl play-pause"
+        "on-click": "~/.config/ml4w/scripts/media-playerctl.sh play-pause"
     },

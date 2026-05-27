@@ -5,9 +5,9 @@
         "interval": 1,
         "escape": false,
         "tooltip-format": "Now playing",
-        "on-click": "playerctl play-pause",
-        "on-click-right": "playerctl next",
-        "on-click-middle": "playerctl previous",
-        "on-scroll-up": "playerctl volume 0.05+",
-        "on-scroll-down": "playerctl volume 0.05-"
+        "on-click": "~/.config/ml4w/scripts/media-playerctl.sh play-pause",
+        "on-click-right": "~/.config/ml4w/scripts/media-playerctl.sh next",
+        "on-click-middle": "~/.config/ml4w/scripts/media-playerctl.sh previous",
+        "on-scroll-up": "~/.config/ml4w/scripts/media-playerctl.sh volume 0.05+",
+        "on-scroll-down": "~/.config/ml4w/scripts/media-playerctl.sh volume 0.05-"
     },

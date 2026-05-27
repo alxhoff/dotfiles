@@ -2,19 +2,22 @@
 # Waybar custom/media-title — fixed-width marquee + progress bar (playerctl).
 set -euo pipefail
 
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+PLAYERCTL="$SCRIPT_DIR/media-playerctl.sh"
+
 width=${MEDIA_BLOCK_WIDTH:-24}
 
-status=$(playerctl status 2>/dev/null || echo Stopped)
+status=$("$PLAYERCTL" status 2>/dev/null || echo Stopped)
 if [[ "$status" == "Stopped" ]]; then
 	python3 -c 'import json; print(json.dumps({"text": ""}))'
 	exit 0
 fi
 
-artist=$(playerctl metadata artist 2>/dev/null || true)
-title=$(playerctl metadata title 2>/dev/null || true)
-player=$(playerctl metadata --format '{{playerName}}' 2>/dev/null || true)
-pos=$(playerctl position 2>/dev/null || echo "")
-len_us=$(playerctl metadata mpris:length 2>/dev/null || echo "")
+artist=$("$PLAYERCTL" metadata artist 2>/dev/null || true)
+title=$("$PLAYERCTL" metadata title 2>/dev/null || true)
+player=$("$PLAYERCTL" metadata --format '{{playerName}}' 2>/dev/null || true)
+pos=$("$PLAYERCTL" position 2>/dev/null || echo "")
+len_us=$("$PLAYERCTL" metadata mpris:length 2>/dev/null || echo "")
 
 export STATUS="$status" ARTIST="$artist" TITLE="$title" PLAYER="$player" \
 	WIDTH="$width" POS="$pos" LEN_US="$len_us"
