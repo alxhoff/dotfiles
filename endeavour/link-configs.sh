@@ -143,7 +143,7 @@ fi
 
 # --- Waybar (static files symlinked; modules.json/style.css patched by apply-ml4w-patches.sh) ---
 mkdir -p "$ML4W_CFG/waybar"
-for f in config-primary.jsonc config-secondary.jsonc network_menu.xml; do
+for f in config-primary.jsonc config-secondary.jsonc network_menu.xml display_menu.xml; do
     [[ -f "$PATCHES/waybar/$f" ]] || continue
     link_path "$PATCHES/waybar/$f" "$ML4W_CFG/waybar/$f"
 done

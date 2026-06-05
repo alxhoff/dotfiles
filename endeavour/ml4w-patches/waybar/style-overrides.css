@@ -218,6 +218,7 @@ window#waybar {
 
 #connect #network,
 #connect #custom-network,
+#connect #custom-display,
 #connect #network.ethernet,
 #connect #network.wifi,
 #connect #network.disconnected,
@@ -242,11 +243,16 @@ window#waybar {
 }
 
 #connect #network,
-#connect #custom-network {
+#connect #custom-network,
+#connect #custom-display {
     padding: 2px 12px;
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     font-size: 13px;
     letter-spacing: 0.03em;
+}
+
+#connect #custom-display.mismatch {
+    color: #e6c07b;
 }
 
 #connect #custom-network.vpn {

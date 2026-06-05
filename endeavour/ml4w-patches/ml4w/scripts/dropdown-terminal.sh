@@ -11,7 +11,8 @@ CONFIG="${HOME}/.config/ml4w/dropdown-terminal.env"
 : "${DROPDOWN_WORKSPACE:=dropdown}"
 : "${DROPDOWN_CMD:=}"
 : "${DROPDOWN_SIZE:=100% 42%}"
-: "${DROPDOWN_MOVE:=0 4}"
+: "${DROPDOWN_MOVE:=0 0}"
+: "${DROPDOWN_MARGIN:=12}"
 
 client_json() {
 	hyprctl clients -j 2>/dev/null || echo '[]'
@@ -59,7 +60,7 @@ layout_dropdown() {
 	local target_mon=$2
 	[[ -n "$addr" && -n "$target_mon" ]] || return 0
 
-	export DROPDOWN_SIZE DROPDOWN_MOVE TARGET_MONITOR="$target_mon"
+	export DROPDOWN_SIZE DROPDOWN_MOVE DROPDOWN_MARGIN TARGET_MONITOR="$target_mon"
 	read -r w h x y <<<"$(python3 <<'PY'
 import json, os, subprocess
 
@@ -76,7 +77,7 @@ def effective_size(mon):
     return w, h
 
 size = os.environ.get("DROPDOWN_SIZE", "100% 42%").split()
-move = os.environ.get("DROPDOWN_MOVE", "0 4").split()
+move = os.environ.get("DROPDOWN_MOVE", "0 0").split()
 target = os.environ.get("TARGET_MONITOR", "").strip()
 monitors = json.loads(subprocess.check_output(["hyprctl", "monitors", "-j"], text=True))
 mon = next((m for m in monitors if m["name"] == target), None)
@@ -84,10 +85,13 @@ if not mon:
     mon = next((m for m in monitors if m.get("focused")), monitors[0])
 eff_w, eff_h = effective_size(mon)
 reserved_top = (mon.get("reserved") or [0, 0, 0, 0])[1]
-w = pct(size[0], eff_w)
-h = pct(size[1], eff_h)
-x = mon["x"] + pct(move[0], eff_w)
-y = mon["y"] + reserved_top + pct(move[1], eff_h)
+margin = int(os.environ.get("DROPDOWN_MARGIN", "12"))
+usable_w = eff_w - (margin * 2)
+usable_h = eff_h - reserved_top - (margin * 2)
+w = min(pct(size[0], usable_w), usable_w)
+h = min(pct(size[1], usable_h), usable_h)
+x = mon["x"] + margin + pct(move[0], usable_w)
+y = mon["y"] + reserved_top + margin + pct(move[1], usable_h)
 print(w, h, x, y)
 PY
 )"

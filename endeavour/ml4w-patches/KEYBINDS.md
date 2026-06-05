@@ -39,6 +39,7 @@
 - `Alt+Space` — Focus floating/tiled
 - `Alt+U` / `Alt+Y` / `Alt+N` — Border off / 1px / normal
 - `Alt+X` — Display profiles (W/H/L)
+- **Waybar** — click display icon (H/W/L) next to network for profile menu + auto-detect
 - `Alt+Ctrl+M` — Pavucontrol
 - `Print` — Screenshot (full screen)
 

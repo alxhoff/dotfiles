@@ -28,25 +28,29 @@ in_cooldown() {
 	[[ -f "$COOLDOWN" ]] && (($(date +%s) < $(cat "$COOLDOWN")))
 }
 
-run_apply() {
-	in_cooldown && return 0
+should_apply() {
+	local detected=$1
+	local current=${2:-}
+	[[ "$detected" != skip && "$detected" != "$current" ]]
+}
+
+run_apply_once() {
 	(
 		exec 9>"$LOCK"
 		flock -n 9 || exit 0
-		in_cooldown && exit 0
 
-		local retries=${HOTPLUG_RETRY_COUNT:-6}
+		local retries=${HOTPLUG_RETRY_COUNT:-10}
 		local delay=${HOTPLUG_RETRY_SEC:-3}
 		local attempt=0 detected current
 
 		while ((attempt <= retries)); do
 			detected=$("$APPLY" detect 2>/dev/null || echo skip)
-			if [[ "$detected" != skip ]]; then
-				current=$(cat "$STATE" 2>/dev/null || true)
-				if [[ "$detected" == "$current" ]]; then
-					exit 0
-				fi
+			current=$(cat "$STATE" 2>/dev/null || true)
+			if should_apply "$detected" "$current"; then
 				"$APPLY" auto
+				exit 0
+			fi
+			if [[ "$detected" != skip && "$detected" == "$current" ]]; then
 				exit 0
 			fi
 			((attempt++)) || true
@@ -54,6 +58,20 @@ run_apply() {
 		done
 	) &
 	wait $! 2>/dev/null || true
+}
+
+run_apply() {
+	local pass=${1:-1}
+	run_apply_once
+	[[ "$pass" -ge 2 ]] && return 0
+
+	# Outputs can take a while to enumerate (connector names like DP-8 vs DP-11).
+	local detected current
+	detected=$("$APPLY" detect 2>/dev/null || echo skip)
+	current=$(cat "$STATE" 2>/dev/null || true)
+	if [[ "$detected" == skip ]] || should_apply "$detected" "$current"; then
+		( sleep 12; run_apply 2 ) &
+	fi
 }
 
 schedule_apply() {

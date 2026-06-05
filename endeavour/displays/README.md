@@ -3,7 +3,7 @@
 ## Idea
 
 1. **Save layouts** in `profiles/*.hypr` in **this repo** (`endeavour/displays/profiles/`).
-2. **Detect** which dock is connected by monitor **description** (not `DP-7` vs `DP-10`).
+2. **Detect** which dock is connected by monitor **description** (not `DP-7` vs `DP-11` — connector names change; profiles map via `# description` lines on apply).
 3. **Apply** the matching profile to `~/.config/hypr/monitors.conf` and reload.
 
 **Important:** `nwg-displays` only writes `~/.config/hypr/monitors.conf` (runtime). It does **not**
@@ -54,6 +54,10 @@ On **laptop** profile, windows are moved to the internal panel before externals 
 
 **Alt+X** then **H** / **L** / **W** — home / laptop / work layout  
 Manual apply also works if hotplug mis-detects.
+
+**Waybar:** click the display icon next to network (shows **H** / **W** / **L**). Menu: auto-detect, home, work, laptop, restart hotplug listener. Turns amber when detected profile differs from active.
+
+**Undock / black laptop panel:** **Alt+X → L**, Waybar display menu → **Laptop only**, or `./apply-display-profile.sh laptop`. Open the lid if it was closed at the dock.
 
 If only 1–2 externals are connected (partial dock), auto mode does **nothing** (`skip`) until all home monitors appear or you apply manually.
 

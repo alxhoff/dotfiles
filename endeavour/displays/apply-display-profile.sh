@@ -45,7 +45,7 @@ import json, os, subprocess
 def outputs():
     return json.loads(subprocess.check_output(["hyprctl", "monitors", "all", "-j"], text=True))
 
-def live_externals(monitors, edp):
+def externals(monitors, edp):
     return [
         m for m in monitors
         if edp not in m.get("name", "")
@@ -54,23 +54,39 @@ def live_externals(monitors, edp):
         and m.get("height", 0) > 100
     ]
 
+def dock_parts(env_key):
+    spec = os.environ.get(env_key, "").strip()
+    return [p for p in spec.split("|") if p]
+
 edp = os.environ.get("LAPTOP_PATTERN", "eDP")
-descs = " ".join(m.get("description", "") for m in outputs())
-live = live_externals(
+all_m = outputs()
+descs = " ".join(m.get("description", "") for m in all_m)
+connected = externals(all_m, edp)
+active = externals(
     json.loads(subprocess.check_output(["hyprctl", "monitors", "-j"], text=True)), edp)
+# Hotplugged outputs can appear in `monitors all` before they are active in monitors -j.
+dock_count = max(len(connected), len(active))
 
 def dock_match(env_key, min_count):
-    spec = os.environ.get(env_key, "").strip()
-    if not spec:
+    parts = dock_parts(env_key)
+    if len(parts) < min_count:
         return False
-    parts = [p for p in spec.split("|") if p]
-    return len(parts) >= min_count and all(p in descs for p in parts) and len(live) >= min_count
+    return all(p in descs for p in parts) and dock_count >= min_count
+
+def partial_dock(env_key):
+    parts = dock_parts(env_key)
+    if not parts:
+        return False
+    matched = sum(1 for p in parts if p in descs)
+    return 0 < matched < len(parts)
 
 if dock_match("HOME_DOCK_DESCRIPTIONS", 3):
     print("home")
 elif dock_match("WORK_DOCK_DESCRIPTIONS", 2):
     print("work")
-elif len(live) == 0:
+elif partial_dock("HOME_DOCK_DESCRIPTIONS") or partial_dock("WORK_DOCK_DESCRIPTIONS"):
+    print("skip")
+elif dock_count == 0:
     print("laptop")
 else:
     print("skip")
@@ -79,7 +95,7 @@ PY
 
 resolve_profile_lines() {
     local prof_file=$1
-    export PROF_FILE="$prof_file" LAPTOP_PATTERN
+    export PROF_FILE="$prof_file" LAPTOP_PATTERN HOME_DOCK_DESCRIPTIONS WORK_DOCK_DESCRIPTIONS
     python3 <<'PY'
 import json, os, subprocess, sys
 from pathlib import Path
@@ -88,16 +104,26 @@ path = Path(os.environ["PROF_FILE"])
 edp = os.environ.get("LAPTOP_PATTERN", "eDP")
 all_m = json.loads(subprocess.check_output(["hyprctl", "monitors", "all", "-j"], text=True))
 
+def dock_parts(env_key):
+    spec = os.environ.get(env_key, "").strip()
+    return [p for p in spec.split("|") if p]
+
+def dock_tokens():
+    tokens = []
+    for key in ("HOME_DOCK_DESCRIPTIONS", "WORK_DOCK_DESCRIPTIONS"):
+        tokens.extend(dock_parts(key))
+    tokens.extend(("0x41AD", "Samsung Electric Company", "ViewSonic", "Acer", "Dell Inc."))
+    seen = set()
+    out = []
+    for t in sorted(tokens, key=len, reverse=True):
+        if t not in seen:
+            seen.add(t)
+            out.append(t)
+    return out
+
 def find_name(desc_comment: str):
-    # Most specific tokens first — avoid matching every "Lenovo" panel as eDP-1.
-    tokens = (
-        "DELL UP2516D", "VX3276-QHD", "B246WL",
-        "Q27q-1L", "C34H89x", "0x41AD",
-        "Samsung Electric Company", "ViewSonic", "Acer",
-    )
     desc = desc_comment.lstrip("# ").strip()
-    matched = [t for t in tokens if t in desc or t.lower() in desc.lower()]
-    matched.sort(key=len, reverse=True)
+    matched = [t for t in dock_tokens() if t in desc or t.lower() in desc.lower()]
     for token in matched:
         hits = [m for m in all_m if token in (m.get("description") or "")]
         if len(hits) == 1:
@@ -148,15 +174,6 @@ resolve_and_apply() {
 
     mapfile -t lines < <(resolve_profile_lines "$prof_file") || return 1
 
-    # Undock only: move windows to laptop panel before disabling externals.
-    if [[ "$prof" == laptop ]]; then
-        target_mon=$(find_laptop_monitor)
-        if [[ -n "$target_mon" && -x "$MIGRATE" ]]; then
-            log "moving session → $target_mon"
-            "$MIGRATE" "$target_mon" || true
-        fi
-    fi
-
     {
         echo "# profile=$prof applied $(date -Iseconds)"
         printf '%s\n' "${lines[@]}"
@@ -169,9 +186,23 @@ resolve_and_apply() {
     hyprctl reload
     echo "$prof" >"$STATE_FILE"
 
-    if [[ "$prof" == laptop && -n "$target_mon" ]]; then
+    # Undock: enable internal panel in monitors.conf first (above), then move session.
+    if [[ "$prof" == laptop ]]; then
+        local target_mon brightness
+        target_mon=$(find_laptop_monitor)
+        sleep 0.35
+        if [[ -n "$target_mon" && -x "$MIGRATE" ]]; then
+            log "moving session → $target_mon"
+            "$MIGRATE" "$target_mon" || true
+        fi
         hyprctl dispatch dpms on 2>/dev/null || true
-        hyprctl dispatch focusmonitor "$target_mon" 2>/dev/null || true
+        brightness="${HOME}/.config/ml4w/scripts/brightness-laptop.sh"
+        if [[ -x "$brightness" ]]; then
+            "$brightness" restore || true
+        fi
+        if [[ -n "$target_mon" ]]; then
+            hyprctl dispatch focusmonitor "$target_mon" 2>/dev/null || true
+        fi
     fi
 
     waybar_launch="${HOME}/.config/ml4w/scripts/waybar-launch.sh"

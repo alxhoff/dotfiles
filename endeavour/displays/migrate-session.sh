@@ -41,9 +41,12 @@ if target not in all_names:
 mons, mon_ids, mon_names = refresh_active()
 if target not in mon_names:
     log(f"enabling disabled target {target}")
-    run("hyprctl", "keyword", "monitor", f"{target},preferred,auto,1")
-    time.sleep(0.35)
-    mons, mon_ids, mon_names = refresh_active()
+    for _ in range(6):
+        run("hyprctl", "keyword", "monitor", f"{target},preferred,auto,1")
+        time.sleep(0.25)
+        mons, mon_ids, mon_names = refresh_active()
+        if target in mon_names:
+            break
     if target not in mon_names:
         print(f"migrate: target {target} not active after enable", file=sys.stderr)
         raise SystemExit(1)

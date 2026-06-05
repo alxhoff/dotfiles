@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <object class="GtkMenu" id="menu">
+    <child>
+      <object class="GtkMenuItem" id="auto">
+        <property name="label">Auto-detect layout</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="delimiter1"/>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="home">
+        <property name="label">Home dock</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="work">
+        <property name="label">Work dock</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="laptop">
+        <property name="label">Laptop only</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="delimiter2"/>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="restart-listener">
+        <property name="label">Restart hotplug listener</property>
+      </object>
+    </child>
+  </object>
+</interface>

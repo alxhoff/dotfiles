@@ -60,6 +60,7 @@
         "orientation": "horizontal",
         "modules": [
             "custom/network",
+            "custom/display",
             "battery"
         ]
     },

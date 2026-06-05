@@ -1,0 +1,17 @@
+    "custom/display": {
+        "exec": "~/.config/ml4w/scripts/display-status.sh",
+        "return-type": "json",
+        "interval": 3,
+        "format": "{}",
+        "escape": false,
+        "tooltip": true,
+        "menu": "on-click",
+        "menu-file": "~/.config/waybar/display_menu.xml",
+        "menu-actions": {
+            "auto": "~/.config/dotfiles/endeavour/displays/apply-display-profile.sh auto",
+            "home": "~/.config/dotfiles/endeavour/displays/apply-display-profile.sh home",
+            "work": "~/.config/dotfiles/endeavour/displays/apply-display-profile.sh work",
+            "laptop": "~/.config/dotfiles/endeavour/displays/apply-display-profile.sh laptop",
+            "restart-listener": "~/.config/dotfiles/endeavour/displays/restart-display-listener.sh"
+        }
+    },
