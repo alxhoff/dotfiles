@@ -59,6 +59,10 @@ Manual apply also works if hotplug mis-detects.
 
 **Undock / black laptop panel:** **Alt+X → L**, Waybar display menu → **Laptop only**, or `./apply-display-profile.sh laptop`. Open the lid if it was closed at the dock.
 
+**Dock before opening the laptop (or wrong rotations / laptop still on):** plug the dock, open the lid — the listener should re-apply **home** when the internal panel appears or layouts drift. If not: Waybar display icon → **Auto-detect** or **Home dock**.
+
+**Unplug/replug dock:** wait ~15–30s for monitors to enumerate. The script no longer applies **laptop** while dock outputs are still appearing (that was blocking **home**). Manual: **Auto-detect** in Waybar.
+
 If only 1–2 externals are connected (partial dock), auto mode does **nothing** (`skip`) until all home monitors appear or you apply manually.
 
 ## Office (later)

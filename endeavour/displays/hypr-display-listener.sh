@@ -31,7 +31,9 @@ in_cooldown() {
 should_apply() {
 	local detected=$1
 	local current=${2:-}
-	[[ "$detected" != skip && "$detected" != "$current" ]]
+	[[ "$detected" == skip ]] && return 1
+	[[ "$detected" != "$current" ]] && return 0
+	[[ "$("$APPLY" needs-refresh 2>/dev/null || echo no)" == yes ]]
 }
 
 run_apply_once() {
@@ -50,7 +52,8 @@ run_apply_once() {
 				"$APPLY" auto
 				exit 0
 			fi
-			if [[ "$detected" != skip && "$detected" == "$current" ]]; then
+			if [[ "$detected" != skip && "$detected" == "$current" ]] \
+				&& [[ "$("$APPLY" needs-refresh 2>/dev/null || echo no)" != yes ]]; then
 				exit 0
 			fi
 			((attempt++)) || true
