@@ -152,4 +152,7 @@ link_path "$PATCHES/waybar/config-primary.jsonc" "$ML4W_CFG/waybar/config"
 mkdir -p "$ML4W_CFG/kitty"
 link_path "$PATCHES/kitty/kitty.conf" "$ML4W_CFG/kitty/kitty.conf"
 
+mkdir -p "$ML4W_CFG/dunst"
+link_path "$PATCHES/dunst/dunstrc" "$ML4W_CFG/dunst/dunstrc"
+
 log "Done. Re-run ./endeavour/apply-ml4w-patches.sh for waybar modules/style overlays."

@@ -114,6 +114,7 @@ for name, file in (
     ("idle_inhibitor", "idle-inhibitor.jsonc"),
     ("clock", "clock.jsonc"),
     ("battery", "battery.jsonc"),
+    ("pulseaudio", "pulseaudio.jsonc"),
 ):
     snip_path = patches / file
     if not snip_path.exists():
