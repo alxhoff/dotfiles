@@ -1,0 +1,12 @@
+[Unit]
+Description=Pause Windows Docker VM after boot
+After=docker.service
+Wants=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/windows-pause-on-boot.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target

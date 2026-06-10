@@ -145,6 +145,19 @@ fi
 # --- Docker Windows VM ---
 if want docker; then
     link_path "$DOTFILES_DIR/docker/compose.yaml" "$TARGET_HOME/compose.yaml"
+    mkdir -p "$TARGET_HOME/.local/bin"
+    link_path "$DOTFILES_DIR/docker/windows-pause-on-boot.sh" \
+        "$TARGET_HOME/.local/bin/windows-pause-on-boot.sh"
+    if [[ "$DRY_RUN" != 1 ]]; then
+        chmod +x "$TARGET_HOME/.local/bin/windows-pause-on-boot.sh" 2>/dev/null || true
+    fi
+    mkdir -p "$TARGET_HOME/.config/systemd/user"
+    link_path "$DOTFILES_DIR/docker/windows-pause-on-boot.service" \
+        "$TARGET_HOME/.config/systemd/user/windows-pause-on-boot.service"
+    if [[ "$DRY_RUN" != 1 ]] && command -v systemctl >/dev/null; then
+        systemctl --user daemon-reload
+        systemctl --user enable windows-pause-on-boot.service 2>/dev/null || true
+    fi
 fi
 
 # --- User binaries ---

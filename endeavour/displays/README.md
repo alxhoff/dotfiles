@@ -63,6 +63,8 @@ Manual apply also works if hotplug mis-detects.
 
 **Unplug/replug dock:** wait ~15–30s for monitors to enumerate. The script no longer applies **laptop** while dock outputs are still appearing (that was blocking **home**). Manual: **Auto-detect** in Waybar.
 
+**Invisible windows / Alt+Return does nothing on one monitor:** usually a bad switch while the laptop panel was still active (e.g. home dock from the lock screen). Run `./recover-display-session.sh`, unlock if you were still locked, then try again. Corrupted tiles are floated automatically; re-tile with **Alt+Shift+Space** or move windows to another workspace and back.
+
 If only 1–2 externals are connected (partial dock), auto mode does **nothing** (`skip`) until all home monitors appear or you apply manually.
 
 ## Office (later)
@@ -85,3 +87,4 @@ Restore home from git if needed: `git checkout -- profiles/home.hypr` then `./ap
 | `migrate-session.sh` | move windows before undock |
 | `capture-layout.sh` | save live layout |
 | `restart-display-listener.sh` | safe listener restart |
+| `recover-display-session.sh` | fix broken tiles after a bad dock switch |

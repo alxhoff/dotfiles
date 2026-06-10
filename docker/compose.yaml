@@ -21,5 +21,7 @@ services:
     volumes:
       - ./windows:/storage
       - ./window_data:/data
-    restart: always
+    # unless-stopped: survives reboot; use windows-pause-on-boot to stay paused (not running).
+    # windows stop (compose down) removes the container — it will not come back until windows start.
+    restart: unless-stopped
     stop_grace_period: 2m

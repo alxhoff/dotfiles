@@ -302,9 +302,11 @@ function windows
 				firefox --new-window http://localhost:8006/ &
 			case '*'
 				echo "Usage: windows {start|pause|resume|stop|rebuild|rebuild-hard}"
+				echo "  pause/resume — freeze VM; on boot it stays paused (windows stop removes it until start)"
         end
     else
         echo "Usage: windows {start|pause|resume|stop|rebuild|rebuild-hard}"
+        echo "  On boot the VM is paused by default; use resume when you need it."
     end
 end
 

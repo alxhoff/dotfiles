@@ -5,6 +5,9 @@ set -euo pipefail
 CONFIG="${HOME}/.config/ml4w/dropdown-terminal.env"
 [[ -f "$CONFIG" ]] && source "$CONFIG"
 
+DISPLAY_CONFIG="${HOME}/.config/dotfiles/endeavour/displays/config.env"
+[[ -f "$DISPLAY_CONFIG" ]] && source "$DISPLAY_CONFIG"
+
 : "${DROPDOWN_TERM:=kitty}"
 : "${DROPDOWN_CLASS:=dropdown-terminal}"
 : "${DROPDOWN_TITLE:=Dropdown}"
@@ -26,6 +29,35 @@ for m in json.load(sys.stdin):
         print(m["name"])
         break
 '
+}
+
+primary_monitor_name() {
+	export WAYBAR_PRIMARY_PATTERN WORK_WAYBAR_PRIMARY_PATTERN
+	python3 <<'PY'
+import json, os, subprocess
+
+patterns = [
+    p.strip()
+    for p in (
+        os.environ.get("WAYBAR_PRIMARY_PATTERN", ""),
+        os.environ.get("WORK_WAYBAR_PRIMARY_PATTERN", ""),
+    )
+    if p.strip()
+]
+monitors = json.loads(subprocess.check_output(["hyprctl", "monitors", "-j"], text=True))
+active = [m for m in monitors if not m.get("disabled")]
+primary = None
+for pattern in patterns:
+    primary = next(
+        (m["name"] for m in active if pattern in m.get("description", "")),
+        None,
+    )
+    if primary:
+        break
+if not primary and active:
+    primary = max(active, key=lambda m: m.get("width", 0) * m.get("height", 0))["name"]
+print(primary or "")
+PY
 }
 
 has_dropdown() {
@@ -99,6 +131,15 @@ PY
 	hyprctl dispatch resizewindowpixel exact "$w" "$h",address:"$addr" 2>/dev/null || true
 	hyprctl dispatch movewindowpixel exact "$x" "$y",address:"$addr" 2>/dev/null || true
 }
+
+if [[ "${1:-}" == relayout ]]; then
+	addr=$(dropdown_addr || true)
+	[[ -n "$addr" ]] || exit 0
+	TARGET_MONITOR=$(primary_monitor_name)
+	[[ -n "$TARGET_MONITOR" ]] || TARGET_MONITOR=$(focused_monitor_name)
+	layout_dropdown "$addr" "$TARGET_MONITOR"
+	exit 0
+fi
 
 TARGET_MONITOR=$(focused_monitor_name)
 

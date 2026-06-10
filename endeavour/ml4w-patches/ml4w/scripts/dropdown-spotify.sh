@@ -212,6 +212,17 @@ adopt_discord() {
 	prepare_client "$discord_addr"
 }
 
+if [[ "${1:-}" == relayout ]]; then
+	TARGET_MONITOR=$(primary_monitor_name)
+	[[ -n "$TARGET_MONITOR" ]] || exit 0
+	spotify_addr=$(client_addr "$DROPDOWN_CLASS" || true)
+	discord_addr=$(client_addr "$DISCORD_CLASS" || true)
+	[[ -n "$spotify_addr" || -n "$discord_addr" ]] || exit 0
+	[[ -n "$spotify_addr" ]] || spotify_addr=""
+	layout_windows "$spotify_addr" "$discord_addr" "$TARGET_MONITOR"
+	exit 0
+fi
+
 TARGET_MONITOR=$(primary_monitor_name)
 [[ -n "$TARGET_MONITOR" ]] || TARGET_MONITOR=$(hyprctl monitors -j | python3 -c '
 import json, sys

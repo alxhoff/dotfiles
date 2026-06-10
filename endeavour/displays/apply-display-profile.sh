@@ -37,6 +37,99 @@ for m in json.load(sys.stdin):
 " "$LAPTOP_PATTERN" 2>/dev/null || echo "eDP-1"
 }
 
+find_primary_monitor() {
+    local prof=${1:-home}
+    export WAYBAR_PRIMARY_PATTERN WORK_WAYBAR_PRIMARY_PATTERN PROFILE="$prof"
+    python3 <<'PY'
+import json, os, subprocess
+
+profile = os.environ.get("PROFILE", "home")
+patterns = []
+if profile == "work":
+    patterns.append(os.environ.get("WORK_WAYBAR_PRIMARY_PATTERN", ""))
+else:
+    patterns.append(os.environ.get("WAYBAR_PRIMARY_PATTERN", ""))
+patterns.append(os.environ.get("WORK_WAYBAR_PRIMARY_PATTERN", ""))
+patterns.append(os.environ.get("WAYBAR_PRIMARY_PATTERN", ""))
+patterns = [p.strip() for p in patterns if p.strip()]
+
+monitors = json.loads(subprocess.check_output(["hyprctl", "monitors", "-j"], text=True))
+edp = os.environ.get("LAPTOP_PATTERN", "eDP")
+active = [
+    m for m in monitors
+    if not m.get("disabled")
+    and edp not in m.get("name", "")
+]
+primary = None
+for pattern in patterns:
+    primary = next(
+        (m["name"] for m in active if pattern in m.get("description", "")),
+        None,
+    )
+    if primary:
+        break
+if not primary and active:
+    primary = max(active, key=lambda m: m.get("width", 0) * m.get("height", 0))["name"]
+print(primary or "")
+PY
+}
+
+profile_disables_laptop() {
+    local prof_file=$1
+    local laptop_mon
+    laptop_mon=$(find_laptop_monitor)
+    [[ -n "$laptop_mon" ]] || return 1
+    grep -qE "^monitor=${laptop_mon},disable$" "$prof_file" 2>/dev/null \
+        || grep -qE "^monitor=.*${LAPTOP_PATTERN}.*,disable$" "$prof_file" 2>/dev/null
+}
+
+laptop_monitor_active() {
+    local laptop_mon
+    laptop_mon=$(find_laptop_monitor)
+    [[ -n "$laptop_mon" ]] || return 1
+    hyprctl monitors -j | python3 -c "
+import json, sys
+name = sys.argv[1]
+for m in json.load(sys.stdin):
+    if m.get('name') == name and not m.get('disabled'):
+        raise SystemExit(0)
+raise SystemExit(1)
+" "$laptop_mon"
+}
+
+migrate_off_laptop_if_needed() {
+    local prof=$1
+    local prof_file=$2
+    local primary_mon laptop_mon
+
+    profile_disables_laptop "$prof_file" || return 0
+    laptop_monitor_active || return 0
+    [[ -x "$MIGRATE" ]] || return 0
+
+    primary_mon=$(find_primary_monitor "$prof")
+    [[ -n "$primary_mon" ]] || return 0
+    laptop_mon=$(find_laptop_monitor)
+
+    log "moving session off $laptop_mon → $primary_mon before disabling internal panel"
+    "$MIGRATE" "$primary_mon" || true
+}
+
+schedule_session_refresh() {
+    local refresh="${HOME}/.config/ml4w/scripts/refresh-session-layouts.sh"
+    local flag="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-needs-refresh"
+
+    if pgrep -x hyprlock >/dev/null 2>&1; then
+        touch "$flag"
+        log "deferring layout refresh until unlock"
+        return 0
+    fi
+
+    if [[ -x "$refresh" ]]; then
+        log "refreshing session layouts"
+        "$refresh" || true
+    fi
+}
+
 detect_profile() {
     export HOME_DOCK_DESCRIPTIONS WORK_DOCK_DESCRIPTIONS LAPTOP_PATTERN
     python3 <<'PY'
@@ -336,6 +429,8 @@ resolve_and_apply() {
 
     mapfile -t lines < <(resolve_profile_lines "$prof_file") || return 1
 
+    migrate_off_laptop_if_needed "$prof" "$prof_file"
+
     {
         echo "# profile=$prof applied $(date -Iseconds)"
         printf '%s\n' "${lines[@]}"
@@ -355,6 +450,9 @@ resolve_and_apply() {
             hyprctl keyword monitor "${laptop_mon},disable" 2>/dev/null || true
         fi
     fi
+
+    sleep 0.2
+    schedule_session_refresh
 
     # Undock: enable internal panel in monitors.conf first (above), then move session.
     if [[ "$prof" == laptop ]]; then
