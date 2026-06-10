@@ -10,7 +10,8 @@ LOCK="${XDG_RUNTIME_DIR:-/tmp}/dwindle-auto-split.lock"
 exec 9>"$LOCK"
 flock -n 9 || exit 0
 
-export PORTRAIT_MONITOR_PATTERNS
+EQUALIZE_SCHEDULE="${HOME}/.config/ml4w/scripts/equalize-tiling-schedule.sh"
+export PORTRAIT_MONITOR_PATTERNS EQUALIZE_SCHEDULE
 exec python3 <<'PY'
 import json
 import os
@@ -74,6 +75,14 @@ def handle_event(line: str) -> None:
         return
     if line.startswith("openwindow>>"):
         # Do not touch preselect here — Alt+H/V must stick (permanent_direction_override).
+        schedule = os.environ.get("EQUALIZE_SCHEDULE", "")
+        if os.path.isfile(schedule):
+            subprocess.Popen(
+                [schedule],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True,
+            )
         return
     if line.startswith("monitoradded>>") or line.startswith("monitorremoved>>"):
         last_portrait["monitor"] = None

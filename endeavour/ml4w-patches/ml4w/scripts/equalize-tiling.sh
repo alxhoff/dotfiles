@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Equalize tiled windows in the same row/column (manual: Alt+Ctrl+E).
+# Equalize tiled windows in the same row/column.
+# Manual: Alt+Ctrl+E. Auto: dwindle-auto-split on openwindow (debounced).
 set -euo pipefail
 
 LOCK="${XDG_RUNTIME_DIR:-/tmp}/equalize-tiling.lock"
@@ -68,7 +69,7 @@ def refresh_group(windows, ws_id):
 
 
 def row_is_stable(windows):
-    if any(c["size"][0] < MIN_SIDE for c in windows):
+    if any(c["size"][1] < MIN_SIDE for c in windows):
         return False
     ys = [c["at"][1] for c in windows]
     hs = [c["size"][1] for c in windows]
@@ -76,7 +77,7 @@ def row_is_stable(windows):
 
 
 def col_is_stable(windows):
-    if any(c["size"][1] < MIN_SIDE for c in windows):
+    if any(c["size"][0] < MIN_SIDE for c in windows):
         return False
     xs = [c["at"][0] for c in windows]
     ws = [c["size"][0] for c in windows]
@@ -160,13 +161,13 @@ if not active:
     raise SystemExit(0)
 
 row = [c for c in clients if same_row(active, c)]
-if len(row) >= 2:
+if len(row) >= 2 and row_is_stable(row):
     equalize_row(row, ws_id)
     batch([f"dispatch focuswindow address:{orig}"])
     raise SystemExit(0)
 
 col = [c for c in clients if same_col(active, c)]
-if len(col) >= 2:
+if len(col) >= 2 and col_is_stable(col):
     equalize_col(col, ws_id)
     batch([f"dispatch focuswindow address:{orig}"])
 PY

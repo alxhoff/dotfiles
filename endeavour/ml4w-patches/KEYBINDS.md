@@ -29,7 +29,8 @@
 - `Alt+H` — Next window tiles side-by-side (does not move existing windows)
 - `Alt+V` — Next window tiles top/bottom (does not move existing windows)
 - Portrait/rotated monitors auto-use vertical stack for new windows (`dwindle-auto-split.sh`)
-- **Alt+Ctrl+E** — Equalize widths/heights in the current row/column (optional; only when you want it)
+- New tiled windows auto-equalize their row/column after open (~0.4s; `dwindle-auto-split.sh`)
+- **Alt+Ctrl+E** — Equalize widths/heights in the current row/column (manual; always runs)
 - `Alt+E` / `Alt+Q` — Toggle split orientation
 - `Alt+F` — Fullscreen
 - `Alt+Ctrl+W` — Wallpaper picker (waypaper)
