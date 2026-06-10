@@ -37,7 +37,7 @@ case "$choice" in
             loginctl terminate-user "$USER" 2>/dev/null || true
         fi
         ;;
-    Suspend) systemctl suspend ;;
+    Suspend) "$HOME/.config/ml4w/scripts/suspend-if-battery.sh" --notify ;;
     Reboot) systemctl reboot ;;
     Shutdown) systemctl poweroff ;;
 esac

@@ -45,6 +45,6 @@
 - `Alt+Ctrl+M` — Pavucontrol
 - `Print` — Screenshot (full screen)
 
-Power menu (`Alt+Shift+P`): **l** lock · **s** suspend · **e** logout · **h** hibernate · **r** reboot · **Shift+s** shutdown
+Power menu (`Alt+Shift+P`): **l** lock · **s** suspend (battery only) · **e** logout · **h** hibernate (battery only) · **r** reboot · **Shift+s** shutdown. Auto-suspend after 30 min idle also skips when on external power.
 
 Display menu (`Alt+X`): **w** work · **h** home · **l** laptop
