@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Keep dwindle preselect aligned with monitor shape (portrait = stack vertically).
+# Portrait monitors: default new windows to vertical stack. Respects Alt+H/V preselect.
 set -euo pipefail
 
 CONFIG_ENV="${HOME}/.config/dotfiles/endeavour/displays/config.env"
@@ -20,7 +20,7 @@ import sys
 import time
 
 patterns = [p for p in os.environ.get("PORTRAIT_MONITOR_PATTERNS", "").split("|") if p]
-last = {"monitor": None, "dir": None}
+last_portrait = {"monitor": None}
 
 
 def hypr_json(*args):
@@ -40,19 +40,18 @@ def is_portrait(mon: dict) -> bool:
     return mon.get("height", 0) > mon.get("width", 0)
 
 
-def preselect_for(name: str | None) -> None:
+def preselect_portrait(name: str | None) -> None:
+    """Only portrait monitors get an automatic preselect (vertical stack)."""
     if not name:
         return
     monitors = hypr_json("monitors", "-j")
     mon = next((m for m in monitors if m.get("name") == name), None)
-    if not mon:
+    if not mon or not is_portrait(mon):
         return
-    direction = "d" if is_portrait(mon) else "r"
-    if last["monitor"] == name and last["dir"] == direction:
+    if last_portrait["monitor"] == name:
         return
-    dispatch("layoutmsg", "preselect", direction)
-    last["monitor"] = name
-    last["dir"] = direction
+    dispatch("layoutmsg", "preselect", "d")
+    last_portrait["monitor"] = name
 
 
 def active_monitor() -> str | None:
@@ -71,14 +70,14 @@ def handle_event(line: str) -> None:
     if not line:
         return
     if line.startswith("focusedmon>>"):
-        preselect_for(line.split(">>", 1)[1])
+        preselect_portrait(line.split(">>", 1)[1])
         return
     if line.startswith("openwindow>>"):
-        preselect_for(active_monitor())
+        # Do not touch preselect here — Alt+H/V must stick (permanent_direction_override).
         return
     if line.startswith("monitoradded>>") or line.startswith("monitorremoved>>"):
-        last["monitor"] = None
-        preselect_for(active_monitor())
+        last_portrait["monitor"] = None
+        preselect_portrait(active_monitor())
 
 
 def main() -> int:
@@ -88,7 +87,7 @@ def main() -> int:
         return 1
     sock_path = f"{runtime}/hypr/{sig}/.socket2.sock"
 
-    preselect_for(active_monitor())
+    preselect_portrait(active_monitor())
 
     while True:
         try:
