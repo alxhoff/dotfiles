@@ -61,7 +61,7 @@ Manual apply also works if hotplug mis-detects.
 
 **Dock before opening the laptop (or wrong rotations / laptop still on):** plug the dock, open the lid — the listener should re-apply **home** when the internal panel appears or layouts drift. If not: Waybar display icon → **Auto-detect** or **Home dock**.
 
-**Unplug/replug dock:** wait ~15–30s for monitors to enumerate. The script no longer applies **laptop** while dock outputs are still appearing (that was blocking **home**). Manual: **Auto-detect** in Waybar.
+**Unplug/replug dock:** wait ~5–15s for the listener to switch profiles. Undock now keys off **active** external monitors only (stale `monitors all` entries no longer block **laptop**). Manual: **Alt+X → L** or Waybar **Auto-detect**.
 
 **Invisible windows / Alt+Return does nothing on one monitor:** usually a bad switch while the laptop panel was still active (e.g. home dock from the lock screen). Run `./recover-display-session.sh`, unlock if you were still locked, then try again. Corrupted tiles are floated automatically; re-tile with **Alt+Shift+Space** or move windows to another workspace and back.
 

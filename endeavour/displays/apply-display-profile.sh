@@ -153,32 +153,33 @@ def dock_parts(env_key):
 
 edp = os.environ.get("LAPTOP_PATTERN", "eDP")
 all_m = outputs()
-descs = " ".join(m.get("description", "") for m in all_m)
 connected = externals(all_m, edp)
 active = externals(
     json.loads(subprocess.check_output(["hyprctl", "monitors", "-j"], text=True)), edp)
-# Hotplugged outputs can appear in `monitors all` before they are active in monitors -j.
-dock_count = max(len(connected), len(active))
+
+# Undocked: no active externals. Ignore stale `monitors all` descriptions (they block laptop).
+if not active:
+    if connected:
+        print("skip")  # hotplug: outputs in `all` but not active yet
+    else:
+        print("laptop")
+    raise SystemExit(0)
+
+active_descs = " ".join(m.get("description", "") for m in active)
+active_count = len(active)
 
 def dock_match(env_key, min_count):
     parts = dock_parts(env_key)
     if len(parts) < min_count:
         return False
-    return all(p in descs for p in parts) and dock_count >= min_count
+    return all(p in active_descs for p in parts) and active_count >= min_count
 
 def partial_dock(env_key):
     parts = dock_parts(env_key)
     if not parts:
         return False
-    matched = sum(1 for p in parts if p in descs)
+    matched = sum(1 for p in parts if p in active_descs)
     return 0 < matched < len(parts)
-
-def any_dock_hint():
-    for key in ("HOME_DOCK_DESCRIPTIONS", "WORK_DOCK_DESCRIPTIONS"):
-        for part in dock_parts(key):
-            if part in descs:
-                return True
-    return False
 
 if dock_match("HOME_DOCK_DESCRIPTIONS", 3):
     print("home")
@@ -186,8 +187,6 @@ elif dock_match("WORK_DOCK_DESCRIPTIONS", 2):
     print("work")
 elif partial_dock("HOME_DOCK_DESCRIPTIONS") or partial_dock("WORK_DOCK_DESCRIPTIONS"):
     print("skip")
-elif dock_count == 0 and not any_dock_hint():
-    print("laptop")
 else:
     print("skip")
 PY
@@ -253,21 +252,15 @@ def dock_parts(env_key):
     return [p for p in os.environ.get(env_key, "").split("|") if p]
 
 edp = os.environ.get("LAPTOP_PATTERN", "eDP")
-descs = " ".join(m.get("description", "") for m in outputs())
+active = json.loads(subprocess.check_output(["hyprctl", "monitors", "-j"], text=True))
 externals = [
-    m for m in outputs()
+    m for m in active
     if edp not in m.get("name", "")
     and not m.get("disabled")
     and m.get("width", 0) > 100
+    and m.get("height", 0) > 100
 ]
-if externals:
-    print("yes")
-    raise SystemExit(0)
-for key in ("HOME_DOCK_DESCRIPTIONS", "WORK_DOCK_DESCRIPTIONS"):
-    if any(p in descs for p in dock_parts(key)):
-        print("yes")
-        raise SystemExit(0)
-print("no")
+print("yes" if externals else "no")
 PY
 }
 

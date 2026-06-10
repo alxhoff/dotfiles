@@ -15,7 +15,12 @@ DEBOUNCE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-debounce.pid"
 LOCK="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-apply.lock"
 COOLDOWN="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-cooldown"
 STATE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-profile"
+LOG="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-listener.log"
 echo $$ >"$PIDFILE"
+
+log() {
+	echo "$(date -Iseconds) listener: $*" >>"$LOG"
+}
 
 cancel_debounce() {
 	if [[ -f "$DEBOUNCE" ]]; then
@@ -48,8 +53,9 @@ run_apply_once() {
 		while ((attempt <= retries)); do
 			detected=$("$APPLY" detect 2>/dev/null || echo skip)
 			current=$(cat "$STATE" 2>/dev/null || true)
+			log "detect=$detected current=$current attempt=$attempt"
 			if should_apply "$detected" "$current"; then
-				"$APPLY" auto
+				"$APPLY" auto 2>&1 | tee -a "$LOG"
 				exit 0
 			fi
 			if [[ "$detected" != skip && "$detected" == "$current" ]] \
@@ -78,7 +84,9 @@ run_apply() {
 }
 
 schedule_apply() {
+	local reason=${1:-hotplug}
 	cancel_debounce
+	log "scheduled ($reason)"
 	(
 		sleep "${HOTPLUG_SETTLE_SEC:-5}"
 		run_apply
@@ -94,7 +102,8 @@ listen_events() {
 		if [[ -S "$sock" ]]; then
 			socat -u "UNIX-CONNECT:$sock" - 2>/dev/null | while read -r line; do
 				case $line in
-				monitoradded* | monitorremoved*) schedule_apply ;;
+				monitoradded*) schedule_apply monitoradded ;;
+				monitorremoved*) schedule_apply monitorremoved ;;
 				esac
 			done
 		fi
@@ -103,5 +112,5 @@ listen_events() {
 }
 
 # Dock may already be connected when Hyprland starts (no monitoradded events after this).
-schedule_apply
+schedule_apply startup
 listen_events
