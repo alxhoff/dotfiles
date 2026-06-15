@@ -1,0 +1,26 @@
+# Optional eye candy — requires SwayFX (stock Sway ignores/invalidates these).
+# Install: paru -S swayfx-git   (or swayfx from AUR)
+# Enable:  ln -sf 05-swayfx.conf.example ~/.config/sway/config.d/05-swayfx.conf
+# Session: change greeter / dotfiles-start-sway.sh to run `swayfx` instead of `sway`
+#
+# Corners need visible gaps (see 00-base.conf).
+
+corner_radius 10
+smart_corner_radius enable
+
+blur enable
+blur_xray disable
+blur_passes 2
+blur_radius 5
+
+layer_effects "waybar" {
+    corner_radius 10;
+}
+
+layer_effects "primary" {
+    corner_radius 10;
+}
+
+layer_effects "secondary" {
+    corner_radius 10;
+}

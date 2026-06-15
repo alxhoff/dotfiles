@@ -24,14 +24,15 @@
 - `Alt+Shift+1…0` — Move window and follow
 - `Alt+J/K/L/;` or arrows — Focus in direction; cycles tabs inside a group, then other windows/monitors
 - `Alt+Shift+J/K/L/;` or arrows — Move window within the workspace first (swap/re-nest splits); crosses to the next monitor only at the screen edge
-- `Alt+W` — Tabbed layout (all windows layered; press again to ungroup)
-- `Alt+S` — Stacked layout (tab bar with titles visible; press again to ungroup)
+- `Alt+W` — Tabbed layout on **active monitor** (all tiled windows there)
+- `Alt+S` — Stacked layout on **active monitor** (tab bar with titles)
+- `Alt+E` — Ungroup / exit stack on active monitor; if not grouped, toggle split (i3 `layout toggle split`)
+- `Alt+Q` — Toggle split orientation
 - `Alt+H` — Next window tiles side-by-side (does not move existing windows)
 - `Alt+V` — Next window tiles top/bottom (does not move existing windows)
 - Portrait/rotated monitors auto-use vertical stack for new windows (`dwindle-auto-split.sh`)
 - New tiled windows auto-equalize their row/column after open (~0.4s; `dwindle-auto-split.sh`)
 - **Alt+Ctrl+E** — Equalize widths/heights in the current row/column (manual; always runs)
-- `Alt+E` / `Alt+Q` — Toggle split orientation
 - `Alt+F` — Fullscreen
 - `Alt+Ctrl+W` — Wallpaper picker (waypaper)
 - `Alt+Shift+W` — Random wallpaper

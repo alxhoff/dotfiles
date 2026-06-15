@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
-# Guake-style dropdown Spotify (+ Discord split when running). Hyprland special workspace.
+# Guake-style dropdown Spotify (+ Discord split when running).
 set -euo pipefail
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=compositor.sh
+source "$SCRIPT_DIR/compositor.sh"
+if compositor_is_sway; then
+	exec "$SCRIPT_DIR/dropdown-spotify-sway.sh" "$@"
+fi
 
 CONFIG="${HOME}/.config/ml4w/dropdown-spotify.env"
 [[ -f "$CONFIG" ]] && source "$CONFIG"

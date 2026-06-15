@@ -43,10 +43,12 @@ window#waybar {
     background: transparent;
 }
 
-#workspaces button.active {
+#workspaces button.active,
+#workspaces button.focused {
     background: @module-bg;
     color: @accent;
     font-weight: 600;
+    opacity: 1;
 }
 
 #workspaces button:hover {
@@ -496,6 +498,14 @@ window#waybar.secondary #workspaces button {
     padding: 2px 8px;
     margin: 2px 2px;
     min-width: 0;
+}
+
+window#waybar.secondary #workspaces button.active,
+window#waybar.secondary #workspaces button.focused {
+    background: @module-bg;
+    color: @accent;
+    font-weight: 600;
+    opacity: 1;
 }
 
 window#waybar.secondary #time {

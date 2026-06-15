@@ -1,0 +1,5 @@
+# Work dock — translated from endeavour/displays/profiles/work.hypr
+
+output DP-8 mode 2560x1440@60 position 7920 0 transform 270
+output DP-9 mode 3440x1440@60 position 4480 200
+output eDP-1 mode 1920x1200@60 position 5360 1640

@@ -1,0 +1,7 @@
+# Home dock — translated from endeavour/displays/profiles/home.hypr
+# Re-map connector names if swaymsg -t get_outputs shows different DP-* IDs.
+
+output DP-7 mode 2560x1440@60 position 1920 192 transform 90
+output DP-8 mode 2560x1440@60 position 3360 0
+output DP-9 mode 1920x1200@60 position 5920 192 transform 90
+output eDP-1 disable

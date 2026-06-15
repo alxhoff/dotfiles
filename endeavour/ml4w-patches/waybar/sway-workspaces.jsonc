@@ -1,0 +1,5 @@
+    "sway/workspaces": {
+        "on-click": "activate",
+        "all-outputs": true,
+        "format": "{name}"
+    },

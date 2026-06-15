@@ -141,6 +141,10 @@ if want i3; then
     mkdir -p "$TARGET_HOME/.config"
     link_path "$DOTFILES_DIR/i3" "$TARGET_HOME/.config/i3"
 fi
+if want sway; then
+    mkdir -p "$TARGET_HOME/.config"
+    link_path "$DOTFILES_DIR/sway" "$TARGET_HOME/.config/sway"
+fi
 
 # --- Docker Windows VM ---
 if want docker; then

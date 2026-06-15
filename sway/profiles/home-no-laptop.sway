@@ -1,0 +1,5 @@
+# Home dock, laptop panel off
+output DP-7 mode 2560x1440@60 position 0 0
+output DP-8 mode 2560x1440@60 position 2560 0
+output DP-9 mode 1920x1200@60 position 5120 0
+output eDP-1 disable

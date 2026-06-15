@@ -2,6 +2,10 @@
 # Fix tiled-layout corruption and misplaced dropdown windows after display changes.
 set -euo pipefail
 
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=compositor.sh
+source "$SCRIPT_DIR/compositor.sh"
+
 CONFIG_ENV="${HOME}/.config/dotfiles/endeavour/displays/config.env"
 [[ -f "$CONFIG_ENV" ]] && source "$CONFIG_ENV"
 : "${PORTRAIT_MONITOR_PATTERNS:=Q27q-1L|B246WL|UP2516D}"
@@ -13,6 +17,14 @@ DROPDOWN_SPOTIFY="${HOME}/.config/ml4w/scripts/dropdown-spotify.sh"
 
 exec 9>"$LOCK"
 flock -n 9 || exit 0
+
+if compositor_is_sway; then
+	for script in "$DROPDOWN_TERM" "$DROPDOWN_SPOTIFY"; do
+		[[ -x "$script" ]] && "$script" relayout 2>/dev/null || true
+	done
+	rm -f "$REFRESH_FLAG"
+	exit 0
+fi
 
 command -v hyprctl >/dev/null || exit 0
 hyprctl version >/dev/null 2>&1 || exit 0

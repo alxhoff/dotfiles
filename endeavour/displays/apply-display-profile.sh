@@ -14,6 +14,11 @@ MONITORS_CONF="${HOME}/.config/hypr/monitors.conf"
 STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-profile"
 MIGRATE="$SCRIPT_DIR/migrate-session.sh"
 
+if command -v swaymsg >/dev/null 2>&1 && swaymsg -t get_version >/dev/null 2>&1 \
+    && ! { command -v hyprctl >/dev/null && hyprctl version >/dev/null 2>&1; }; then
+    exec "$SCRIPT_DIR/apply-display-profile-sway.sh" "$@"
+fi
+
 log() { echo "displays: $*"; }
 
 require_hypr() {

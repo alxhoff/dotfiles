@@ -1,0 +1,6 @@
+# Dotfiles Sway config (trial session — Hyprland stays untouched).
+# Based on i3/config with Endeavour/Hyprland keybind updates where portable.
+#
+# Log out → plasmalogin → pick "Sway (dotfiles trial)" or "Hyprland".
+
+include ~/.config/sway/config.d/*.conf
