@@ -22,6 +22,27 @@ if [[ -f "$DISPLAYS/monitors.conf.default" ]] && [[ ! -f "${HOME}/.config/hypr/m
     log "hypr/monitors.conf (safe default)"
 fi
 
+if [[ -x "$DISPLAYS/validate-monitors-conf.sh" ]] && ! hyprctl version >/dev/null 2>&1; then
+    "$DISPLAYS/validate-monitors-conf.sh" || true
+    log "monitors.conf validated (pre-session)"
+fi
+
+if [[ -x "$DOTFILES_DIR/endeavour/install-systemd-policies.sh" ]]; then
+    if [[ -f /etc/systemd/logind.conf.d/99-dotfiles-lid.conf ]]; then
+        log "systemd logind lid policy already installed"
+    else
+        log "install logind lid policy: sudo $DOTFILES_DIR/endeavour/install-systemd-policies.sh"
+    fi
+fi
+
+if [[ -x "$DOTFILES_DIR/endeavour/install-hypr-session.sh" ]]; then
+    if [[ -x /usr/local/lib/dotfiles/start-hyprland-preflight.sh ]]; then
+        log "Hyprland session preflight already installed (/usr/local)"
+    else
+        log "install session preflight: sudo $DOTFILES_DIR/endeavour/install-hypr-session.sh"
+    fi
+fi
+
 HYPR_MAIN="$ML4W_CFG/hypr/hyprland.conf"
 for src_line in \
     'source = ~/.config/hypr/conf/binds-dotfiles.conf' \

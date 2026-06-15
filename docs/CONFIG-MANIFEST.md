@@ -21,8 +21,6 @@ Clone location can differ; `~/.config/dotfiles` always resolves correctly once l
 |-----------|-----------|
 | `~/.config/dotfiles` | `.` (repo root) |
 | `~/.config/hypr/display-profiles` | `endeavour/displays/profiles/` |
-| `~/.config/kanshi/config` | `endeavour/displays/kanshi.config` |
-| `~/.config/hypr/scripts/dotfiles-display-hook.sh` | `endeavour/displays/dotfiles-display-hook.sh` |
 | `~/.config/waypaper/config.ini` | `endeavour/ml4w-patches/waypaper/config.ini` |
 | `~/.config/hypr/conf/*-dotfiles.conf`, `layouts.conf`, `autostart.conf`, … | `endeavour/ml4w-patches/hypr/conf/` |
 | `~/.config/hypr/hyprlock.conf`, `hypridle.conf`, `hyprpaper.conf` | `endeavour/ml4w-patches/hypr/` |

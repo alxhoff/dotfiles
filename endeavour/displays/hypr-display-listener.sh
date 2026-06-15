@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# On hotplug: wait for outputs to settle, then apply the matching profile once.
-# Also applies on startup (dock may already be connected before this script runs).
+# Hotplug listener: debounce, then apply the matching profile (with retries).
 set -euo pipefail
 
 DOTFILES_DISPLAYS=${DOTFILES_DISPLAYS:-$HOME/.config/dotfiles/endeavour/displays}
@@ -13,7 +12,6 @@ source "$DOTFILES_DISPLAYS/config.env"
 PIDFILE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-listener.pid"
 DEBOUNCE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-debounce.pid"
 LOCK="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-apply.lock"
-COOLDOWN="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-cooldown"
 STATE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-profile"
 LOG="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-listener.log"
 echo $$ >"$PIDFILE"
@@ -29,10 +27,6 @@ cancel_debounce() {
 	fi
 }
 
-in_cooldown() {
-	[[ -f "$COOLDOWN" ]] && (($(date +%s) < $(cat "$COOLDOWN")))
-}
-
 should_apply() {
 	local detected=$1
 	local current=${2:-}
@@ -41,13 +35,13 @@ should_apply() {
 	[[ "$("$APPLY" needs-refresh 2>/dev/null || echo no)" == yes ]]
 }
 
-run_apply_once() {
+run_apply() {
 	(
 		exec 9>"$LOCK"
 		flock -n 9 || exit 0
 
-		local retries=${HOTPLUG_RETRY_COUNT:-10}
-		local delay=${HOTPLUG_RETRY_SEC:-3}
+		local retries=${HOTPLUG_RETRY_COUNT:-6}
+		local delay=${HOTPLUG_RETRY_SEC:-2}
 		local attempt=0 detected current
 
 		while ((attempt <= retries)); do
@@ -69,26 +63,28 @@ run_apply_once() {
 	wait $! 2>/dev/null || true
 }
 
-run_apply() {
-	local pass=${1:-1}
-	run_apply_once
-	[[ "$pass" -ge 2 ]] && return 0
-
-	# Outputs can take a while to enumerate (connector names like DP-8 vs DP-11).
-	local detected current
+startup_settle_sec() {
+	local detected
 	detected=$("$APPLY" detect 2>/dev/null || echo skip)
-	current=$(cat "$STATE" 2>/dev/null || true)
-	if [[ "$detected" == skip ]] || should_apply "$detected" "$current"; then
-		( sleep 12; run_apply 2 ) &
+	if [[ "$detected" == laptop ]]; then
+		echo 0
+	else
+		echo "${HOTPLUG_SETTLE_SEC:-5}"
 	fi
 }
 
 schedule_apply() {
 	local reason=${1:-hotplug}
+	local settle
 	cancel_debounce
 	log "scheduled ($reason)"
+	if [[ "$reason" == startup ]]; then
+		settle=$(startup_settle_sec)
+	else
+		settle=${HOTPLUG_SETTLE_SEC:-5}
+	fi
 	(
-		sleep "${HOTPLUG_SETTLE_SEC:-5}"
+		sleep "$settle"
 		run_apply
 	) &
 	echo $! >"$DEBOUNCE"
@@ -111,6 +107,5 @@ listen_events() {
 	done
 }
 
-# Dock may already be connected when Hyprland starts (no monitoradded events after this).
 schedule_apply startup
 listen_events

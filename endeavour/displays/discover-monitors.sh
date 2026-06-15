@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run inside Hyprland. Shows names (can change) and descriptions (stable for kanshi/config.env).
+# Run inside Hyprland. Shows names (can change) and descriptions (stable for config.env).
 set -euo pipefail
 
 if ! command -v hyprctl >/dev/null; then

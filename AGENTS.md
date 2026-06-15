@@ -57,7 +57,7 @@ Do **not** edit ML4W files in place without also updating `ml4w-patches/` — ch
 - **Launcher:** `~/.config/ml4w/scripts/waybar-launch.sh` (from patches).
 - **Primary monitor** (pattern in `endeavour/displays/config.env`: `WAYBAR_PRIMARY_PATTERN=VX3276-QHD`): full bar → `config-primary.jsonc`.
 - **Secondary / portrait:** minimal bar → `config-secondary.jsonc` (workspaces, passthrough, mpris, pulseaudio, clock). **Tray only on primary** — SNI (nm-applet) cannot register on two bars.
-- **Restart on display change:** `endeavour/displays/dotfiles-display-hook.sh` calls waybar-launch after profile apply.
+- **Waybar on display change:** `apply-display-profile.sh` relaunches waybar after apply.
 - **Logs:** `$XDG_RUNTIME_DIR/dotfiles-waybar/{primary,secondary}.log` if a bar disappears.
 - **Idle inhibitor:** text labels “Awake” / “Auto-lock” (no Nerd Font icons in that module).
 

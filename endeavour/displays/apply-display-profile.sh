@@ -12,14 +12,9 @@ PROFILE=${1:-auto}
 PROFILES_DIR=$(resolve_profiles_dir "$SCRIPT_DIR")
 MONITORS_CONF="${HOME}/.config/hypr/monitors.conf"
 STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-profile"
-COOLDOWN_FILE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-cooldown"
 MIGRATE="$SCRIPT_DIR/migrate-session.sh"
 
 log() { echo "displays: $*"; }
-
-set_cooldown() {
-    echo $(($(date +%s) + ${APPLY_COOLDOWN_SEC:-8})) >"$COOLDOWN_FILE"
-}
 
 require_hypr() {
     command -v hyprctl >/dev/null || { log "hyprctl missing"; exit 1; }
@@ -190,54 +185,6 @@ elif partial_dock("HOME_DOCK_DESCRIPTIONS") or partial_dock("WORK_DOCK_DESCRIPTI
 else:
     print("skip")
 PY
-}
-
-stable_detect() {
-    local attempts=${1:-10}
-    local delay=${2:-2}
-    local i result best="skip"
-    local first
-
-    first=$(detect_profile)
-    case "$first" in
-        home | work)
-            echo "$first"
-            return 0
-            ;;
-        laptop)
-            if [[ "$(dock_outputs_present)" != yes ]]; then
-                echo laptop
-                return 0
-            fi
-            best="skip"
-            ;;
-        skip)
-            best="skip"
-            ;;
-    esac
-
-    for ((i = 0; i < attempts; i++)); do
-        result=$(detect_profile)
-        case "$result" in
-            home | work)
-                echo "$result"
-                return 0
-                ;;
-            laptop)
-                if [[ "$(dock_outputs_present)" != yes ]]; then
-                    echo laptop
-                    return 0
-                fi
-                best="skip"
-                ;;
-            skip)
-                best="skip"
-                ;;
-        esac
-        sleep "$delay"
-    done
-
-    echo "$best"
 }
 
 dock_outputs_present() {
@@ -432,7 +379,6 @@ resolve_and_apply() {
     log "applied $prof → $MONITORS_CONF"
     printf '  %s\n' "${lines[@]}" >&2
 
-    set_cooldown
     hyprctl reload
     echo "$prof" >"$STATE_FILE"
 
@@ -477,7 +423,7 @@ main() {
     require_hypr
 
     if [[ "$PROFILE" == auto ]]; then
-        PROFILE=$(stable_detect)
+        PROFILE=$(detect_profile)
         log "detected: $PROFILE"
         [[ "$PROFILE" == skip ]] && { log "partial setup — no change"; exit 0; }
         if [[ "$PROFILE" == laptop ]] && [[ "$(dock_outputs_present)" == yes ]]; then
@@ -529,7 +475,25 @@ main() {
             fi
             resolve_and_apply "$PROFILE" || exit 1
             ;;
-        recover) resolve_and_apply laptop || exit 1 ;;
+        recover)
+            local refresh="${HOME}/.config/ml4w/scripts/refresh-session-layouts.sh"
+            if [[ -x "$refresh" ]]; then
+                log "recover: refreshing session layouts"
+                "$refresh" || true
+            fi
+            PROFILE=$(cat "$STATE_FILE" 2>/dev/null || true)
+            [[ -z "$PROFILE" || "$PROFILE" == skip ]] && PROFILE=$(detect_profile)
+            case "$PROFILE" in
+                home|work|laptop) ;;
+                *) PROFILE=laptop ;;
+            esac
+            log "recover: re-applying $PROFILE"
+            if [[ "$PROFILE" == laptop ]] && [[ "$(dock_outputs_present)" == yes ]]; then
+                log "recover: externals present — use home/work manually if needed"
+                exit 0
+            fi
+            resolve_and_apply "$PROFILE" || exit 1
+            ;;
         *) log "unknown profile: $PROFILE"; exit 1 ;;
     esac
 }

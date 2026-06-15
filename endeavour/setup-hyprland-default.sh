@@ -116,24 +116,6 @@ if [[ "$DRY_RUN" != 1 ]]; then
     fi
 fi
 
-# Kanshi user config symlink
-mkdir -p "$HOME/.config/kanshi"
-if [[ -f "$DOTFILES_DIR/endeavour/displays/kanshi.config" ]]; then
-    if [[ "$DRY_RUN" == 1 ]]; then
-        echo "  [dry-run] ln -sf kanshi.config -> ~/.config/kanshi/config"
-    else
-        ln -sf "$DOTFILES_DIR/endeavour/displays/kanshi.config" "$HOME/.config/kanshi/config"
-        log "kanshi: no systemd unit on Arch — add to hypr autostart: exec-once = kanshi"
-    fi
-fi
-
-# Hypr hook script for kanshi exec=
-mkdir -p "$HOME/.config/hypr/scripts"
-if [[ "$DRY_RUN" != 1 ]]; then
-    ln -sf "$DOTFILES_DIR/endeavour/displays/dotfiles-display-hook.sh" \
-        "$HOME/.config/hypr/scripts/dotfiles-display-hook.sh"
-fi
-
 DM=$(systemctl show -p Id display-manager --value 2>/dev/null || true)
 log "Display manager: ${DM:-unknown}"
 
@@ -155,13 +137,8 @@ SDDM (ML4W): edit /etc/sddm.conf - [Autologin] Session=hyprland (optional).
 1) Log into Hyprland once.
 2) At home dock:  cd $DOTFILES_DIR/endeavour/displays && ./discover-monitors.sh | tee ~/monitor-discovery-home.txt
 3) At work dock:   ./discover-monitors.sh | tee ~/monitor-discovery-work.txt
-4) Edit profiles/*.hypr and kanshi.config with real monitor names.
-5) Merge into ~/.config/hypr/conf/autostart.conf:
-
-   exec-once = $DOTFILES_DIR/endeavour/displays/hypr-display-listener.sh
-
-   Or use kanshi only (exec-once = kanshi in autostart.conf).
-
+4) Edit profiles/*.hypr and config.env (HOME_DOCK_DESCRIPTIONS / WORK_DOCK_DESCRIPTIONS).
+5) ./endeavour/link-configs.sh  (listener autostart is in ml4w autostart.conf)
 6) Test: ./apply-display-profile.sh auto
 
 See docs/HYPRLAND-DISPLAYS.md

@@ -25,10 +25,7 @@ choice=$(
 
 case "$choice" in
     Lock)
-        if command -v hyprlock >/dev/null 2>&1; then
-            exec hyprlock
-        fi
-        loginctl lock-session 2>/dev/null || true
+        exec "$HOME/.config/ml4w/scripts/lock-session.sh"
         ;;
     'Log out')
         if command -v hyprctl >/dev/null 2>&1; then
@@ -37,7 +34,7 @@ case "$choice" in
             loginctl terminate-user "$USER" 2>/dev/null || true
         fi
         ;;
-    Suspend) "$HOME/.config/ml4w/scripts/suspend-if-battery.sh" --notify ;;
+    Suspend) "$HOME/.config/ml4w/scripts/suspend.sh" ;;
     Reboot) systemctl reboot ;;
     Shutdown) systemctl poweroff ;;
 esac

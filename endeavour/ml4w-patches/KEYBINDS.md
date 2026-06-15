@@ -10,7 +10,7 @@
 - `Alt+C` — Browser
 - `Alt+Ctrl+V` — Clipboard history (not in i3; moved off Alt+V)
 - `Alt+/` — Keybind cheat sheet
-- `Alt+P` — Lock screen
+- `Alt+P` — Lock screen (hyprlock; idle lock uses the same path)
 - `Alt+Shift+P` — Power menu (l/s/e/h/r/Shift+s)
 - `Alt+R` — Resize mode
 - `Alt+Shift+C` — Reload Hyprland config
@@ -35,7 +35,7 @@
 - `Alt+F` — Fullscreen
 - `Alt+Ctrl+W` — Wallpaper picker (waypaper)
 - `Alt+Shift+W` — Random wallpaper
-- `Alt+Esc` — Game passthrough toggle (Hyprland stops grabbing input)
+- `Alt+Esc` — Game passthrough toggle (releases Alt+mouse window drag/resize and scroll workspace)
 - `Alt+Ctrl+G` — Steam Link game mode (focus + passthrough)
 - `Alt+Shift+Space` — Floating toggle
 - `Alt+Space` — Focus floating/tiled
@@ -45,6 +45,6 @@
 - `Alt+Ctrl+M` — Pavucontrol
 - `Print` — Screenshot (full screen)
 
-Power menu (`Alt+Shift+P`): **l** lock · **s** suspend (battery only) · **e** logout · **h** hibernate (battery only) · **r** reboot · **Shift+s** shutdown. Auto-suspend after 30 min idle also skips when on external power.
+Power menu (`Alt+Shift+P`): **l** lock · **s** suspend · **e** logout · **h** hibernate (battery only) · **r** reboot · **Shift+s** shutdown. Waybar power icon (wlogout): **u** suspend. Auto-suspend after 30 min idle skips when on external power.
 
 Display menu (`Alt+X`): **w** work · **h** home · **l** laptop

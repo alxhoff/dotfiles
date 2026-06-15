@@ -1,0 +1,30 @@
+{
+    "label" : "lock",
+    "action" : "~/.config/ml4w/scripts/lock-session.sh",
+    "text" : "Lock",
+    "keybind" : "l"
+}
+{
+    "label" : "suspend",
+    "action" : "~/.config/ml4w/scripts/suspend.sh",
+    "text" : "Suspend",
+    "keybind" : "u"
+}
+{
+    "label" : "logout",
+    "action" : "hyprctl dispatch exit",
+    "text" : "Exit",
+    "keybind" : "e"
+}
+{
+    "label" : "shutdown",
+    "action" : "systemctl poweroff",
+    "text" : "Shutdown",
+    "keybind" : "s"
+}
+{
+    "label" : "reboot",
+    "action" : "systemctl reboot",
+    "text" : "Reboot",
+    "keybind" : "r"
+}

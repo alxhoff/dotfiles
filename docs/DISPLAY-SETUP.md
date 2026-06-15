@@ -2,6 +2,8 @@
 
 On Wayland, **arandr/xrandr do not apply**. Use Hyprland’s `monitor=` rules plus this repo’s `endeavour/displays/` tools.
 
+**Canonical guide:** [endeavour/displays/README.md](../endeavour/displays/README.md) (hotplug listener only — kanshi removed).
+
 ## Overview
 
 | Tool | Role |

@@ -5,6 +5,8 @@
 1. **Boot into Hyprland** (ML4W config at `~/.config/hypr`) instead of Plasma.
 2. **Auto layout** when docking at home vs work — like the old `i3/display_scripts/` + `polybar/launch.sh` logic.
 
+**Current stack:** `endeavour/displays/README.md` — hotplug listener only (kanshi removed).
+
 ## 1. Install Hyprland and set default session
 
 You currently log in via **plasmalogin** with **Plasma** only (`/usr/share/wayland-sessions/plasma.desktop`). Hyprland must be installed as a session:

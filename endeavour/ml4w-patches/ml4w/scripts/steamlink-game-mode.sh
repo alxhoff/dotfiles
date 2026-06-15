@@ -4,5 +4,5 @@
 set -euo pipefail
 
 hyprctl dispatch focuswindow 'class:^(steamlink|com\.valvesoftware\.steamlink)$' 2>/dev/null || true
-hyprctl dispatch submap passthrough
+"$(dirname "${BASH_SOURCE[0]}")/passthrough-on.sh"
 notify-send -t 5000 'Passthrough on' 'Alt+Esc to exit. Mouse: Alt+Ctrl+U to focus away from Steam Link.'

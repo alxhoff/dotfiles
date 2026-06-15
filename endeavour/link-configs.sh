@@ -82,16 +82,25 @@ if dest=$(link_display_profiles "$DOTFILES_DIR" 2>/dev/null); then
     log "display-profiles -> $dest"
 fi
 
-mkdir -p "${HOME}/.config/kanshi"
-link_path "$DISPLAYS/kanshi.config" "${HOME}/.config/kanshi/config"
-
-mkdir -p "$ML4W_CFG/hypr/scripts"
-link_path "$DISPLAYS/dotfiles-display-hook.sh" "$ML4W_CFG/hypr/scripts/dotfiles-display-hook.sh"
-
 for s in "$DISPLAYS"/*.sh; do
     [[ -f "$s" ]] || continue
     [[ "$DRY_RUN" == 1 ]] || chmod +x "$s"
 done
+
+# --- Hyprland session: validate monitors.conf before compositor starts ---
+SESSION="$DOTFILES_DIR/endeavour/session"
+mkdir -p "${HOME}/.local/bin" "${HOME}/.local/share/wayland-sessions"
+link_path "$SESSION/start-hyprland.sh" "${HOME}/.local/bin/dotfiles-start-hyprland"
+if [[ -f "$SESSION/hyprland.desktop" ]]; then
+    if [[ "$DRY_RUN" == 1 ]]; then
+        echo "  would install: ${HOME}/.local/share/wayland-sessions/hyprland.desktop"
+    else
+        sed "s|@HOME@|$HOME|g" "$SESSION/hyprland.desktop" \
+            >"${HOME}/.local/share/wayland-sessions/hyprland.desktop"
+        log "session: ~/.local/share/wayland-sessions/hyprland.desktop"
+    fi
+fi
+[[ "$DRY_RUN" == 1 ]] || chmod +x "${HOME}/.local/bin/dotfiles-start-hyprland" 2>/dev/null || true
 
 # --- Hyprland patches (into ML4W tree; ~/.config/hypr symlinks here) ---
 for f in layouts.conf gestures.conf autostart.conf monitor.conf binds.conf \
@@ -154,5 +163,11 @@ link_path "$PATCHES/kitty/kitty.conf" "$ML4W_CFG/kitty/kitty.conf"
 
 mkdir -p "$ML4W_CFG/dunst"
 link_path "$PATCHES/dunst/dunstrc" "$ML4W_CFG/dunst/dunstrc"
+
+mkdir -p "$ML4W_CFG/wlogout"
+for f in layout style.css; do
+    [[ -f "$PATCHES/wlogout/$f" ]] || continue
+    link_path "$PATCHES/wlogout/$f" "$ML4W_CFG/wlogout/$f"
+done
 
 log "Done. Re-run ./endeavour/apply-ml4w-patches.sh for waybar modules/style overlays."
