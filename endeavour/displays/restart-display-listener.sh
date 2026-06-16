@@ -30,6 +30,11 @@ rm -f "$PIDFILE"
 sleep 0.5
 
 nohup "$LISTENER" >>"$LOG" 2>&1 &
-echo $! >"$PIDFILE"
-sleep 0.5
-kill -0 "$(cat "$PIDFILE")" && echo "listener started (pid $(cat "$PIDFILE"), log: $LOG)"
+disown
+sleep 1
+if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+	echo "listener started (pid $(cat "$PIDFILE"), log: $LOG)"
+else
+	echo "listener failed to start — see $LOG" >&2
+	exit 1
+fi

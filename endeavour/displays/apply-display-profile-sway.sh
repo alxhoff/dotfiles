@@ -11,6 +11,7 @@ source "$SCRIPT_DIR/lib.sh"
 PROFILE=${1:-auto}
 PROFILES_DIR=$(resolve_profiles_dir "$SCRIPT_DIR")
 STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/dotfiles-display-profile"
+MIGRATE="$SCRIPT_DIR/migrate-session-sway.sh"
 WAYBAR_LAUNCH="${HOME}/.config/sway/scripts/waybar-launch.sh"
 WALLPAPER_RESTORE="${HOME}/.config/sway/scripts/wallpaper-restore.sh"
 DROPDOWN_TERM="${HOME}/.config/ml4w/scripts/dropdown-terminal.sh"
@@ -25,7 +26,7 @@ require_sway() {
 
 main() {
     require_sway
-    export PROFILE PROFILES_DIR STATE_FILE LAPTOP_PATTERN \
+    export PROFILE PROFILES_DIR STATE_FILE LAPTOP_PATTERN MIGRATE \
         HOME_DOCK_DESCRIPTIONS WORK_DOCK_DESCRIPTIONS \
         WAYBAR_PRIMARY_PATTERN WORK_WAYBAR_PRIMARY_PATTERN SCRIPT_DIR
     local apply_rc=0
@@ -81,7 +82,12 @@ def detect_profile():
     connected = externals(outputs(all_outputs=True))
     live = externals(active)
     if not live:
-        return "laptop" if not connected else "skip"
+        current = state_file.read_text().strip() if state_file.exists() else ""
+        if current in ("home", "work"):
+            return "laptop"
+        if connected:
+            return "skip"
+        return "laptop"
     active_descs = " ".join(desc(o) for o in live)
 
     def dock_match(env_key, min_count):
@@ -194,7 +200,7 @@ def resolve_profile_lines(prof_file: Path):
 def to_swaymsg(spec):
     if spec["disable"]:
         return ["output", spec["name"], "disable"]
-    args = ["output", spec["name"]]
+    args = ["output", spec["name"], "enable"]
     mode = normalize_mode(spec["mode"])
     if mode == "preferred":
         args.extend(["mode", "preferred"])
@@ -325,6 +331,33 @@ PY
     fi
     if [[ "$apply_rc" -ne 0 ]]; then
         return "$apply_rc"
+    fi
+
+    applied_profile=$(cat "$STATE_FILE" 2>/dev/null || true)
+    if [[ "$applied_profile" == laptop ]]; then
+        laptop_mon=$(
+            swaymsg -t get_outputs | python3 -c "
+import json, sys
+pat = sys.argv[1]
+for o in json.load(sys.stdin):
+    if pat in o.get('name', ''):
+        print(o['name'])
+        break
+" "$LAPTOP_PATTERN" 2>/dev/null || echo "eDP-1"
+        )
+        sleep 0.35
+        if [[ -n "$laptop_mon" && -x "$MIGRATE" ]]; then
+            log "moving session → $laptop_mon"
+            "$MIGRATE" "$laptop_mon" || true
+        fi
+        swaymsg output "$laptop_mon" dpms on 2>/dev/null || true
+        brightness="${HOME}/.config/ml4w/scripts/brightness-laptop.sh"
+        if [[ -x "$brightness" ]]; then
+            "$brightness" restore || true
+        fi
+        if [[ -n "$laptop_mon" ]]; then
+            swaymsg focus output "$laptop_mon" 2>/dev/null || true
+        fi
     fi
 
     if [[ -x "$WAYBAR_LAUNCH" ]]; then

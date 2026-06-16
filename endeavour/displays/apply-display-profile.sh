@@ -131,7 +131,7 @@ schedule_session_refresh() {
 }
 
 detect_profile() {
-    export HOME_DOCK_DESCRIPTIONS WORK_DOCK_DESCRIPTIONS LAPTOP_PATTERN
+    export HOME_DOCK_DESCRIPTIONS WORK_DOCK_DESCRIPTIONS LAPTOP_PATTERN STATE_FILE
     python3 <<'PY'
 import json, os, subprocess
 
@@ -157,10 +157,16 @@ connected = externals(all_m, edp)
 active = externals(
     json.loads(subprocess.check_output(["hyprctl", "monitors", "-j"], text=True)), edp)
 
-# Undocked: no active externals. Ignore stale `monitors all` descriptions (they block laptop).
+# Undocked: no live externals. If we were on a dock profile, switch to laptop even when
+# `monitors all` still lists stale disconnected outputs (that case blocked undock before).
 if not active:
-    if connected:
-        print("skip")  # hotplug: outputs in `all` but not active yet
+    import pathlib
+    state = pathlib.Path(os.environ.get("STATE_FILE", "/tmp/dotfiles-display-profile"))
+    current = state.read_text().strip() if state.exists() else ""
+    if current in ("home", "work"):
+        print("laptop")
+    elif connected:
+        print("skip")  # docking: outputs in `all` but not active yet
     else:
         print("laptop")
     raise SystemExit(0)

@@ -6,6 +6,8 @@ DOTFILES_DISPLAYS=${DOTFILES_DISPLAYS:-$HOME/.config/dotfiles/endeavour/displays
 APPLY="$DOTFILES_DISPLAYS/apply-display-profile.sh"
 # shellcheck source=endeavour/displays/config.env
 source "$DOTFILES_DISPLAYS/config.env"
+# shellcheck source=endeavour/displays/lib.sh
+source "$DOTFILES_DISPLAYS/lib.sh"
 
 [[ -x "$APPLY" ]] || exit 0
 
@@ -45,7 +47,7 @@ run_apply() {
 		local attempt=0 detected current
 
 		while ((attempt <= retries)); do
-			detected=$("$APPLY" detect 2>/dev/null || echo skip)
+			detected=$(detect_profile_name "$APPLY")
 			current=$(cat "$STATE" 2>/dev/null || true)
 			log "detect=$detected current=$current attempt=$attempt"
 			if should_apply "$detected" "$current"; then
@@ -63,27 +65,23 @@ run_apply() {
 	wait $! 2>/dev/null || true
 }
 
-startup_settle_sec() {
-	local detected
-	detected=$("$APPLY" detect 2>/dev/null || echo skip)
-	if [[ "$detected" == laptop ]]; then
-		echo 0
-	else
-		echo "${HOTPLUG_SETTLE_SEC:-5}"
-	fi
-}
-
 schedule_apply() {
 	local reason=${1:-hotplug}
 	local settle
-	cancel_debounce
-	log "scheduled ($reason)"
-	if [[ "$reason" == startup ]]; then
-		settle=$(startup_settle_sec)
+
+	if [[ "$reason" == monitoradded || "$reason" == monitorremoved ]]; then
+		if debounce_running "$DEBOUNCE"; then
+			log "debounce already pending ($reason)"
+			return 0
+		fi
 	else
-		settle=${HOTPLUG_SETTLE_SEC:-5}
+		cancel_debounce
 	fi
+
+	settle=$(hotplug_settle_sec "$reason" "$APPLY" "$STATE")
+	log "scheduled ($reason, settle=${settle}s)"
 	(
+		trap 'rm -f "$DEBOUNCE"' EXIT
 		sleep "$settle"
 		run_apply
 	) &

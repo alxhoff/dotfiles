@@ -26,7 +26,7 @@ mkdir -p "$RUNTIME"
 
 LOCK="${RUNTIME}/launch.lock"
 exec 9>"$LOCK"
-if ! flock -n 9; then
+if ! flock -w 15 9; then
     exit 0
 fi
 
@@ -206,6 +206,9 @@ if style_src.exists():
 else:
     style_out.write_text(overrides.read_text() if overrides.exists() else "")
 PY
+
+# Children must not inherit the flock fd (would block all future relaunches).
+exec 9>&-
 
 STYLE="${RUNTIME}/style.css"
 
